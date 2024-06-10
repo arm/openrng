@@ -1,0 +1,11 @@
+---
+BasedOnStyle: LLVM
+
+AlignArrayOfStructures: Left
+
+# The defines in openrng.h are difficult to read without.
+AlignConsecutiveMacros: true
+
+# Left align const
+QualifierAlignment: Left
+---

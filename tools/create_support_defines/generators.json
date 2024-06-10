@@ -1,0 +1,169 @@
+{
+  "features": [
+    "newStream",
+    "newStreamEx",
+    "leapfrog",
+    "skipAhead",
+    "skipAheadEx",
+    "uniformBits32",
+    "uniformBits64"
+  ],
+  "statuses": [
+    "supported",
+    "unsupported",
+    "notImplemented",
+    "nondeterm",
+    "quasi"
+  ],
+  "generators": [
+    {
+        "method": "MCG31",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "supported",
+        "skipAhead": "supported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "unsupported",
+        "uniformBits64": "unsupported"
+      }
+    },
+    {
+        "method": "MRG32K3A",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "supported",
+        "skipAheadEx": "supported",
+        "uniformBits32": "unsupported",
+        "uniformBits64": "unsupported"
+      }
+    },
+    {
+        "method": "R250",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "unsupported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "unsupported",
+        "uniformBits64": "unsupported"
+      }
+    },
+    {
+        "method": "MT19937",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "supported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    },
+    {
+        "method": "MCG59",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "supported",
+        "skipAhead": "supported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    },
+    {
+        "method": "WH",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "SOBOL",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "notImplemented",
+        "leapfrog": "quasi",
+        "skipAhead": "supported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "unsupported",
+        "uniformBits64": "unsupported"
+      }
+    },
+    {
+        "method": "NIEDERR",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "MT2203",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "IABSTRACT",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "DABSTRACT",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "SABSTRACT",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "SFMT19937",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "supported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    },
+    {
+        "method": "NONDETERM",
+        "featureStatus": {
+        "newStream": "nondeterm",
+        "uniformBits32": "nondeterm",
+        "uniformBits64": "nondeterm",
+        "leapfrog": "unsupported",
+        "skipAhead": "unsupported",
+        "skipAheadEx": "unsupported"
+      }
+    },
+    {
+        "method": "ARS5",
+        "featureStatus": {
+        "newStream": "notImplemented"
+      }
+    },
+    {
+        "method": "PHILOX4X32X10",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "supported",
+        "skipAheadEx": "supported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    }
+  ]
+}

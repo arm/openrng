@@ -1,0 +1,12 @@
+image: gcc
+
+before_script:
+ - apt-get update --yes
+ - apt-get install --yes cmake
+
+build:
+  tags:
+    - arm64
+  script:
+    - mkdir build
+    - cd build && cmake .. && make -j && ctest

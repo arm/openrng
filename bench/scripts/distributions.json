@@ -1,0 +1,103 @@
+{
+  "UniformBits": {
+    "type": "discrete",
+    "params": [],
+    "supported_methods": ["std"]
+  },
+  "UniformBits32": {
+    "type": "discrete",
+    "params": [],
+    "supported_methods": ["std"]
+  },
+  "UniformBits64": {
+    "type": "discrete",
+    "params": [],
+    "supported_methods": ["std"]
+  },
+  "Bernoulli": {
+    "type": "discrete",
+    "params": ["p"],
+    "supported_methods": ["icdf"]
+  },
+  "Geometric": {
+    "type": "discrete",
+    "params": ["p"],
+    "default_args": [0.5],
+    "supported_methods": ["icdf"]
+  },
+  "Binomial": {
+    "type": "discrete",
+    "params": ["ntrial", "p"],
+    "default_args": [100, 0.5],
+    "supported_methods": ["btpe"]
+  },
+  "Hypergeometric": {
+    "type": "discrete",
+    "params": ["l", "s", "m"]
+  },
+  "Poisson": {
+    "type": "discrete",
+    "params": ["lambda"]
+  },
+  "NegBinomial": {
+    "type": "discrete",
+    "params": ["a", "p"]
+  },
+  "Uniform": {
+    "type": "continuous",
+    "params": ["a", "b"],
+    "default_args": [0.0, 1.0],
+    "supported_methods": ["std", "std_accurate"]
+  },
+  "Gaussian": {
+    "type": "continuous",
+    "params": ["a", "sigma"],
+    "supported_methods": ["boxmuller", "boxmuller2", "icdf"]
+  },
+  "Exponential": {
+    "type": "continuous",
+    "params": ["alpha", "beta"],
+    "supported_methods": ["icdf","icdf_accurate"]
+  },
+  "Laplace": {
+    "type": "continuous",
+    "params": ["alpha", "beta"],
+    "supported_methods": ["icdf"]
+  },
+  "Weibull": {
+    "type": "continuous",
+    "params": ["a", "alpha", "beta"],
+    "supported_methods": ["icdf","icdf_accurate"]
+  },
+  "Cauchy": {
+    "type": "continuous",
+    "params": ["alpha", "beta"],
+    "supported_methods": ["icdf"]
+  },
+  "Rayleigh": {
+    "type": "continuous",
+    "params": ["alpha", "beta"],
+    "supported_methods": ["icdf","icdf_accurate"]
+  },
+  "Lognormal": {
+    "type": "continuous",
+    "params": ["alpha", "sigma", "b", "beta"]
+  },
+  "Gumbel": {
+    "type": "continuous",
+    "params": ["alpha", "beta"],
+    "supported_methods": ["icdf"]
+  },
+  "Gamma": {
+    "type": "continuous",
+    "params": ["a", "alpha", "beta"]
+  },
+  "Beta": {
+    "type": "continuous",
+    "params": ["p", "q", "alpha", "beta"]
+  },
+  "ChiSquare": {
+    "type": "continuous",
+    "params": ["v"]
+  }
+}

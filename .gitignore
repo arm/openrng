@@ -1,0 +1,22 @@
+# Build and install directories.
+build*/
+install/
+
+# Examples
+examples/pi
+examples/skipahead
+
+# Cache files from python.
+*.pyc
+
+# Visual studio code configuration settings.
+.vscode
+
+# JSON compiler database.
+compile_commands.json
+
+# Clangd cache for code completion.
+.cache
+
+# Backups from vim/emacs
+*~
