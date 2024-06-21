@@ -1,12 +1,20 @@
-image: gcc
-
-before_script:
- - apt-get update --yes
- - apt-get install --yes cmake
-
-build:
+default:
+  image: ubuntu:22.04
   tags:
     - arm64
+  before_script:
+    - apt update --yes
+    - DEBIAN_FRONTEND=noninteractive apt install --yes cmake g++ git gcovr
+    - mkdir build && cd build
+
+build-and-test:
   script:
-    - mkdir build
-    - cd build && cmake .. && make -j && ctest
+    - cmake .. && make -j $(nproc) && ctest -j $(nproc)
+
+code-coverage:
+  script:
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage" -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+    - make -j $(nproc)
+    - ctest -j $(nproc)
+    - gcovr -r .. -f "../src" -e ".*sve"
+  coverage: /^TOTAL.*\s+(\d+\%)$/
