@@ -111,7 +111,11 @@ DynamicArray<char> mod(DynamicArray<char> g, const DynamicArray<char> &p) {
  */
 static DynamicArray<char> fromIndices(auto indices) {
   const auto order = 1 + indices.back();
+
   DynamicArray<char> result(order, 0);
+  if (order <= 0) {
+    return result;
+  }
   for (auto index : indices) {
     result[index] = 1;
   }
@@ -138,7 +142,6 @@ static DynamicArray<char> fromIndices(auto indices) {
  */
 template <std::array characteristicPolynomialIndices>
 DynamicArray<char> gf2SkipAheadPolynomial(uint64_t n) {
-
   const DynamicArray<char> p = fromIndices(characteristicPolynomialIndices);
   DynamicArray<char> x(2);
   x[0] = 0;
@@ -155,10 +158,6 @@ namespace openrng {
  *
  * Convenience wrapper that choses the appropriate characteristic polynomial.
  */
-DynamicArray<char> mt19937SkipAheadPolynomial(uint64_t n) {
-  return gf2SkipAheadPolynomial<
-      skipahead::data::mt19937CharacteristicPolynomialIndices>(n);
-}
 
 DynamicArray<char> sfmt19937SkipAheadPolynomial(uint64_t n) {
   return gf2SkipAheadPolynomial<

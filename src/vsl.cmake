@@ -3,6 +3,35 @@ if(OPENRNG_LIB_SUFFIX)
   set_target_properties(openrng PROPERTIES OUTPUT_NAME "openrng_${OPENRNG_LIB_SUFFIX}")
 endif()
 
+#
+# Set VERSION and SOVERSION. This can help system administrators with upgrading
+# or downgrading OpenRNG.
+#
+# In the specific case of Linux, when compiling an executable, a user will
+# typically target libopenrng.so, no suffix. Assuming VERSION=24.04 and
+# SOVERSION=1, when running an executable, it will look for libopenrng.so.1,
+# with the SOVERSION suffix. The actual executable is libopenrng.24.04, with the
+# VERSION suffix. A system administrator can install multiple versions of
+# OpenRNG, and then configure the symbolic links to pick the desired version at
+# either compile or runtime. The default installation on linux looks like.
+#
+#    $ ls install/lib -l
+#   lrwxrwxrwx libopenrng.so -> libopenrng.so.1
+#   lrwxrwxrwx libopenrng.so.1 -> libopenrng.so.24.04
+#   -rw-r--r-- libopenrng.so.24.04
+#
+# And the SOVERSION is embedded in the library's header.
+#
+#    $ readelf -d install/lib/libopenrng.so.24.04 | grep SONAME
+#   0x000000000000000e (SONAME)             Library soname: [libopenrng.so.1]
+#
+# VERSION: This needs to be bumped every release.
+#
+# SOVERSION: If the ABI has changed since the previous release, this number
+# needs to be bumped.
+#
+set_target_properties(openrng PROPERTIES VERSION 24.04 SOVERSION 1)
+
 # CMAKE_SYSTEM_PROCESSOR is the target processor, if not set, it will default to
 # the host platform. If you want to change CMAKE_SYSTEM_PROCESSOR, you will also
 # need to set CMAKE_SYSTEM_NAME. This can be done on the command line with

@@ -5,6 +5,7 @@ install/
 # Examples
 examples/pi
 examples/skipahead
+examples/sobol_joe_kuo
 
 # Cache files from python.
 *.pyc

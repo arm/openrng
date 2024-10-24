@@ -8,8 +8,9 @@
 #pragma once
 
 #include <generator/generator.hpp>
-#include <generator/sobol_default_direction_numbers.hpp>
 #include <utils/dynamic_array.hpp>
+
+#include <array>
 
 namespace openrng {
 
@@ -30,13 +31,22 @@ struct SobolState {
 class SobolGenerator : public Generator {
   void advance();
 
+  int initialise_direction_nums(const uint32_t *, const uint32_t *,
+                                const uint32_t, bool);
+
   SobolState state;
 
-  /* State vector cannot be blindly copied in save/restore methods as it is
-     dynamically allocated and contains a pointer. This has to be specially
-     handled - state vector is stored directly in the Generator rather than the
+  constexpr static int max_default_dimensions = 40;
+  constexpr static int directions_per_dimension = 32;
+
+  /* Some aspects of state have dynamic size, dictated by the number of
+     dimensions. These cannot be blindly copied in save/restore methods as they
+     are dynamically allocated a contain a pointer. This has to be specially
+     handled - store dynamic arrays directly in the Generator rather than the
      State struct to prevent issues from allocation during save and restore.  */
   DynamicArray<uint32_t> state_vector{};
+  std::array<DynamicArray<uint32_t>, directions_per_dimension>
+      direction_numbers{};
 
 public:
   SobolGenerator() : Generator{VSL_BRNG_SOBOL}, state{} {}

@@ -42,6 +42,31 @@ extern "C" {
  */
 
 /**
+ * \example sobol_joe_kuo.cpp
+ *
+ * This example demonstrates how to process the direction numbers supplied by S.
+ * Joe and F. Y. Kuo (available at https://web.maths.unsw.edu.au/~fkuo/sobol/),
+ * and organise the input array such that they can be used with \ref
+ * VSL_BRNG_SOBOL. It expects three arguments: a path to the list of numbers,
+ * the number of dimensions and the number of elements to generate.
+ *
+ * Example output:
+ * \code{.sh}
+ * $ ./sobol_joe_kuo new-joe-kuo-6.21201 3 30
+ * 0.5,	0.5,	0.5
+ * 0.75,	0.25,	0.25
+ * 0.25,	0.75,	0.75
+ * 0.375,	0.375,	0.625
+ * 0.875,	0.875,	0.125
+ * 0.625,	0.125,	0.875
+ * 0.125,	0.625,	0.375
+ * 0.1875,	0.3125,	0.9375
+ * 0.6875,	0.8125,	0.4375
+ * 0.9375,	0.0625,	0.6875
+ * \endcode
+ */
+
+/**
  * \defgroup groupService Service functions
  *
  * This section documents all service function. The service functions are used
@@ -107,6 +132,12 @@ extern "C" {
  * \defgroup groupTypes Data types.
  *
  * The following section documents all data types provided by OpenRNG.
+ */
+
+/**
+ * \defgroup groupQRNG QRNG flags.
+ *
+ * The following section documents special flags for initialising QRNGs.
  */
 
 /**
@@ -248,6 +279,59 @@ extern "C" {
  * supported on the CPU running the application.
  */
 #define VSL_RNG_ERROR_NONDETERM_NOT_SUPPORTED -0x100c
+
+/**
+ * \ingroup groupQRNG
+ *
+ * Second element of `params` argument to \ref vslNewStreamEx to indicate custom
+ * direction numbers and/or primitive polynomials will be used.
+ */
+#define VSL_USER_QRNG_INITIAL_VALUES 0x1
+
+/**
+ * \ingroup groupQRNG
+ *
+ * Pass (possibly combined with other flags using `|`) as third element of
+ * `params` array to \ref vslNewStreamEx to indicate user-defined primitive
+ * polynomials will be used. If \ref VSL_USER_INIT_DIRECTION_NUMBERS is not also
+ * set, the number of dimensions must be less than 41.
+ */
+#define VSL_USER_PRIMITIVE_POLYMS 0x1
+
+/**
+ * \ingroup groupQRNG
+ *
+ * Pass (possibly combined with other flags using `|`) as third element of
+ * `params` array to \ref vslNewStreamEx to indicate user-defined initial
+ * direction numbers will be used. If \ref VSL_USER_PRIMITIVE_POLYMS is not also
+ * set, the number of dimensions must be less than 41. Use \ref
+ * VSL_USER_DIRECTION_NUMBERS to pass the full set of 32 direction numbers per
+ * dimension instead of relying on polynomials to generate them.
+ */
+#define VSL_USER_INIT_DIRECTION_NUMBERS 0x2
+
+/**
+ * \ingroup groupQRNG
+ *
+ * Pass (possibly combined with other flags using `|`) as third element of
+ * `params` array to \ref vslNewStreamEx to indicate user-defined direction
+ * numbers will be used. \ref VSL_USER_PRIMITIVE_POLYMS will be ignored if set -
+ * params array must contain the full set of 32 direction numbers per dimension.
+ */
+#define VSL_USER_DIRECTION_NUMBERS 0x4
+
+/**
+ * \ingroup groupQRNG
+ *
+ * Pass (possibly combined with other flags using `|`) as third element of
+ * `params` array to \ref vslNewStreamEx to indicate that the default values for
+ * dimension 0 should be overridden by the custom settings. Direction numbers
+ * for dimension 0 are ordinarily set to the special-case from Bratley & Fox
+ * 1988. This option is ignored unless both `VSL_USER_INIT_DIRECTION_NUMBERS`
+ * and `VSL_USER_PRIMITIVE_POLYMS` are set, and is implicit for
+ * `VSL_USER_DIRECTION_NUMBERS`.
+ */
+#define VSL_QRNG_OVERRIDE_1ST_DIM_INIT 0x8
 
 /**
  * \ingroup groupBrng
@@ -617,6 +701,7 @@ extern "C" {
  */
 #define VSL_BRNG_WH 0x1004
 
+// clang-format off
 /**
  * \ingroup groupBrng
  *
@@ -635,7 +720,94 @@ extern "C" {
  * ==================================
  *
  * If `n` is 1, initialize according to \ref vslNewStream. Otherwise,
- * return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
+ * vslNewStreamEx can be used to pass user-defined primitive polynomials and/or
+ * initial direction numbers:
+ *
+ * Polynomials and direction numbers
+ * ---------------------------------
+ *
+ * To register both custom polynomials and initial direction numbers, the layout
+ * of the `params` array should be as follows:
+ *
+ * | Index | Value |
+ * |-------|-------|
+ * | 0     | `n_dimensions` |
+ * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 2     | `VSL_USER_INIT_DIRECTION_NUMBERS \| VSL_USER_PRIMITIVE_POLYMS` |
+ * | 3 to 2 + `n_dimensions` | Primitive polynomials |
+ * | 2 + `n_dimensions` | Max degree of any polynomial (`max_deg`) |
+ * | 3 + `n_dimensions` to 3 + `n_dimensions` + `max_deg` * (`n_dimensions` - 1) | Initial direction numbers, in dimension-major order and zero-padded to `max_deg` elements each |
+ *
+ * See \ref sobol_joe_kuo.cpp for an example of how to initialise a
+ * stream using this layout.
+ *
+ * By default dimension 0 is still initialised using default
+ * parameters. set `params[2] |= VSL_QRNG_OVERRIDE_1ST_DIM_INIT` to
+ * override dimension 0 - layout then has to be:
+ *
+ * | Index | Value |
+ * |-------|-------|
+ * | 0     | `n_dimensions` |
+ * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 2     | `VSL_USER_INIT_DIRECTION_NUMBERS \| VSL_USER_PRIMITIVE_POLYMS \| VSL_QRNG_OVERRIDE_1ST_DIM_INIT` |
+ * | 3 to 3 + `n_dimensions` | Primitive polynomials |
+ * | 3 + `n_dimensions` | Max degree of any polynomial (`max_deg`) |
+ * | 4 + `n_dimensions` to 4 + (`max_deg` + 1) * `n_dimensions`  | Initial direction numbers, in dimension-major order and zero-padded to `max_deg` elements each |
+ *
+ * In other words, one more polynomial and set of initial direction
+ * numbers must be passed to account for the extra dimension.
+ *
+ * Polynomials only
+ * ----------------
+ *
+ * To register only custom polynomials, and use the default table of
+ * initial direction numbers, the layout of the `params` array should
+ * be as follows:
+ *
+ * | Index | Value |
+ * |-------|-------|
+ * | 0     | `n_dimensions` |
+ * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 2     | `VSL_USER_PRIMITIVE_POLYMS` |
+ * | 3 to 2 + `n_dimensions` | Primitive polynomials |
+ *
+ * Note it is assumed that the maximum degree is 8 - using a higher
+ * degree than this without supplying initial direction numbers is not
+ * supported. `n_dimensions` must be less than 41.
+ *
+ * Note VSL_QRNG_OVERRIDE_1ST_DIM_INIT is ignored for this option.
+ *
+ * Initial direction numbers only
+ * ------------------------------
+ *
+ * To register only initial direction numbers, and use VSL's default
+ * polynomials to generate the full table, layout should be as
+ * follows:
+ *
+ * | Index | Value |
+ * |-------|-------|
+ * | 0     | `n_dimensions` |
+ * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 2     | `VSL_USER_INIT_DIRECTION_NUMBERS` |
+ * | 3     | `max_deg` |
+ * | 4 to 4 + `max_deg` * (`n_dimensions` - 1) | Initial direction numbers, in dimension-major order and zero-padded to `max_deg` elements each |
+ *
+ * Note VSL_QRNG_OVERRIDE_1ST_DIM_INIT is ignored for this option.
+ *
+ * Direction numbers only
+ * ----------------------
+ *
+ * To register only the full table of direction numbers, layout should be as
+ * follows:
+ *
+ * | Index | Value |
+ * |-------|-------|
+ * | 0     | `n_dimensions` |
+ * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 2     | `VSL_USER_DIRECTION_NUMBERS` |
+ * | 3 to 3 + 32 * `n_dimensions` | Direction numbers, in dimension-major order |
+ *
+ * Note VSL_QRNG_OVERRIDE_1ST_DIM_INIT is implicitly set for this option.
  *
  * Recurrence relation
  * ===================
@@ -713,6 +885,7 @@ extern "C" {
  * multivariate quadrature and optimization, ACM TOMS 14 (1988) 88-100
  *
  */
+// clang-format on
 #define VSL_BRNG_SOBOL 0x1005
 
 /**
@@ -795,9 +968,6 @@ extern "C" {
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | Yes
  * \ref vslSkipAheadStreamEx | No
- *
- * \note MT19937 skip ahead is missing some important performance optimizations
- * in \armplref. This will be rectified in a later release.
  *
  * Example
  * =======
@@ -1236,22 +1406,21 @@ extern "C" {
 /**
  * \ingroup groupDistMethods
  *
- * This invokes the generation of Gaussian distributed numbers through
- * the Inverse Cumulative Distribution Function method, from a set of
- * uniformly distributed numbers in the interval \f$[0, 1)\f$, to which
- * then apply an appropriate transformation to produce random numbers
- * distributed following a lognormal distribution.
+ * This invokes the generation of Gaussian distributed numbers through the
+ * Inverse Cumulative Distribution Function method, from a set of uniformly
+ * distributed numbers in the interval \f$[0, 1)\f$, and then applies an
+ * appropriate transformation to produce random numbers in a lognormal
+ * distribution.
  */
 #define VSL_RNG_METHOD_LOGNORMAL_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * This invokes the generation of Gaussian distributed numbers through
- * the BoxMuller2 method, from a set of uniformly distributed numbers in
- * the interval \f$[0, 1)\f$, to which the apply an appropriate
- * transformation to produce random numbers distributed following a
- * lognormal distribution.
+ * This invokes the generation of Gaussian distributed numbers through the
+ * BoxMuller2 method, from a set of uniformly distributed numbers in the
+ * interval \f$[0, 1)\f$, and then applies an appropriate transformation to
+ * produce random numbers in a lognormal distribution.
  */
 #define VSL_RNG_METHOD_LOGNORMAL_BOXMULLER2 2
 
@@ -2595,7 +2764,7 @@ int vsRngGaussianMV(const openrng_int_t method, VSLStreamStatePtr stream,
  *
  * Generates single-precision random numbers distributed according to the Gumbel
  * distribution. The parameters of this distribution are: a displacement
- * quantity \f$a\f$ and a scale factor \f$\beta\f$
+ * quantity \f$a\f$ and a scale factor \f$\beta\f$.
  *
  * The probability density function is given by:
  *
@@ -3061,7 +3230,8 @@ int vslSkipAheadStream(VSLStreamStatePtr stream, const long long int nskip);
  * The nskip array is interpreted as follows:
  *
  * \code{.cpp} nskip[0] + nskip[1] * pow(2, 64) + nskip[2] * pow(2, 128) ...
- *   + nskip[i] * pow(2, 64 * i) + ... \endcode
+ *   + nskip[i] * pow(2, 64 * i) + ...
+ * \endcode
  *
  * \param[in] stream An initialized random stream.
  * \param[in] n The size of the provided `nskip` array.

@@ -56,7 +56,6 @@ The following is a list of all PRNGs that have been implemented in \armplref.
  * \ref VSL_BRNG_R250
  * \ref VSL_BRNG_MRG32K3A
  * \ref VSL_BRNG_MCG59
- * \ref VSL_BRNG_SOBOL
  * \ref VSL_BRNG_MT19937
  * \ref VSL_BRNG_SFMT19937
  * \ref VSL_BRNG_NONDETERM
@@ -67,7 +66,6 @@ implemented in \armplref. If any of these values are used, the API will return
 \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
 
  * \ref VSL_BRNG_WH
- * \ref VSL_BRNG_NIEDERR
  * \ref VSL_BRNG_MT2203
  * \ref VSL_BRNG_IABSTRACT
  * \ref VSL_BRNG_DABSTRACT

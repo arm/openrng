@@ -6,7 +6,7 @@
  */
 
 #include <generator/mt19937.hpp>
-#include <utils/mt_skip_ahead.hpp>
+#include <utils/mt_skip_ahead_data.hpp>
 
 namespace openrng {
 
@@ -116,27 +116,56 @@ xorStatesInPlace(ring_buffer<uint32_t, MT19937State::N> &result,
   }
 }
 
+int deg(const DynamicArray<char> &a) {
+  for (int i = a.size() - 1; i >= 0; i--) {
+    if (a[i]) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+static DynamicArray<char> fromBits(auto indeces) {
+  const auto size = indeces.size() * 64;
+  DynamicArray<char> result(size, 0);
+  for (size_t j = 0; j < indeces.size(); j++) {
+    for (size_t i = 0; i < 64; i++)
+      if (1 & (indeces[j] >> i))
+        result[j * 64 + i] = 1;
+  }
+  result.resize(deg(result) + 1);
+  return result;
+}
+
 int MT19937Generator<CPUFeatures::generic>::skipAhead(uint64_t n,
                                                       const uint64_t nskip[]) {
   if (n > 1) {
     return VSL_RNG_ERROR_SKIPAHEADEX_UNSUPPORTED;
   }
 
-  DynamicArray<char> g = mt19937SkipAheadPolynomial(nskip[0]);
+  uint64_t skip = nskip[0];
 
-  //
-  // Taking the skip ahead polynomial g, get the sum (xor) of each i'th state.x
-  // where the i'th coefficient of g is non-zero.
-  //
-  decltype(state.x) resultState = {};
-  for (size_t i = 0; i < g.size(); i++) {
-    if (g[i]) {
-      xorStatesInPlace(resultState, state.x);
+  for (int j = 0; skip; j++, skip >>= 1) {
+    if ((skip & 1) == 0) {
+      continue;
     }
-    advance();
-  }
 
-  state.x = resultState;
+    const DynamicArray<char> g = fromBits(skipahead::data::mt19937_cache[j]);
+
+    //
+    // Taking the skip ahead polynomial g, get the sum (xor) of each i'th
+    // state.x where the i'th coefficient of g is non-zero.
+    //
+    decltype(state.x) resultState = {};
+    for (size_t i = 0; i < g.size(); i++) {
+      if (g[i]) {
+        xorStatesInPlace(resultState, state.x);
+      }
+      advance();
+    }
+
+    state.x = resultState;
+  }
 
   return VSL_ERROR_OK;
 }

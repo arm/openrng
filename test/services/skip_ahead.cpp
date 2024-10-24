@@ -102,24 +102,21 @@ TEST_CASE("Skip ahead reference test") {
   VSLStreamStatePtr vstream, rstream;
   VSLBRngProperties brngProperties;
   const auto seed = GENERATE(as<openrng_int_t>{}, 0, 1, 2, INT_MAX, UINT_MAX);
-  const auto skipAhead = GENERATE(as<int64_t>{}, 0, 1, 2, 4, 23'456, LLONG_MAX);
+  const auto skipAhead =
+      GENERATE(as<int64_t>{}, 0, 1, 2, 4, 23'456, 1LL << 32, LLONG_MAX);
   const int n = 100;
   int errcode;
 
   const auto brngId = GENERATE(SKIPAHEAD_SUPPORTED);
   CAPTURE(seed, skipAhead, brngToString(brngId));
 
-  if (skipAhead == LLONG_MAX && brngId == VSL_BRNG_MT19937) {
-    SKIP("The current implementation of MT19937 is too slow to unittest large "
-         "skip aheads");
+  if (skipAhead >= INT_MAX && brngId == VSL_BRNG_SFMT19937) {
+    SKIP(
+        "The current implementation of SFMT19937 is too slow to unittest large "
+        "skip aheads");
   }
 
-  if (skipAhead == LLONG_MAX && brngId == VSL_BRNG_SFMT19937) {
-    SKIP("The current implementation of MT19937 is too slow to unittest large "
-         "skip aheads");
-  }
-
-  if (brngId == VSL_BRNG_SOBOL && skipAhead == LLONG_MAX) {
+  if (brngId == VSL_BRNG_SOBOL && skipAhead >= INT_MAX) {
     SKIP("Skipping past the end of SOBOL is not supported.");
   }
 

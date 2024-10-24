@@ -8,6 +8,7 @@
 #include <generator/neon/mt19937_neon.hpp>
 #include <utils/dynamic_array.hpp>
 #include <utils/mt_skip_ahead.hpp>
+#include <utils/mt_skip_ahead_data.hpp>
 #include <utils/neon_intrinsics.hpp>
 
 #include <algorithm>
@@ -295,22 +296,32 @@ int MT19937Generator<CF>::skipAhead(uint64_t n, const uint64_t nskip[]) {
     return VSL_RNG_ERROR_SKIPAHEADEX_UNSUPPORTED;
   }
 
-  DynamicArray<char> g = mt19937SkipAheadPolynomial(nskip[0]);
+  auto skip = nskip[0];
 
-  //
-  // Taking the skip ahead polynomial g, get the sum (xor) of each i'th state.x
-  // where the i'th coefficient of g is non-zero.
-  //
-  auto stateCopy = state.x;
-  decltype(state.x) resultState = {};
-  for (size_t i = 0; i < g.size(); i++) {
-    if (g[i]) {
-      xorStatesInPlace<CF>(resultState, stateCopy);
+  DynamicArray<const DynamicArray<uint64_t> *> q(64);
+  int howmany_nnz = 0;
+  for (int j = 0; skip; ++j, skip >>= 1) {
+    if ((skip & 1) != 0) {
+      q[howmany_nnz] = &skipahead::data::mt19937_cache[j];
+      howmany_nnz += 1;
     }
-    advanceOnceInPlace(stateCopy);
   }
 
-  state.x = resultState;
+  for (int hm = 0; hm < howmany_nnz; ++hm) {
+    auto stateCopy = state.x;
+    decltype(state.x) resultState = {};
+    auto coefficient = *q[hm];
+    for (size_t c_bit = 0; c_bit < coefficient.size(); ++c_bit) {
+      const uint64_t b = coefficient[c_bit];
+      for (int i = 0; i < 64; ++i) {
+        if (1 & b >> i) {
+          xorStatesInPlace<CF>(resultState, stateCopy);
+        }
+        advanceOnceInPlace(stateCopy);
+      }
+    }
+    state.x = resultState;
+  }
 
   //
   // We need to recompute any cached state.

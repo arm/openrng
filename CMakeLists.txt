@@ -1,18 +1,5 @@
-# Feel free to bump as we hit new lower bounds.
-cmake_minimum_required(VERSION 3.14)
-
-# Without this policy, we see some warnings when fetching other CMake projects
-# with FetchContent.
-if(POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW)
-endif(POLICY CMP0048)
-
-# Enable the use of CMAKE_MSVC_RUNTIME_LIBRARY.
-if(POLICY CMP0091)
-  cmake_policy(SET CMP0091 NEW)
-endif()
-
-project(rng VERSION 0.0.1 LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.15)
+project(rng VERSION 24.04 LANGUAGES C CXX)
 include(CTest)
 
 # Set build type to Release if not specified.
@@ -24,8 +11,20 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 
-# Set the standard to c++20 globally. If you need finer control, you can set
-# CXX_STANDARD per target.
+# Set the standard to C++20 globally if it's supported, otherwise, print an
+# error message.
+file(
+  WRITE ${CMAKE_CURRENT_BINARY_DIR}/concepts.cpp
+  "#include <concepts>\nint main() {}"
+)
+try_compile(
+  COMPILER_SUPPORTS_CXX20 ${CMAKE_CURRENT_BINARY_DIR} SOURCES
+  ${CMAKE_CURRENT_BINARY_DIR}/concepts.cpp
+  CXX_STANDARD 20
+)
+if (NOT COMPILER_SUPPORTS_CXX20)
+  message(FATAL_ERROR "C++20 support is required. Configure CMake to use a C++20 compiler.")
+endif()
 set(CMAKE_CXX_STANDARD 20)
 
 # Alternative to CMAKE_SOURCE_DIR. You can't include a CMAKE project that uses
