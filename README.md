@@ -34,9 +34,11 @@ to contribute to the development of OpenRNG, please see the
 
 ## Download, build and install OpenRNG
 
-In this section, we assume that you have already installed the necessary build
-tools. The steps below use CMake to configure the project and `make` to build
-it.
+Building OpenRNG requires either GCC >=11 or Clang >=16. The steps below use
+CMake to configure the project and `make` to build it. To configure the project
+with a compiler other than your system's default compiler, see the
+[CMAKE_LANG_COMPILER](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER.html)
+documentation.
 
 Clone the OpenRNG repository:
 

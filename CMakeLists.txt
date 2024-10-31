@@ -57,6 +57,9 @@ if (NOT GIT_HASH)
   set(GIT_HASH 0)
 endif()
 
+# Disable GLIBCXX assertions to avoid libstdc++ dependency
+add_compile_definitions(_GLIBCXX_NO_ASSERTIONS)
+
 if (WIN32)
   # Disable _CRT_SECURE and _CRT_NONSTDC for portability. We want to continue
   # using fopen, getpid, etc. on WIN32.

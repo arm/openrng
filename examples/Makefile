@@ -4,7 +4,7 @@ endif
 
 CFLAGS=-O3 -I${OPENRNG_ROOT}/include
 CXXFLAGS=${CFLAGS}
-LDFLAGS=-L${OPENRNG_ROOT}/lib -lopenrng -lm
+LDFLAGS=-L${OPENRNG_ROOT}/lib -L${OPENRNG_ROOT}/lib64 -lopenrng -lm
 
 all: pi skipahead sobol_joe_kuo
 
