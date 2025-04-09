@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -113,7 +113,7 @@ int stdFill(Generator *generator, const int64_t n, int32_t r[], const int32_t a,
 
   generator->fill(n, reinterpret_cast<float *>(r));
   for (int64_t i = 0; i < n; i++) {
-    r[i] = reinterpret_cast<float &>(r[i]) * (b - a) + a;
+    r[i] = int32_t(reinterpret_cast<float &>(r[i]) * (b - a)) + a;
   }
 
   return VSL_ERROR_OK;

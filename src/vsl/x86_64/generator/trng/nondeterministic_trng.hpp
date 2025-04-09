@@ -22,7 +22,6 @@ public:
   int initialise(const int64_t, const unsigned int[]);
 
   int fillBits(int64_t, uint32_t[]) final;
-  int fillBits32(int64_t, uint32_t[]) final;
   int fillBits64(int64_t, uint64_t[]) final;
   int fill(int64_t, float[]) final;
   int fill(int64_t, double[]) final;

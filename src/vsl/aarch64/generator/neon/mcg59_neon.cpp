@@ -160,11 +160,6 @@ int Mcg59Generator<CPUFeatures::neon>::fillBits32(int64_t n, uint32_t buffer[]) 
   return VSL_ERROR_OK;
 }
 
-int Mcg59Generator<CPUFeatures::neon>::fillBits64(int64_t n,
-                                                  uint64_t buffer[]) {
-  return fillBits32(2 * n, reinterpret_cast<uint32_t *>(buffer));
-}
-
 int Mcg59Generator<CPUFeatures::neon>::fill(int64_t n, float buffer[]) {
   int i = 0;
   for (; i + unroll_count < n; i += unroll_count)

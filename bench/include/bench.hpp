@@ -25,7 +25,7 @@ template <typename BufType, typename... Params, typename... Args>
 auto distribution(int (*func)(openrng_int_t, VSLStreamStatePtr, openrng_int_t,
                               BufType *, Params...),
                   uint64_t niters, int brng, int method, int nelems,
-                  Args &&...args) {
+                  int elemSize, Args &&...args) {
 
   VSLStreamStatePtr stream;
   VSLBRngProperties brngProperties;
@@ -44,7 +44,8 @@ auto distribution(int (*func)(openrng_int_t, VSLStreamStatePtr, openrng_int_t,
     we probably want to update distributions.json and generate_bench.py to
     adjust the bufferSize specifically only when uniformbits is used.
   */
-  const int bufferSize = brngProperties.WordSize / sizeof(uint32_t) * nelems;
+  const int bufferSize =
+      brngProperties.WordSize / sizeof(uint32_t) * nelems * elemSize;
 
   std::vector<BufType> buffer(bufferSize);
 

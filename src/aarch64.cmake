@@ -5,21 +5,30 @@ set(TRNG_GENERATORS
 set_source_files_properties(${TRNG_GENERATORS} PROPERTIES COMPILE_OPTIONS -march=armv8.5-a+rng)
 
 set(NEON_GENERATORS
+  vsl/aarch64/generator/neon/ars5_neon.cpp
   vsl/aarch64/generator/neon/mcg31m1_neon.cpp
   vsl/aarch64/generator/neon/mcg59_neon.cpp
   vsl/aarch64/generator/neon/mrg32k3a_neon.cpp
   vsl/aarch64/generator/neon/mt19937_neon.cpp
+  vsl/aarch64/generator/neon/mt2203_neon.cpp
   vsl/aarch64/generator/neon/philox4x3210_neon.cpp
   vsl/aarch64/generator/neon/sfmt19937_neon.cpp
 )
 
 set(SHA3_GENERATORS
   vsl/aarch64/generator/sha3/mt19937_sha3.cpp
+  vsl/aarch64/generator/sha3/mt2203_sha3.cpp
   vsl/aarch64/generator/sha3/philox4x3210_sha3.cpp
   vsl/aarch64/generator/sha3/sfmt19937_sha3.cpp
 )
 
 set_source_files_properties(${SHA3_GENERATORS} PROPERTIES COMPILE_OPTIONS -march=armv8.2-a+sha3)
+
+set(AES_GENERATORS
+  vsl/aarch64/generator/aes/ars5_aes.cpp
+)
+
+set_source_files_properties(${AES_GENERATORS} PROPERTIES COMPILE_OPTIONS -march=armv8-a+crypto)
 
 # SVE support on Windows & macOS is poor, so skip building.
 if(NOT (WIN32 OR APPLE))
@@ -43,4 +52,5 @@ target_sources(openrng PRIVATE
   ${NEON_GENERATORS}
   ${TRNG_GENERATORS}
   ${SHA3_GENERATORS}
+  ${AES_GENERATORS}
 )

@@ -53,6 +53,22 @@ template <> const auto rRngGaussian<float> = rsRngGaussian;
 template <> const auto rRngGaussian<double> = rdRngGaussian;
 
 template <typename T>
+using rngGaussianMVFunction = int(const openrng_int_t method,
+                                  VSLStreamStatePtr stream,
+                                  const openrng_int_t n, T r[],
+                                  const openrng_int_t dimen,
+                                  const openrng_int_t mstorage, const T *a,
+                                  const T *t);
+
+template <typename T> rngGaussianMVFunction<T> *vRngGaussianMV;
+template <> const auto vRngGaussianMV<float> = vsRngGaussianMV;
+template <> const auto vRngGaussianMV<double> = vdRngGaussianMV;
+
+template <typename T> rngGaussianMVFunction<T> *rRngGaussianMV;
+template <> const auto rRngGaussianMV<float> = rsRngGaussianMV;
+template <> const auto rRngGaussianMV<double> = rdRngGaussianMV;
+
+template <typename T>
 using rngGumbelFunction = int(const openrng_int_t method,
                               VSLStreamStatePtr stream, const openrng_int_t n,
                               T r[], const T a, const T beta);

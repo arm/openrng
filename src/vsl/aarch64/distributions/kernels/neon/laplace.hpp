@@ -25,7 +25,7 @@ template <> struct ICDF<CPUFeatures::neon> {
 
     DynamicArray<T> uniforms(size);
     if (uniforms.data() == nullptr) {
-      return VSL_ERROR_NULL_PTR;
+      return VSL_ERROR_MEM_FAILURE;
     }
 
     auto ok = generator->fill(size, uniforms.data());

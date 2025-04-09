@@ -1,11 +1,12 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
  */
 
 #include <generator/mt19937.hpp>
+#include <generator/mt_initialization.hpp>
 #include <utils/mt_skip_ahead_data.hpp>
 
 namespace openrng {
@@ -23,34 +24,7 @@ namespace openrng {
  */
 int MT19937Generator<CPUFeatures::generic>::initialise(
     const int64_t n, const unsigned int params[]) {
-  const auto data = state.x.data();
-  data[0] = 19650218;
-  for (int i = 1; i < N; i++) {
-    data[i] = 1812433253ULL * (data[i - 1] ^ (data[i - 1] >> 30)) + i;
-  }
-
-  int i = 1;
-  for (int j = 0, k = 0; k < std::max(n, N); k++) {
-    data[i] ^= 1664525ULL * (data[i - 1] ^ (data[i - 1] >> 30));
-    data[i] += params[j] + j;
-    i = i == N - 1 ? 1 : i + 1;
-    j = j == n - 1 ? 0 : j + 1;
-    if (i == 1) {
-      data[0] = data[N - 1];
-    }
-  }
-
-  for (int k = 0; k < N - 1; k++) {
-    data[i] ^= 1566083941ULL * (data[i - 1] ^ (data[i - 1] >> 30));
-    data[i] -= i;
-    i = i == N - 1 ? 1 : i + 1;
-    if (i == 1) {
-      data[0] = data[N - 1];
-    }
-  }
-
-  data[0] = 1 << 31;
-  return VSL_ERROR_OK;
+  return mt_initialise_by_array<N>(n, params, state.x.data());
 }
 
 uint32_t MT19937Generator<CPUFeatures::generic>::advance() {
@@ -77,17 +51,6 @@ int MT19937Generator<CPUFeatures::generic>::fillBits(int64_t n,
     buffer[i] = advance();
   }
   return VSL_ERROR_OK;
-}
-
-int MT19937Generator<CPUFeatures::generic>::fillBits32(int64_t n,
-                                                       uint32_t buffer[]) {
-  // MT19937 already generates uniformly distributed integers in [0, 2^32]
-  return fillBits(n, buffer);
-}
-
-int MT19937Generator<CPUFeatures::generic>::fillBits64(int64_t n,
-                                                       uint64_t buffer[]) {
-  return fillBits32(2 * n, reinterpret_cast<uint32_t *>(buffer));
 }
 
 int MT19937Generator<CPUFeatures::generic>::fill(int64_t n, float buffer[]) {
@@ -128,6 +91,12 @@ int deg(const DynamicArray<char> &a) {
 static DynamicArray<char> fromBits(auto indeces) {
   const auto size = indeces.size() * 64;
   DynamicArray<char> result(size, 0);
+
+  // Seems unnecessary, but clang-tidy insists on it.
+  if (result.size() == 0) {
+    return result;
+  }
+
   for (size_t j = 0; j < indeces.size(); j++) {
     for (size_t i = 0; i < 64; i++)
       if (1 & (indeces[j] >> i))

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -26,9 +26,14 @@ ExpectedDataMap<2> expectedData = {
     {VSL_BRNG_MRG32K3A,      {0x0022a011, 0x8e4e3264}},
     {VSL_BRNG_R250,          {0x3abafa6c, 0x97e10ec4}},
     {VSL_BRNG_MT19937,       {0xd82c07cd, 0x629f6fbe}},
+    {VSL_BRNG_MT2203,        {0x39406633, 0x1713b68c}},
     {VSL_BRNG_SFMT19937,     {0x5b889b2f, 0xda3af938}},
     {VSL_BRNG_PHILOX4X32X10, {0x6627e8d5, 0xe169c58d}},
     {VSL_BRNG_SOBOL,         {0x80000000, 0xc0000000}},
+    {VSL_BRNG_ARS5,          {0x7ecce06f, 0x7cdc3bca}},
+    {VSL_BRNG_MT2203 + 1,    {0x6733ca2e, 0xc9f4ebb4}},
+    {VSL_BRNG_MT2203 + 1000, {0xe258aa1d, 0x6c9b5386}},
+    {VSL_BRNG_MT2203 + 3142, {0x8ac91017, 0xe4180188}}
 };
 } // namespace
 

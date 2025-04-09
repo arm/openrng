@@ -37,6 +37,10 @@ Expected<Generator> Generator::choose(Args &&...args) {
     if (SupportedFeatures::hasSha3)
       return create<DerivedGenerator<CPUFeatures::sha3>>(args...);
 
+  if constexpr (IsCompleteGenerator<DerivedGenerator<CPUFeatures::aes>>)
+    if (SupportedFeatures::hasAes)
+      return create<DerivedGenerator<CPUFeatures::aes>>(args...);
+
   if constexpr (IsCompleteGenerator<DerivedGenerator<CPUFeatures::neon>>)
     if (SupportedFeatures::hasNeon)
       return create<DerivedGenerator<CPUFeatures::neon>>(args...);

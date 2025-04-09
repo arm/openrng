@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -28,11 +28,11 @@ be
   #define UNIFORMBITS32_UNSUPPORTED VSL_BRNG_MCG31, VSL_BRNG_MRG32K3A, VSL_BRNG_R250
   #define UNIFORMBITS64_SUPPORTED VSL_BRNG_MT19937
   #define UNIFORMBITS64_UNSUPPORTED VSL_BRNG_MCG31, VSL_BRNG_MRG32K3A, VSL_BRNG_R250
-
 """
 
 import json
 from pathlib import Path
+import platform
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
@@ -82,12 +82,18 @@ def transformData(data):
     statuses = data['statuses']
     generatorDataList = data['generators']
 
+    # Because the MT2203 does not satisfy bitwise reproducibility with any
+    # other VSL library and we rely on its separate statistical testing,
+    # unless on aarch64, MT2203 is not tested against refng.
+    include_mt2203 = platform.machine() == "aarch64"
+
     return {
         feature: {
             status: [
                 f'VSL_BRNG_{gen["method"]}'
                 for gen in generatorDataList
-                if gen["featureStatus"].get(feature) == status
+                if gen["featureStatus"].get(feature) == status and
+                (include_mt2203 or not gen["method"].startswith("MT2203"))
             ]
             for status in statuses
         }

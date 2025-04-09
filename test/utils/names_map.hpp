@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -11,6 +11,10 @@
 #include <string>
 
 static std::string brngToString(openrng_int_t method) {
+  if (method >= VSL_BRNG_MT2203 && method < VSL_BRNG_MT2203 + 6024) {
+    return "MT2203 + " + std::to_string(method - VSL_BRNG_MT2203);
+  }
+
   switch (method) {
   case VSL_BRNG_MCG31:
     return "MCG31";
@@ -28,8 +32,6 @@ static std::string brngToString(openrng_int_t method) {
     return "NIEDERR";
   case VSL_BRNG_MT19937:
     return "MT19937";
-  case VSL_BRNG_MT2203:
-    return "MT2203";
   case VSL_BRNG_IABSTRACT:
     return "IABSTRACT";
   case VSL_BRNG_DABSTRACT:

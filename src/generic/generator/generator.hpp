@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -88,15 +88,13 @@ public:
   /**
    * Fills r with n * 32 bits, uniformly distributed bits.
    */
-  virtual int fillBits32(int64_t, uint32_t[]) {
-    return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
-  }
+  virtual int fillBits32(int64_t n, uint32_t dst[]) { return fillBits(n, dst); }
 
   /**
    * Fills r with n * 64 bits, uniformly distributed bits.
    */
-  virtual int fillBits64(int64_t, uint64_t[]) {
-    return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+  virtual int fillBits64(int64_t n, uint64_t dst[]) {
+    return fillBits32(2 * n, reinterpret_cast<uint32_t *>(dst));
   }
 
   /**
@@ -265,7 +263,7 @@ public:
    * initialised with operator new without the C++ runtime.
    */
   template <typename DerivedGenerator, typename... Args>
-  static Expected<Generator> create(Args &&...args) {
+  static Expected<Generator> create(int64_t brngId, Args &&...args) {
 
     // Due to the lack of the C++ runtime, the memory is allocated with malloc
     // and then the buffer is passed into placement new which knows how to
@@ -276,7 +274,7 @@ public:
       return {nullptr, VSL_ERROR_MEM_FAILURE};
     }
 
-    auto generator = new (buffer) DerivedGenerator;
+    auto generator = new (buffer) DerivedGenerator(brngId);
 
     const int error = generator->initialise(args...);
     if (error) {

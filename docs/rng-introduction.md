@@ -1,178 +1,226 @@
-# An Overview of OpenRNG
+# An overview of OpenRNG
 
-# Introduction to OpenRNG
+\armplref provides a Random Number Generator (RNG) interface called OpenRNG.
+OpenRNG includes the interface to the RNG part of the Vector Statistics Library
+(VSL) developed by Intel and shipped for x86 processors as part of oneMKL.
+Intel have released this interface, with their documentation, to us under the
+CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/deed.en). This
+has allowed us to develop our own implementation of this functionality for
+Arm-based systems which enables software portability between architectures with
+no code changes.
 
-OpenRNG is the random number generator (RNG) interface provided in \armplref.
-OpenRNG includes the interface to the random number generation part of the
-Vector Statistics library (VSL) library developed by Intel(R) and shipped for
-x86 processors as part of oneMKL. We are grateful to Intel(R) for having
-released this interface, along with their documentation, to us under the CC BY
-4.0 license (https://creativecommons.org/licenses/by/4.0/deed.en), allowing us
-to develop our own implementation of this functionality for users of Arm-based
-systems, enabling software portability between architectures with no code
-changes.
+We try to use the same generators and initializations as documented in the
+oneMKL documentation. This means that functions which return bit sequences are
+bitwise reproducible between Arm and x86 systems. Functions that return integer
+or floating point values might give different answers between Arm and x86
+systems because the accuracy of various operations is different between the
+two libraries.
 
-We have endeavoured to ensure that the same generators and initializations are
-used as documented in the oneMKL documentation. This means that functions which
-return bit sequences are bitwise reproducible between Arm and x86 systems. If an
-integer or floating point answer is requested answers may differ as the
-precision of various operations is different between the two libraries.
-
-Note that in this release not all of the random number functions from VSL have
-been included. These functions are listed in the documentation as not
-implemented. We are intending to fill out this coverage in future releases, and
-we are very keen to hear from users who find missing functionality that they
-would like us to prioritize, see \feedback.
+This release does not include all of the random number functions from VSL. The
+documentation lists both the implemented and missing functionalities in the
+tables in the next sections. We will improve coverage of the missing functions
+in future releases.
 
 # Basic Random Number Generators
 
-A basic random number generator (BRNG) is any source of randomness capable of
+A Basic Random Number Generator (BRNG) is any source of randomness capable of
 producing a uniform distribution in the range [0, 1). The inclusion of 0 in the
 range depends on the generator. Some BRNGs can also generate uniformly
-distributed bit streams. OpenRNG supports three types of BRNGs:
+distributed bitstreams. OpenRNG supports different types of BRNGs:
 
  * Pseudorandom number generators
  * Quasirandom number generators
  * Nondeterministic random number generators
 
-See \ref groupBrng for a list of all BRNGs supported by the API. Note that not
-all BRNGs supported by the API have been implemented at this time. All
-generators that have not been implemented will have a banner in their respective
-documentation which says "Not implemented in \armplref".
+See \ref groupBrng for a list of all BRNGs supported by the API. This release
+does not include all BRNGs supported by the API. All generators that have not
+been implemented have a banner in their documentation which says "Not
+implemented in \armplref".
 
 
-# Pseudorandom Number Generators
+# Pseudorandom number generators
 
-Pseudorandom number generators (PRNG) are algorithms that generate sequences
-which approximate randomness from an initial seed. PRNG sequences are periodic,
-but the quality of a PRNG sequence is determined by how closely a subsequence
-approximates a nondeterministic source of randomness. There are numerous
-statistical tests for PRNGs, and several test suites that implement these tests.
-See, for example, https://github.com/umontreal-simul/TestU01-2009.
+Pseudorandom Number Generators (PRNG) are algorithms that generate sequences
+which approximate randomness from an initial seed. PRNG sequences are periodic.
+The quality of a PRNG sequence is determined by how closely a subsequence
+approximates a nondeterministic source of randomness. See, for example, the
+testsuite https://github.com/umontreal-simul/TestU01-2009 for some statistical
+tests for PRNGs.
 
-The following is a list of all PRNGs that have been implemented in \armplref.
+The following is a list of all PRNGs that \armplref implements.
 
- * \ref VSL_BRNG_MCG31
- * \ref VSL_BRNG_R250
- * \ref VSL_BRNG_MRG32K3A
- * \ref VSL_BRNG_MCG59
- * \ref VSL_BRNG_MT19937
- * \ref VSL_BRNG_SFMT19937
- * \ref VSL_BRNG_NONDETERM
- * \ref VSL_BRNG_PHILOX4X32X10
+| Generator     | Description                                       |
+| :------------ | :------------------------------------------------ |
+| MCG31m1       | A 31-bit multiplicative congruential generator    |
+| MCG59         | A 59-bit multiplicative congruential generator    |
+| MRG32K3A      | Combined multiple recursive generator             |
+| MT19937       | Mersenne-Twiser generator                         |
+| SFMT19937     | SIMD oriented Fast Mersenne-Twister generator     |
+| MT2203        | Set of 6024 Mersenne-Twister generators           |
+| R250          | Generalized feedback shift register generator     |
+| PHILOX4x32x10 | A Philox counter-based generator                  |
+| ARS5          | An ARS5 counter-based generator                   |
+
+All generators produce random number in single or double precision.
 
 The following is a list of all PRNGs that exist in the API but have _not_ been
-implemented in \armplref. If any of these values are used, the API will return
-\ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
+implemented in \armplref. The API will returns \ref
+VSL_ERROR_FEATURE_NOT_IMPLEMENTED is any of these are selected.
 
- * \ref VSL_BRNG_WH
- * \ref VSL_BRNG_MT2203
- * \ref VSL_BRNG_IABSTRACT
- * \ref VSL_BRNG_DABSTRACT
- * \ref VSL_BRNG_SABSTRACT
- * \ref VSL_BRNG_ARS5
+| Generator     | Description                                                        |
+| :------------ | :----------------------------------------------------------------- |
+| WH            | Set of 273 Wichmann-Hill generators                                |
+| ABSTRACT      | Abstract source of randomness based on the user-provided settings  |
 
 
-# Quasirandom Number Generators
+# Quasirandom number generators
 
-Quasirandom number generators (QRNG) are algorithms that generate sequences of
+Quasirandom Number Generators (QRNG) are algorithms that generate sequences of
 n-dimensional vectors uniformly distributed on n-dimensional hypercubes. For all
 QRNGs in the API, the seed determines the number of dimensions. Each element of
 the sequence consists of n-dimensional vectors represented by n consecutive
 values in the returned buffer.
 
-The following is a list of all QRNGs that have been implemented in \armplref.
+The following is a list of all QRNGs that have been implemented in
+\armplref.
 
- * \ref VSL_BRNG_SOBOL
+| Generator     | Description                                              |
+| :------------ | :------------------------------------------------------- |
+| SOBOL         | Up to 40-dimensional low-discrepancy sequences generator |
 
-The following is a list of all QRNGs that exist in the API but have _not_ been
-implemented in \armplref. If any of these values are used, the API will return
-\ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
+It returns random numbers in single or double precision. The other
+QRNG that exist in the API but has _not_ been implemented in \armplref
+is
 
- * \ref VSL_BRNG_NIEDERR
+| Generator     | Description |
+| :------------ | :-------------------------------------------------------- |
+| NIEDERR       | Up to 318-dimensional low-discrepancy sequences generator |
 
+The API returns \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED if it is selected.
 
-# Nondeterministic Random Number Generators
+# Nondeterministic random number generators
 
-Nondeterministic random number generators are generators that take entropy from
-an external source to generate random numbers. Nondeterministic generators are
-typically slower than PRNGs and the sequences are not reproducible.
+Nondeterministic random number generators take entropy from an external source
+to generate random numbers. Nondeterministic generators are typically slower
+than PRNGs and the sequences are not reproducible.
 
 \armplref implements the only value for nondeterministic generators:
 
- * \ref VSL_BRNG_NONDETERM
+| Generator     | Description |
+| :------------ | :-----------------------------------------------------|
+| Nondeterministic | Random generator based on hardware entropy sources |
 
-# Random Streams
+It returns random numbers in single or double precision.
 
-An instance of a BRNG is referred to as a stream. OpenRNG provides service
+# Random streams
+
+An instance of a BRNG is referred to as a stream. \armplref provides service
 functions for creating, initializing, copying, modifying and deleting streams,
-see \ref groupService. For example, a stream with the PHILOX4X32X10 generator
-and a single seed can be created as follows:
+see \ref groupService. For example, you create a stream with the PHILOX4X32X10
+generator and a single seed as follows:
 
     VSLStreamStatePtr stream;
-    int errcode = vslNewStream(&stream, VSL_BRNG_PHILOX4X32X10, 42);
+    int seed = 42;
+    int errcode = vslNewStream(&stream, VSL_BRNG_PHILOX4X32X10, seed);
 
-See the \ref pi.c example, for a complete example of creating and using a
+See the \ref pi.c example for a complete example of creating and using a
 stream.
 
 
 # Distributions
 
-OpenRNG can generate random numbers with many common probability distributions,
-both discrete and continuous. To access random numbers from the stream, you must
-request numbers with a specific distribution, and OpenRNG will advance your
-stream in the background. For example, a uniform distribution on [0, 1) can be
-generated as follows:
+\armplref can generate random numbers with many common probability
+distributions, both discrete and continuous. To access random numbers from the
+stream, you must request numbers with a specific distribution, and \armplref
+advances your stream in the background. For example, you create a uniform
+distribution over the interval [0, 1) as follows:
 
     float randomNumbers[nRandomNumbers];
+    const float a = 0.0f;
+    const float b = 1.0f;
     int errcode = vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, nRandomNumbers,
-                               &randomNumbers, 0, 1);
+                               &randomNumbers, a, b);
 
-This snippet will fill the buffer, `randomNumbers`, with random numbers from a
-uniform distribution. On return, the amount your stream has advanced by will be
-dependent on the distribution method used. See the \ref pi.c example for a
-complete example of generating random numbers with a specified probability
-distribution.
+This snippet fills the buffer, `randomNumbers`, with random numbers from a
+uniform distribution. On return, the amount your stream has advanced by depends
+on the distribution method used. See the \ref pi.c example for a complete
+example of generating random numbers with a specified probability distribution.
 
 # Continuous distributions
 
 A continuous distribution is any probability distribution over the reals. All
-continuous distributions fill pre-allocated buffers. Continuous distributions
-can be requested as either single-precision floating point, `float,` or
-double-precision floating point, `double`. The single-precision floating point
-version can be identified by the `vsRng` prefix, and the double-precision
-floating point version can be identified by the `vdRng` prefix.
+continuous distributions fill pre-allocated buffers. You can request continuous
+distributions as either single-precision floating point, `float`, or
+double-precision floating point, `double`. The `vsRng` prefix identifies the
+single-precision floating point version, while the `vdRng` prefix identifies the
+double-precision floating point version.
 
-The following is a list of all continuous distributions that have been
-implemented in \armplref.
+The following is a list of all continuous distributions available in \armplref.
 
-  * \ref vsRngCauchy, \ref vdRngCauchy
-  * \ref vsRngExponential, \ref vdRngExponential
-  * \ref vsRngGaussian, \ref vdRngGaussian
-  * \ref vsRngGumbel, \ref vdRngGumbel
-  * \ref vsRngLaplace, \ref vdRngLaplace
-  * \ref vsRngLognormal, \ref vdRngLognormal
-  * \ref vsRngRayleigh, \ref vdRngRayleigh
+| Distribution | Description                                |
+| :----------- | :----------------------------------------- |
+| Uniform      | Uniform distribution on the interval [a,b) |
+| Gaussian     | Single variable Gaussian distribution      |
+| GaussianMV   | Multivariate Gaussian distribution         |
+| Exponential  | Exponential distribution                   |
+| Laplace      | Laplace distribution                       |
+| Weibull      | Weibull distribution                       |
+| Cauchy       | Cauchy distribution                        |
+| Rayleigh     | Rayleigh distribution                      |
+| Lognormal    | Lognormal distribution                     |
+| Gumbel       | Gumbel distribution                        |
+
+The available continuous distributions are invoked through the following API
+functions:
+
   * \ref vsRngUniform, \ref vdRngUniform
+  * \ref vsRngGaussian, \ref vdRngGaussian
+  * \ref vsRngGaussianMV, \ref vdRngGaussianMV
+  * \ref vsRngExponential, \ref vdRngExponential
+  * \ref vsRngLaplace, \ref vdRngLaplace
   * \ref vsRngWeibull, \ref vdRngWeibull
+  * \ref vsRngCauchy, \ref vdRngCauchy
+  * \ref vsRngRayleigh, \ref vdRngRayleigh
+  * \ref vsRngLognormal, \ref vdRngLognormal
+  * \ref vsRngGumbel, \ref vdRngGumbel
 
-The following is a list of all continuous distributions that exist in the API
-but have _not_ been implemented in \armplref. If any of these methods are used,
-they will return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
+The following is a list of all continuous distributions that exist in
+the API but have _not_ been implemented in \armplref.
+
+| Distribution      | Description                     |
+| :---------------- | :------------------------------ |
+| Beta              | Beta distribution               |
+| Chi-Square        | Chi-Square distribution         |
+| Gamma             | Gamma distribution              |
+
+They correspond to the following API functions:
 
   * \ref vsRngBeta, \ref vdRngBeta
   * \ref vsRngChiSquare, \ref vdRngChiSquare
   * \ref vsRngGamma, \ref vdRngGamma
-  * \ref vsRngGaussianMV, \ref vdRngGaussianMV
+
+These methods return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
 
 # Discrete distributions
 
-A discrete distribution is any probability distribution that's confined to the
-integers. All discrete distributions fill pre-allocated buffers of type `int`
-and their methods can be identified by the `viRng` prefix.
+A discrete distribution is any probability distribution that is confined to the
+integers. The `viRng` prefix identifies all methods for discrete distributions
+which fill pre-allocated buffers of type `int`.
 
-The following is a list of all discrete distributions that have been implemented
+The following is a list of all discrete distributions that are available
 in \armplref.
+
+| Distribution | Description                                 |
+| :----------- | :------------------------------------------ |
+| Bernoulli    | Bernoulli distribution                      |
+| Binomial     | Binomial distribution                       |
+| Geometric    | Geometric distribution                      |
+| Poisson      | Poisson distribution                        |
+| Uniform (int)| Uniform distribution on the interval [a,b)  |
+| UniformBits32| Uniformly distributed bits in 32-bit chunks |
+| UniformBits64| Uniformly distributed bits in 64-bit chunks |
+
+These distributions correspond to the following API functions:
 
   * \ref viRngBernoulli
   * \ref viRngBinomial
@@ -184,31 +232,44 @@ in \armplref.
   * \ref viRngUniformBits64
 
 The following is a list of all discrete distributions that exist in the API but
-have _not_ been implemented in \armplref. If any of these methods are used, they
-will return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
+have _not_ been implemented in \armplref.
+
+| Distribution      | Description                            |
+| :---------------- | :------------------------------------- |
+| Hypergeometric    | Hypergeometric distribution            |
+| Multinomial       | Multinomial distribution               |
+| Negative binomial | Negative binomial distribution         |
+| PoissonV          | Poisson distribution with varying mean |
+
+These distributions correspond to the following API functions:
 
   * \ref viRngHypergeometric
   * \ref viRngMultinomial
   * \ref viRngNegbinomial
   * \ref viRngPoissonV
 
-# Bit streams
+The API returns \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED if any of these functions
+is selected.
 
-OpenRNG supports 3 methods for generating bit streams: \ref viRngUniformBits,
-\ref viRngUniformBits32 and \ref viRngUniformBits64.
+# Bitstreams
+
+\armplref supports the following methods for generating bitstreams:
+
+ * \ref viRngUniformBits
+ * \ref viRngUniformBits32
+ * \ref viRngUniformBits64
 
 \ref viRngUniformBits makes no guarantee of the uniformity of the bit sequences
-returned; it reinterprets the integer sequence of each generator as a bit
-sequence. For some generators, the integer sequence can contain bits that will
-always be 0, or a collection of bits may exhibit periodic behavior over very
+returned. It reinterprets the integer sequence of each generator as a bit
+sequence. For some generators, the integer sequence can contain bits that are
+always 0, or a collection of bits might exhibit periodic behavior over very
 short intervals. The length of the buffer returned is dependent on the
 generator's word size (\ref vslGetBrngProperties).
 
-\ref viRngUniformBits32 and \ref viRngUniformBits64 guarantee that the bits will
-have a uniform distribution. In the 32 bit variant, each element needs to be
-able to hold 32 bits, and in the 64 bit variant, every element needs to be able
-to hold 64 bits. They have almost identical output, there are very few reasons
-to chose one over the other.
+\ref viRngUniformBits32 and \ref viRngUniformBits64 guarantee that the bits have
+a uniform distribution. In the 32-bit variant, each element of the buffer needs
+to be able to hold 32 bits, and in the 64-bit variant, every element of the
+buffer needs to be able to hold 64 bits.
 
 
 # Error handling
@@ -217,17 +278,22 @@ All methods return a negative value on failure. See \ref groupError for a list
 of error code values and what each one means.
 
 
-# Thread Safety
+# Thread safety
 
-OpenRNG is thread-safe, provided multiple threads don't try to access the same
-stream concurrently. In order to scale to multiple threads, OpenRNG provides
+\armplref is thread-safe, provided multiple threads do not try to access the
+same stream concurrently. To scale to multiple threads, \armplref provides
 convenience methods for copying streams and generating disjoint subsequences.
 See \ref vslCopyStream, \ref vslLeapfrogStream and \ref vslSkipAheadStream. See
 the \ref skipahead.c example for an example of generating disjoint sequences.
 
 
-# API Access
+# API access
 
 The API definitions are exposed via `openrng.h`. For convenience `armpl.h` also
-includes `openrng.h`. See \accesspl for
-instructions on how to build and link with \armplref.
+includes `openrng.h`. See \accesspl for instructions on how to build and link
+with \armplref.
+
+# Cryptographic purposes
+
+The random number generators implemented in OpenRNG should not be used for
+cryptographic purposes as they are not cryptographically secure.

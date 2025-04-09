@@ -28,11 +28,6 @@ int NondeterministicGenerator<CPUFeatures::trng>::fillBits(int64_t n,
   return err;
 }
 
-int NondeterministicGenerator<CPUFeatures::trng>::fillBits32(int64_t n,
-                                                             uint32_t dst[]) {
-  return fillBits(n, dst);
-}
-
 int NondeterministicGenerator<CPUFeatures::trng>::fillBits64(int64_t n,
                                                              uint64_t dst[]) {
   for (int i = 0; i < n; i++)

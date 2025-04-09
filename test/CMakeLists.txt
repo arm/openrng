@@ -46,6 +46,7 @@ add_executable(tests
     distributions/cauchy.cpp
     distributions/exponential.cpp
     distributions/gaussian.cpp
+    distributions/gaussianmv.cpp
     distributions/geometric.cpp
     distributions/gumbel.cpp
     distributions/laplace.cpp
@@ -61,6 +62,7 @@ add_executable(tests
     services/get_stream_state_brng.cpp
     services/leapfrog.cpp
     services/leapfrog_quasi.cpp
+    services/mt2203.cpp
     services/new_stream_ex.cpp
     services/new_stream.cpp
     services/nondeterm.cpp
@@ -114,6 +116,11 @@ catch_discover_tests(
   EXTRA_ARGS --allow-running-no-tests
   # Workaround for https://github.com/llvm/llvm-project/issues/64190.
   PROPERTIES ENVIRONMENT "ASAN_OPTIONS=detect_stack_use_after_return=0"
+)
+
+add_test(NAME check-json-interface
+  COMMAND python3 ${OPENRNG_ROOT}/tools/create_api/create_api_from_header.py ${OPENRNG_ROOT}/include/openrng.h
+  WORKING_DIRECTORY ${OPENRNG_ROOT}/tools/create_api
 )
 
 # check-copyright-headers relies on being in a git repository

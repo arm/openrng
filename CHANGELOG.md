@@ -2,7 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-
 ## Unreleased
 
 ### Added
@@ -18,6 +17,38 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 ### Security
+
+
+## 25.04
+
+### Added
+
+#### Generators:
+  - ARS5, MT2203.
+    Both generators have a reference implementation and Neon-optimized versions.
+
+#### Distributions:
+  - GaussianMV, both reference implementation and Neon-optimized version.
+
+### Performance
+  - The performance of the SFMT19937 generator has been improved.
+
+### Changed
+  - [SOVERSION](https://cmake.org/cmake/help/latest/prop_tgt/VERSION.html) has
+    been changed as a consequence of introducing the MT2203 generator.
+
+### Fixed
+
+#### Generators:
+  - Double precision PHILOX4X32X10.
+
+#### Distributions
+  - Discrete uniform distribution over an interval `[a,b)`, with both `a` and
+    `b` integer values and `a< 0`.
+
+### Security
+  - Added an explicit note to explain that our generators should not be used for
+    cryptographic purposes as they are not cryptographically secure.
 
 
 ## 24.10

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -12,6 +12,7 @@
 #include <distributions/cauchy.hpp>
 #include <distributions/exponential.hpp>
 #include <distributions/gaussian.hpp>
+#include <distributions/gaussianmv.hpp>
 #include <distributions/geometric.hpp>
 #include <distributions/gumbel.hpp>
 #include <distributions/laplace.hpp>
@@ -79,10 +80,17 @@ int vdRngGaussian(const openrng_int_t method, VSLStreamStatePtr stream,
                                                sigma);
 }
 
-int vdRngGaussianMV(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-                    double[], const openrng_int_t, const openrng_int_t,
-                    const double *, const double *) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int vdRngGaussianMV(const openrng_int_t method, VSLStreamStatePtr stream,
+                    const openrng_int_t n, double r[],
+                    const openrng_int_t dimen, const openrng_int_t mstorage,
+                    const double *a, const double *t) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+
+  return openrng::distribution::gaussianmv::fill(method, generator, n, dimen,
+                                                 mstorage, r, a, t);
 }
 
 int vdRngGumbel(const openrng_int_t method, VSLStreamStatePtr stream,
@@ -312,10 +320,17 @@ int vsRngGaussian(const openrng_int_t method, VSLStreamStatePtr stream,
                                                sigma);
 }
 
-int vsRngGaussianMV(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-                    float[], const openrng_int_t, const openrng_int_t,
-                    const float *, const float *) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int vsRngGaussianMV(const openrng_int_t method, VSLStreamStatePtr stream,
+                    const openrng_int_t n, float r[], const openrng_int_t dimen,
+                    const openrng_int_t mstorage, const float *a,
+                    const float *t) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+
+  return openrng::distribution::gaussianmv::fill(method, generator, n, dimen,
+                                                 mstorage, r, a, t);
 }
 
 int vsRngGumbel(const openrng_int_t method, VSLStreamStatePtr stream,
@@ -439,6 +454,18 @@ int vslDeleteStream(VSLStreamStatePtr *ptr) {
 
 int vslGetBrngProperties(const int brngId,
                          VSLBRngProperties *const properties) {
+  if (brngId >= VSL_BRNG_MT2203 && brngId < VSL_BRNG_MT2203 + 6024) {
+    properties->StreamStateSize = 0;
+    properties->InitStream = nullptr;
+    properties->sBRng = nullptr;
+    properties->dBRng = nullptr;
+    properties->iBRng = nullptr;
+    properties->NSeeds = 70;
+    properties->IncludesZero = 1;
+    properties->WordSize = 4;
+    properties->NBits = 32;
+    return VSL_ERROR_OK;
+  }
 
   switch (brngId) {
   case VSL_BRNG_MCG31:
@@ -538,13 +565,23 @@ int vslGetBrngProperties(const int brngId,
     properties->NBits = 32;
     break;
 
+  case VSL_BRNG_ARS5:
+    properties->StreamStateSize = 0;
+    properties->InitStream = nullptr;
+    properties->sBRng = nullptr;
+    properties->dBRng = nullptr;
+    properties->iBRng = nullptr;
+    properties->NSeeds = 8;
+    properties->IncludesZero = 1;
+    properties->WordSize = 4;
+    properties->NBits = 32;
+    break;
+
   case VSL_BRNG_WH:
   case VSL_BRNG_NIEDERR:
-  case VSL_BRNG_MT2203:
   case VSL_BRNG_IABSTRACT:
   case VSL_BRNG_DABSTRACT:
   case VSL_BRNG_SABSTRACT:
-  case VSL_BRNG_ARS5:
     return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
 
   default:

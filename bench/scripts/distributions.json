@@ -54,6 +54,13 @@
     "params": ["a", "sigma"],
     "supported_methods": ["boxmuller", "boxmuller2", "icdf"]
   },
+  "GaussianMV": {
+    "type": "continuous",
+    "params": ["dimen", "mstorage", "a[dimen]", "t[dimen*dimen]"],
+    "params_type": ["const int", "const int", "dtype", "dtype"],
+    "supported_methods": ["boxmuller", "boxmuller2", "icdf"],
+    "elem_size": "dimen"
+  },
   "Exponential": {
     "type": "continuous",
     "params": ["alpha", "beta"],

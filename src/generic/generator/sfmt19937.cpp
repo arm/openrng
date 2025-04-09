@@ -6,7 +6,7 @@
  */
 
 #include <generator/sfmt19937.hpp>
-#include <utils/mt_skip_ahead.hpp>
+#include <utils/mt_skip_ahead_data.hpp>
 
 #include <cstring>
 
@@ -142,17 +142,6 @@ int SFMT19937Generator<CPUFeatures::generic>::fillBits(int64_t n,
   return VSL_ERROR_OK;
 }
 
-int SFMT19937Generator<CPUFeatures::generic>::fillBits32(int64_t n,
-                                                         uint32_t buffer[]) {
-  // SFMT19937 already generates uniformly distributed integers in [0, 2^32]
-  return fillBits(n, buffer);
-}
-
-int SFMT19937Generator<CPUFeatures::generic>::fillBits64(int64_t n,
-                                                         uint64_t buffer[]) {
-  return fillBits32(2 * n, reinterpret_cast<uint32_t *>(buffer));
-}
-
 int SFMT19937Generator<CPUFeatures::generic>::fill(int64_t n, float buffer[]) {
   for (int i = 0; i < n; i++) {
     buffer[i] = 0.5 + (float)(int32_t)advance() / (float)(1ULL << 32);
@@ -179,6 +168,35 @@ xorStatesInPlace(ring_buffer<uint128_t, SFMT19937State::N> &result,
   }
 }
 
+namespace {
+int deg(const DynamicArray<char> &a) {
+  for (int i = a.size() - 1; i >= 0; i--) {
+    if (a[i]) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+static DynamicArray<char> fromBits(auto indeces) {
+  const auto size = indeces.size() * 64;
+  DynamicArray<char> result(size, 0);
+
+  // Seems unnecessary, but clang-tidy insists on it.
+  if (result.size() == 0) {
+    return result;
+  }
+
+  for (size_t j = 0; j < indeces.size(); j++) {
+    for (size_t i = 0; i < 64; i++)
+      if (1 & (indeces[j] >> i))
+        result[j * 64 + i] = 1;
+  }
+  result.resize(deg(result) + 1);
+  return result;
+}
+} // namespace
+
 int SFMT19937Generator<CPUFeatures::generic>::skipAhead(
     uint64_t n, const uint64_t nskip[]) {
   if (n > 1) {
@@ -188,24 +206,33 @@ int SFMT19937Generator<CPUFeatures::generic>::skipAhead(
   const auto newIdx = 1 + ((state.current_idx + nskip[0] - 1) % 4);
   const auto nStateUpdates = (state.current_idx + nskip[0] - 1) / 4;
 
-  DynamicArray<char> g = sfmt19937SkipAheadPolynomial(nStateUpdates);
+  uint64_t skip = nStateUpdates;
 
-  //
-  // Taking the skip ahead polynomial g, get the sum (xor) of each i'th state.x
-  // where the i'th coefficient of g is non-zero.
-  //
-  decltype(state.x) resultState = {};
-  for (size_t i = 0; i < g.size(); i++) {
-    if (g[i]) {
-      xorStatesInPlace(resultState, state.x);
+  for (int j = 0; skip; j++, skip >>= 1) {
+    if ((skip & 1) == 0) {
+      continue;
     }
-    advance();
-    advance();
-    advance();
-    advance();
+
+    DynamicArray<char> g = fromBits(skipahead::data::sfmt19937_cache[j]);
+
+    //
+    // Taking the skip ahead polynomial g, get the sum (xor) of each i'th
+    // state.x where the i'th coefficient of g is non-zero.
+    //
+    decltype(state.x) resultState = {};
+    for (size_t i = 0; i < g.size(); i++) {
+      if (g[i]) {
+        xorStatesInPlace(resultState, state.x);
+      }
+      advance();
+      advance();
+      advance();
+      advance();
+    }
+
+    state.x = resultState;
   }
 
-  state.x = resultState;
   state.current_idx = newIdx;
 
   return VSL_ERROR_OK;

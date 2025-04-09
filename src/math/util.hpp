@@ -7,17 +7,13 @@
 
 #pragma once
 
-#include <cstring>
+#include <bit>
 
 namespace openrng::math {
 namespace {
 
-template <typename ToType, typename FromType>
-  requires(sizeof(ToType) == sizeof(FromType))
-inline ToType as(FromType x) {
-  ToType y;
-  memcpy(&y, &x, sizeof(FromType));
-  return y;
+template <typename ToType, typename FromType> inline ToType as(FromType x) {
+  return std::bit_cast<ToType>(x);
 }
 
 template <int N, typename T> inline T horner(T x, const T poly[]) {

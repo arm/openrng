@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -102,111 +102,111 @@ TEST_CASE("SOBOL reference test, Joe and Kuo, 50 dimensions") {
       VSL_USER_INIT_DIRECTION_NUMBERS | VSL_USER_PRIMITIVE_POLYMS |
           override_first_dim,
       /* Polynomials, post-processed to add x^0 and x^d term as above.  */
-      3, 7, 11, 13, 19, 25, 37, 41, 47, 55, 59, 61, 67, 91, 97, 103, 109, 115,
-      131, 137, 143, 145, 157, 167, 171, 185, 191, 193, 203, 211, 213, 229, 239,
-      241, 247, 253, 285, 299, 301, 333, 351, 355, 357, 361, 369, 391, 397, 425,
-      451,
+      3u, 7u, 11u, 13u, 19u, 25u, 37u, 41u, 47u, 55u, 59u, 61u, 67u, 91u, 97u,
+      103u, 109u, 115u, 131u, 137u, 143u, 145u, 157u, 167u, 171u, 185u, 191u,
+      193u, 203u, 211u, 213u, 229u, 239u, 241u, 247u, 253u, 285u, 299u, 301u,
+      333u, 351u, 355u, 357u, 361u, 369u, 391u, 397u, 425u, 451u,
       /* Max degree of any dimension.  */
-      8,
+      8u,
       /* Zero-padded initial direction numbers.  */
       /* Dimension 1.  */
-      1, 0, 0, 0, 0, 0, 0, 0,
+      1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 2.  */
-      1, 3, 0, 0, 0, 0, 0, 0,
+      1u, 3u, 0u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 3.  */
-      1, 3, 1, 0, 0, 0, 0, 0,
+      1u, 3u, 1u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 4.  */
-      1, 1, 1, 0, 0, 0, 0, 0,
+      1u, 1u, 1u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 5.  */
-      1, 1, 3, 3, 0, 0, 0, 0,
+      1u, 1u, 3u, 3u, 0u, 0u, 0u, 0u,
       /* Dimension 6.  */
-      1, 3, 5, 13, 0, 0, 0, 0,
+      1u, 3u, 5u, 13u, 0u, 0u, 0u, 0u,
       /* Dimension 7.  */
-      1, 1, 5, 5, 17, 0, 0, 0,
+      1u, 1u, 5u, 5u, 17u, 0u, 0u, 0u,
       /* Dimension 8.  */
-      1, 1, 5, 5, 5, 0, 0, 0,
+      1u, 1u, 5u, 5u, 5u, 0u, 0u, 0u,
       /* Dimension 9.  */
-      1, 1, 7, 11, 19, 0, 0, 0,
+      1u, 1u, 7u, 11u, 19u, 0u, 0u, 0u,
       /* Dimension 10.  */
-      1, 1, 5, 1, 1, 0, 0, 0,
+      1u, 1u, 5u, 1u, 1u, 0u, 0u, 0u,
       /* Dimension 11.  */
-      1, 1, 1, 3, 11, 0, 0, 0,
+      1u, 1u, 1u, 3u, 11u, 0u, 0u, 0u,
       /* Dimension 12.  */
-      1, 3, 5, 5, 31, 0, 0, 0,
+      1u, 3u, 5u, 5u, 31u, 0u, 0u, 0u,
       /* Dimension 13.  */
-      1, 3, 3, 9, 7, 49, 0, 0,
+      1u, 3u, 3u, 9u, 7u, 49u, 0u, 0u,
       /* Dimension 14.  */
-      1, 1, 1, 15, 21, 21, 0, 0,
+      1u, 1u, 1u, 15u, 21u, 21u, 0u, 0u,
       /* Dimension 15.  */
-      1, 3, 1, 13, 27, 49, 0, 0,
+      1u, 3u, 1u, 13u, 27u, 49u, 0u, 0u,
       /* Dimension 16.  */
-      1, 1, 1, 15, 7, 5, 0, 0,
+      1u, 1u, 1u, 15u, 7u, 5u, 0u, 0u,
       /* Dimension 17.  */
-      1, 3, 1, 15, 13, 25, 0, 0,
+      1u, 3u, 1u, 15u, 13u, 25u, 0u, 0u,
       /* Dimension 18.  */
-      1, 1, 5, 5, 19, 61, 0, 0,
+      1u, 1u, 5u, 5u, 19u, 61u, 0u, 0u,
       /* Dimension 19.  */
-      1, 3, 7, 11, 23, 15, 103, 0,
+      1u, 3u, 7u, 11u, 23u, 15u, 103u, 0u,
       /* Dimension 20.  */
-      1, 3, 7, 13, 13, 15, 69, 0,
+      1u, 3u, 7u, 13u, 13u, 15u, 69u, 0u,
       /* Dimension 21.  */
-      1, 1, 3, 13, 7, 35, 63, 0,
+      1u, 1u, 3u, 13u, 7u, 35u, 63u, 0u,
       /* Dimension 22.  */
-      1, 3, 5, 9, 1, 25, 53, 0,
+      1u, 3u, 5u, 9u, 1u, 25u, 53u, 0u,
       /* Dimension 23.  */
-      1, 3, 1, 13, 9, 35, 107, 0,
+      1u, 3u, 1u, 13u, 9u, 35u, 107u, 0u,
       /* Dimension 24.  */
-      1, 3, 1, 5, 27, 61, 31, 0,
+      1u, 3u, 1u, 5u, 27u, 61u, 31u, 0u,
       /* Dimension 25.  */
-      1, 1, 5, 11, 19, 41, 61, 0,
+      1u, 1u, 5u, 11u, 19u, 41u, 61u, 0u,
       /* Dimension 26.  */
-      1, 3, 5, 3, 3, 13, 69, 0,
+      1u, 3u, 5u, 3u, 3u, 13u, 69u, 0u,
       /* Dimension 27.  */
-      1, 1, 7, 13, 1, 19, 1, 0,
+      1u, 1u, 7u, 13u, 1u, 19u, 1u, 0u,
       /* Dimension 28.  */
-      1, 3, 7, 5, 13, 19, 59, 0,
+      1u, 3u, 7u, 5u, 13u, 19u, 59u, 0u,
       /* Dimension 29.  */
-      1, 1, 3, 9, 25, 29, 41, 0,
+      1u, 1u, 3u, 9u, 25u, 29u, 41u, 0u,
       /* Dimension 30.  */
-      1, 3, 5, 13, 23, 1, 55, 0,
+      1u, 3u, 5u, 13u, 23u, 1u, 55u, 0u,
       /* Dimension 31.  */
-      1, 3, 7, 3, 13, 59, 17, 0,
+      1u, 3u, 7u, 3u, 13u, 59u, 17u, 0u,
       /* Dimension 32.  */
-      1, 3, 1, 3, 5, 53, 69, 0,
+      1u, 3u, 1u, 3u, 5u, 53u, 69u, 0u,
       /* Dimension 33.  */
-      1, 1, 5, 5, 23, 33, 13, 0,
+      1u, 1u, 5u, 5u, 23u, 33u, 13u, 0u,
       /* Dimension 34.  */
-      1, 1, 7, 7, 1, 61, 123, 0,
+      1u, 1u, 7u, 7u, 1u, 61u, 123u, 0u,
       /* Dimension 35.  */
-      1, 1, 7, 9, 13, 61, 49, 0,
+      1u, 1u, 7u, 9u, 13u, 61u, 49u, 0u,
       /* Dimension 36.  */
-      1, 3, 3, 5, 3, 55, 33, 0,
+      1u, 3u, 3u, 5u, 3u, 55u, 33u, 0u,
       /* Dimension 37.  */
-      1, 3, 1, 15, 31, 13, 49, 245,
+      1u, 3u, 1u, 15u, 31u, 13u, 49u, 245u,
       /* Dimension 38.  */
-      1, 3, 5, 15, 31, 59, 63, 97,
+      1u, 3u, 5u, 15u, 31u, 59u, 63u, 97u,
       /* Dimension 39.  */
-      1, 3, 1, 11, 11, 11, 77, 249,
+      1u, 3u, 1u, 11u, 11u, 11u, 77u, 249u,
       /* Dimension 40.  */
-      1, 3, 1, 11, 27, 43, 71, 9,
+      1u, 3u, 1u, 11u, 27u, 43u, 71u, 9u,
       /* Dimension 41.  */
-      1, 1, 7, 15, 21, 11, 81, 45,
+      1u, 1u, 7u, 15u, 21u, 11u, 81u, 45u,
       /* Dimension 42.  */
-      1, 3, 7, 3, 25, 31, 65, 79,
+      1u, 3u, 7u, 3u, 25u, 31u, 65u, 79u,
       /* Dimension 43.  */
-      1, 3, 1, 1, 19, 11, 3, 205,
+      1u, 3u, 1u, 1u, 19u, 11u, 3u, 205u,
       /* Dimension 44.  */
-      1, 1, 5, 9, 19, 21, 29, 157,
+      1u, 1u, 5u, 9u, 19u, 21u, 29u, 157u,
       /* Dimension 45.  */
-      1, 3, 7, 11, 1, 33, 89, 185,
+      1u, 3u, 7u, 11u, 1u, 33u, 89u, 185u,
       /* Dimension 46.  */
-      1, 3, 3, 3, 15, 9, 79, 71,
+      1u, 3u, 3u, 3u, 15u, 9u, 79u, 71u,
       /* Dimension 47.  */
-      1, 3, 7, 11, 15, 39, 119, 27,
+      1u, 3u, 7u, 11u, 15u, 39u, 119u, 27u,
       /* Dimension 48.  */
-      1, 1, 3, 1, 11, 31, 97, 225,
+      1u, 1u, 3u, 1u, 11u, 31u, 97u, 225u,
       /* Dimension 49.  */
-      1, 1, 1, 3, 23, 43, 57, 177};
+      1u, 1u, 1u, 3u, 23u, 43u, 57u, 177u};
 
   VSLStreamStatePtr vsl_stream, ref_stream;
   int errcode;
@@ -484,116 +484,116 @@ TEST_CASE("SOBOL VSL_QRNG_OVERRIDE_1ST_DIM_INIT, Joe and Kuo, 50 dimensions") {
      S. Joe and F. Y. Kuo, Constructing Sobol sequences with better
      two-dimensional projections, SIAM J. Sci. Comput. 30, 2635-2654 (2008).  */
   const std::vector<uint32_t> params_no_override{
-      50,
+      50u,
       /* Special flags.  */
       VSL_USER_QRNG_INITIAL_VALUES,
       VSL_USER_INIT_DIRECTION_NUMBERS | VSL_USER_PRIMITIVE_POLYMS,
       /* Polynomials, post-processed to add x^0 and x^d term as above.  */
-      3, 7, 11, 13, 19, 25, 37, 41, 47, 55, 59, 61, 67, 91, 97, 103, 109, 115,
-      131, 137, 143, 145, 157, 167, 171, 185, 191, 193, 203, 211, 213, 229, 239,
-      241, 247, 253, 285, 299, 301, 333, 351, 355, 357, 361, 369, 391, 397, 425,
-      451,
+      3u, 7u, 11u, 13u, 19u, 25u, 37u, 41u, 47u, 55u, 59u, 61u, 67u, 91u, 97u,
+      103u, 109u, 115u, 131u, 137u, 143u, 145u, 157u, 167u, 171u, 185u, 191u,
+      193u, 203u, 211u, 213u, 229u, 239u, 241u, 247u, 253u, 285u, 299u, 301u,
+      333u, 351u, 355u, 357u, 361u, 369u, 391u, 397u, 425u, 451u,
       /* Max degree of any dimension.  */
-      8,
+      8u,
       /* Zero-padded initial direction numbers.  */
       /* Dimension 1.  */
-      1, 0, 0, 0, 0, 0, 0, 0,
+      1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 2.  */
-      1, 3, 0, 0, 0, 0, 0, 0,
+      1u, 3u, 0u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 3.  */
-      1, 3, 1, 0, 0, 0, 0, 0,
+      1u, 3u, 1u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 4.  */
-      1, 1, 1, 0, 0, 0, 0, 0,
+      1u, 1u, 1u, 0u, 0u, 0u, 0u, 0u,
       /* Dimension 5.  */
-      1, 1, 3, 3, 0, 0, 0, 0,
+      1u, 1u, 3u, 3u, 0u, 0u, 0u, 0u,
       /* Dimension 6.  */
-      1, 3, 5, 13, 0, 0, 0, 0,
+      1u, 3u, 5u, 13u, 0u, 0u, 0u, 0u,
       /* Dimension 7.  */
-      1, 1, 5, 5, 17, 0, 0, 0,
+      1u, 1u, 5u, 5u, 17u, 0u, 0u, 0u,
       /* Dimension 8.  */
-      1, 1, 5, 5, 5, 0, 0, 0,
+      1u, 1u, 5u, 5u, 5u, 0u, 0u, 0u,
       /* Dimension 9.  */
-      1, 1, 7, 11, 19, 0, 0, 0,
+      1u, 1u, 7u, 11u, 19u, 0u, 0u, 0u,
       /* Dimension 10.  */
-      1, 1, 5, 1, 1, 0, 0, 0,
+      1u, 1u, 5u, 1u, 1u, 0u, 0u, 0u,
       /* Dimension 11.  */
-      1, 1, 1, 3, 11, 0, 0, 0,
+      1u, 1u, 1u, 3u, 11u, 0u, 0u, 0u,
       /* Dimension 12.  */
-      1, 3, 5, 5, 31, 0, 0, 0,
+      1u, 3u, 5u, 5u, 31u, 0u, 0u, 0u,
       /* Dimension 13.  */
-      1, 3, 3, 9, 7, 49, 0, 0,
+      1u, 3u, 3u, 9u, 7u, 49u, 0u, 0u,
       /* Dimension 14.  */
-      1, 1, 1, 15, 21, 21, 0, 0,
+      1u, 1u, 1u, 15u, 21u, 21u, 0u, 0u,
       /* Dimension 15.  */
-      1, 3, 1, 13, 27, 49, 0, 0,
+      1u, 3u, 1u, 13u, 27u, 49u, 0u, 0u,
       /* Dimension 16.  */
-      1, 1, 1, 15, 7, 5, 0, 0,
+      1u, 1u, 1u, 15u, 7u, 5u, 0u, 0u,
       /* Dimension 17.  */
-      1, 3, 1, 15, 13, 25, 0, 0,
+      1u, 3u, 1u, 15u, 13u, 25u, 0u, 0u,
       /* Dimension 18.  */
-      1, 1, 5, 5, 19, 61, 0, 0,
+      1u, 1u, 5u, 5u, 19u, 61u, 0u, 0u,
       /* Dimension 19.  */
-      1, 3, 7, 11, 23, 15, 103, 0,
+      1u, 3u, 7u, 11u, 23u, 15u, 103u, 0u,
       /* Dimension 20.  */
-      1, 3, 7, 13, 13, 15, 69, 0,
+      1u, 3u, 7u, 13u, 13u, 15u, 69u, 0u,
       /* Dimension 21.  */
-      1, 1, 3, 13, 7, 35, 63, 0,
+      1u, 1u, 3u, 13u, 7u, 35u, 63u, 0u,
       /* Dimension 22.  */
-      1, 3, 5, 9, 1, 25, 53, 0,
+      1u, 3u, 5u, 9u, 1u, 25u, 53u, 0u,
       /* Dimension 23.  */
-      1, 3, 1, 13, 9, 35, 107, 0,
+      1u, 3u, 1u, 13u, 9u, 35u, 107u, 0u,
       /* Dimension 24.  */
-      1, 3, 1, 5, 27, 61, 31, 0,
+      1u, 3u, 1u, 5u, 27u, 61u, 31u, 0u,
       /* Dimension 25.  */
-      1, 1, 5, 11, 19, 41, 61, 0,
+      1u, 1u, 5u, 11u, 19u, 41u, 61u, 0u,
       /* Dimension 26.  */
-      1, 3, 5, 3, 3, 13, 69, 0,
+      1u, 3u, 5u, 3u, 3u, 13u, 69u, 0u,
       /* Dimension 27.  */
-      1, 1, 7, 13, 1, 19, 1, 0,
+      1u, 1u, 7u, 13u, 1u, 19u, 1u, 0u,
       /* Dimension 28.  */
-      1, 3, 7, 5, 13, 19, 59, 0,
+      1u, 3u, 7u, 5u, 13u, 19u, 59u, 0u,
       /* Dimension 29.  */
-      1, 1, 3, 9, 25, 29, 41, 0,
+      1u, 1u, 3u, 9u, 25u, 29u, 41u, 0u,
       /* Dimension 30.  */
-      1, 3, 5, 13, 23, 1, 55, 0,
+      1u, 3u, 5u, 13u, 23u, 1u, 55u, 0u,
       /* Dimension 31.  */
-      1, 3, 7, 3, 13, 59, 17, 0,
+      1u, 3u, 7u, 3u, 13u, 59u, 17u, 0u,
       /* Dimension 32.  */
-      1, 3, 1, 3, 5, 53, 69, 0,
+      1u, 3u, 1u, 3u, 5u, 53u, 69u, 0u,
       /* Dimension 33.  */
-      1, 1, 5, 5, 23, 33, 13, 0,
+      1u, 1u, 5u, 5u, 23u, 33u, 13u, 0u,
       /* Dimension 34.  */
-      1, 1, 7, 7, 1, 61, 123, 0,
+      1u, 1u, 7u, 7u, 1u, 61u, 123u, 0u,
       /* Dimension 35.  */
-      1, 1, 7, 9, 13, 61, 49, 0,
+      1u, 1u, 7u, 9u, 13u, 61u, 49u, 0u,
       /* Dimension 36.  */
-      1, 3, 3, 5, 3, 55, 33, 0,
+      1u, 3u, 3u, 5u, 3u, 55u, 33u, 0u,
       /* Dimension 37.  */
-      1, 3, 1, 15, 31, 13, 49, 245,
+      1u, 3u, 1u, 15u, 31u, 13u, 49u, 245u,
       /* Dimension 38.  */
-      1, 3, 5, 15, 31, 59, 63, 97,
+      1u, 3u, 5u, 15u, 31u, 59u, 63u, 97u,
       /* Dimension 39.  */
-      1, 3, 1, 11, 11, 11, 77, 249,
+      1u, 3u, 1u, 11u, 11u, 11u, 77u, 249u,
       /* Dimension 40.  */
-      1, 3, 1, 11, 27, 43, 71, 9,
+      1u, 3u, 1u, 11u, 27u, 43u, 71u, 9u,
       /* Dimension 41.  */
-      1, 1, 7, 15, 21, 11, 81, 45,
+      1u, 1u, 7u, 15u, 21u, 11u, 81u, 45u,
       /* Dimension 42.  */
-      1, 3, 7, 3, 25, 31, 65, 79,
+      1u, 3u, 7u, 3u, 25u, 31u, 65u, 79u,
       /* Dimension 43.  */
-      1, 3, 1, 1, 19, 11, 3, 205,
+      1u, 3u, 1u, 1u, 19u, 11u, 3u, 205u,
       /* Dimension 44.  */
-      1, 1, 5, 9, 19, 21, 29, 157,
+      1u, 1u, 5u, 9u, 19u, 21u, 29u, 157u,
       /* Dimension 45.  */
-      1, 3, 7, 11, 1, 33, 89, 185,
+      1u, 3u, 7u, 11u, 1u, 33u, 89u, 185u,
       /* Dimension 46.  */
-      1, 3, 3, 3, 15, 9, 79, 71,
+      1u, 3u, 3u, 3u, 15u, 9u, 79u, 71u,
       /* Dimension 47.  */
-      1, 3, 7, 11, 15, 39, 119, 27,
+      1u, 3u, 7u, 11u, 15u, 39u, 119u, 27u,
       /* Dimension 48.  */
-      1, 1, 3, 1, 11, 31, 97, 225,
+      1u, 1u, 3u, 1u, 11u, 31u, 97u, 225u,
       /* Dimension 49.  */
-      1, 1, 1, 3, 23, 43, 57, 177};
+      1u, 1u, 1u, 3u, 23u, 43u, 57u, 177u};
 
   int errcode;
   constexpr int num_vectors = 20;

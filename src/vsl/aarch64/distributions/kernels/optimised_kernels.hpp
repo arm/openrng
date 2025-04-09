@@ -7,9 +7,11 @@
 
 #pragma once
 #include <distributions/kernels/neon/binomial.hpp>
+#include <distributions/kernels/neon/box_muller.hpp>
 #include <distributions/kernels/neon/box_muller_2.hpp>
 #include <distributions/kernels/neon/exponential.hpp>
 #include <distributions/kernels/neon/gaussian_icdf.hpp>
+#include <distributions/kernels/neon/gaussianmv.hpp>
 #include <distributions/kernels/neon/geometric.hpp>
 #include <distributions/kernels/neon/laplace.hpp>
 #include <distributions/kernels/neon/poisson.hpp>

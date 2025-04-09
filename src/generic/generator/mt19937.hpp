@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -31,14 +31,12 @@ class MT19937Generator<CPUFeatures::generic>
   uint32_t advance();
 
 public:
-  MT19937Generator() : CopyableGenerator{VSL_BRNG_MT19937} {}
+  MT19937Generator(int64_t brng) : CopyableGenerator{brng} {}
 
   using CopyableGenerator::initialise;
   int initialise(const int64_t, const unsigned int[]);
 
   int fillBits(int64_t n, uint32_t[]) final;
-  int fillBits32(int64_t n, uint32_t[]) final;
-  int fillBits64(int64_t n, uint64_t[]) final;
   int fill(int64_t n, float[]) final;
   int fill(int64_t n, double[]) final;
   int skipAhead(uint64_t n, const uint64_t[]) final;

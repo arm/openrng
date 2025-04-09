@@ -30,7 +30,7 @@ endif()
 # SOVERSION: If the ABI has changed since the previous release, this number
 # needs to be bumped.
 #
-set_target_properties(openrng PROPERTIES VERSION 24.04 SOVERSION 1)
+set_target_properties(openrng PROPERTIES VERSION 25.04 SOVERSION 2)
 
 # CMAKE_SYSTEM_PROCESSOR is the target processor, if not set, it will default to
 # the host platform. If you want to change CMAKE_SYSTEM_PROCESSOR, you will also
@@ -86,12 +86,17 @@ if(${BUILD_SHARED_LIBS})
   target_link_options(openrng PRIVATE "-nodefaultlibs")
 endif()
 
+# Copy openrng.h.json file to location.
+set(interface_json openrng.h.json)
+configure_file(${OPENRNG_ROOT}/tools/create_api/openrng.h.json ${CMAKE_CURRENT_BINARY_DIR}/openrng.h.json )
+
+
 # Create a C source file that makes a call to every routine in the interface.
 set(link_src_file linking_with_c.c)
 add_custom_command(
   OUTPUT ${link_src_file}
   COMMAND ${OPENRNG_ROOT}/tools/create_api/create_link_test.py ${link_src_file}
-  DEPENDS ${OPENRNG_ROOT}/tools/create_api/create_link_test.py)
+  DEPENDS ${OPENRNG_ROOT}/tools/create_api/create_link_test.py ${CMAKE_CURRENT_BINARY_DIR}/${interface_json})
 
 # Test linking a C executable by disabling implicit c++ libraries and forcing the linker language.
 add_executable(test_linking_with_c_compiler ${link_src_file})

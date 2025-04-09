@@ -1,8 +1,9 @@
-# Open Random Number Generation (OpenRNG) Reference Guide
+# Open Random Number Generation Reference Guide
 
-Copyright © 2024 Arm Limited (or its affiliates). All rights reserved.
+Copyright © 2024-2025 Arm Limited (or its affiliates). All rights reserved.
 
 # About this book
 
-The following documentation describes OpenRNG, the random number generator (RNG)
-interface provided in \armplref.
+The following documentation describes Open Random Number Generation
+(OpenRNG), the Random Number Generator (RNG) interface provided in
+\armplref.

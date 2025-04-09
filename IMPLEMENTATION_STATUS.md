@@ -3,68 +3,59 @@
 This file lists the current implementation status of each generator and
 distribution defined in the API.
 
-### Implemented
+### Generators
 
-#### Generators
+The list of available generators in the API is:
 
-The following generators are implemented in this version of OpenRNG:
+| Generator        | Implementation status   |
+| :--------------- | :---------------------- |
+| MCG31m1          | Implemented             |
+| MCG59            | Implemented             |
+| MRG32K3A         | Implemented             |
+| MT19937          | Implemented             |
+| SFMT19937        | Implemented             |
+| MT2203           | Implemented             |
+| R250             | Implemented             |
+| PHILOX4x32x10    | Implemented             |
+| ARS5             | Implemented             |
+| SOBOL            | Implemented             |
+| Nondeterministic | Implemented             |
+| WH               | Not implemented         |
+| NIEDERR          | Not implemented         |
+| ABSTRACT         | Not implemented         |
 
- - MCG31
- - MCG59
- - MRG32K3A
- - MT19937
- - NONDETERM
- - PHILOX4X32X10
- - R250
- - SFMT19937
- - SOBOL
+All generators can produce random number in both single and double precision.
 
-#### Distributions
+### Distributions
 
-The following distributions are implemented in this version of OpenRNG:
+The available distributions in the API, both continuous and discrete, are:
 
- - Bernoulli
- - Binomial
- - Cauchy
- - Exponential
- - Gaussian
- - Geometric
- - Gumbel
- - Laplace
- - Lognormal
- - Poisson
- - Rayleigh
- - Uniform
- - Uniform
- - UniformBits
- - UniformBits32
- - UniformBits64
- - Weibull
+| Distribution      | Implementation status   |
+| :-----------------| :---------------------- |
+| Uniform           | Implemented             |
+| Gaussian          | Implemented             |
+| GaussianMV        | Implemented             |
+| Exponential       | Implemented             |
+| Laplace           | Implemented             |
+| Weibull           | Implemented             |
+| Cauchy            | Implemented             |
+| Rayleigh          | Implemented             |
+| Lognormal         | Implemented             |
+| Gumbel            | Implemented             |
+| Uniform (int)     | Implemented             |
+| UniformBits32     | Implemented             |
+| UniformBits64     | Implemented             |
+| Bernoulli         | Implemented             |
+| Geometric         | Implemented             |
+| Binomial          | Implemented             |
+| Poisson           | Implemented             |
+| Beta              | Not Implemented         |
+| Chi-Square        | Not Implemented         |
+| Gamma             | Not Implemented         |
+| Hypergeometric    | Not Implemented         |
+| Multinomial       | Not Implemented         |
+| Negative binomial | Not Implemented         |
+| PoissonV          | Not Implemented         |
 
-
-### Not Implemented
-
-#### Generators
-
-The following generators are _not_ implemented in this version of OpenRNG:
-
- - WH
- - NIEDERR
- - MT2203
- - IABSTRACT
- - DABSTRACT
- - SABSTRACT
- - ARS5
-
-#### Distributions
-
-The following distributions are _not_ implemented in this version of OpenRNG:
-
-  - Beta
-  - ChiSquare
-  - Gamma
-  - GaussianMV
-  - Hypergeometric
-  - Multinomial
-  - Negbinomial
-  - PoissonV
+All continuous distributions can produce values in single or double precisions
+while the discrete distributions can only return integer values.

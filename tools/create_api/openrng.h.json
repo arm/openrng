@@ -1,0 +1,1511 @@
+[
+  {
+    "returnType": "int",
+    "name": "vdRngBeta",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "p",
+        "type": "const double"
+      },
+      {
+        "name": "q",
+        "type": "const double"
+      },
+      {
+        "name": "alpha",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngCauchy",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngChiSquare",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "v",
+        "type": "const int"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngExponential",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngGamma",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "alpha",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngGaussian",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "sigma",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngGaussianMV",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "dimen",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "mstorage",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "a",
+        "type": "const double*"
+      },
+      {
+        "name": "t",
+        "type": "const double*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngGumbel",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngLaplace",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngLognormal",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "alpha",
+        "type": "const double"
+      },
+      {
+        "name": "sigma",
+        "type": "const double"
+      },
+      {
+        "name": "b",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngRayleigh",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngUniform",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "b",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vdRngWeibull",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "double*"
+      },
+      {
+        "name": "alpha",
+        "type": "const double"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "beta",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngBernoulli",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "p",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngBinomial",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "ntrial",
+        "type": "const int"
+      },
+      {
+        "name": "p",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngGeometric",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "p",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngHypergeometric",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "l",
+        "type": "const int"
+      },
+      {
+        "name": "s",
+        "type": "const int"
+      },
+      {
+        "name": "m",
+        "type": "const int"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngMultinomial",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "ntrial",
+        "type": "const int"
+      },
+      {
+        "name": "k",
+        "type": "const int"
+      },
+      {
+        "name": "p",
+        "type": "const double*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngNegBinomial",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "p",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngNegbinomial",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "p",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngPoisson",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "lambda",
+        "type": "const double"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngPoissonV",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "lambda",
+        "type": "const double*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngUniform",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "int*"
+      },
+      {
+        "name": "a",
+        "type": "const int"
+      },
+      {
+        "name": "b",
+        "type": "const int"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngUniformBits",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "buffer",
+        "type": "unsigned int*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngUniformBits32",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "buffer",
+        "type": "unsigned int*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "viRngUniformBits64",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "buffer",
+        "type": "openrng_uint64_t*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngBeta",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "p",
+        "type": "const float"
+      },
+      {
+        "name": "q",
+        "type": "const float"
+      },
+      {
+        "name": "alpha",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngCauchy",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngChiSquare",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "v",
+        "type": "const int"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngExponential",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngGamma",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "alpha",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngGaussian",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "sigma",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngGaussianMV",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "dimen",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "mstorage",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "a",
+        "type": "const float*"
+      },
+      {
+        "name": "t",
+        "type": "const float*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngGumbel",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngLaplace",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngLognormal",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "alpha",
+        "type": "const float"
+      },
+      {
+        "name": "sigma",
+        "type": "const float"
+      },
+      {
+        "name": "b",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngRayleigh",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngUniform",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "b",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsRngWeibull",
+    "parameters": [
+      {
+        "name": "method",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "r",
+        "type": "float*"
+      },
+      {
+        "name": "alpha",
+        "type": "const float"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "beta",
+        "type": "const float"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslCopyStream",
+    "parameters": [
+      {
+        "name": "newstream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "srcstream",
+        "type": "const VSLStreamStatePtr"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslCopyStreamState",
+    "parameters": [
+      {
+        "name": "dststream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "srcstream",
+        "type": "const VSLStreamStatePtr"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslDeleteStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslGetBrngProperties",
+    "parameters": [
+      {
+        "name": "brngId",
+        "type": "const int"
+      },
+      {
+        "name": "properties",
+        "type": "VSLBRngProperties *const"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslGetNumRegBrngs",
+    "parameters": []
+  },
+  {
+    "returnType": "int",
+    "name": "vslGetStreamSize",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "const VSLStreamStatePtr"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslGetStreamStateBrng",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "const VSLStreamStatePtr"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslLeapfrogStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "k",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "nstreams",
+        "type": "const openrng_int_t"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslLoadStreamF",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "fname",
+        "type": "const char*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslLoadStreamM",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "memptr",
+        "type": "const char*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslNewStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "brng",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "seed",
+        "type": "const openrng_uint_t"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslNewStreamEx",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "brng",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "params",
+        "type": "const unsigned int*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslRegisterBrng",
+    "parameters": [
+      {
+        "name": "properties",
+        "type": "const VSLBRngProperties*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslSaveStreamF",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "const VSLStreamStatePtr"
+      },
+      {
+        "name": "fname",
+        "type": "const char*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslSaveStreamM",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "const VSLStreamStatePtr"
+      },
+      {
+        "name": "memptr",
+        "type": "char*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslSkipAheadStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "nskip",
+        "type": "const long long int"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslSkipAheadStreamEx",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "nskip",
+        "type": "const openrng_uint64_t*"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsldNewAbstractStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "dbuf",
+        "type": "const double*"
+      },
+      {
+        "name": "a",
+        "type": "const double"
+      },
+      {
+        "name": "b",
+        "type": "const double"
+      },
+      {
+        "name": "dcallback",
+        "type": "const dUpdateFuncPtr"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vsliNewAbstractStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "ibuf",
+        "type": "const unsigned int*"
+      },
+      {
+        "name": "a",
+        "type": "const iUpdateFuncPtr"
+      }
+    ]
+  },
+  {
+    "returnType": "int",
+    "name": "vslsNewAbstractStream",
+    "parameters": [
+      {
+        "name": "stream",
+        "type": "VSLStreamStatePtr*"
+      },
+      {
+        "name": "n",
+        "type": "const openrng_int_t"
+      },
+      {
+        "name": "sbuf",
+        "type": "const float*"
+      },
+      {
+        "name": "a",
+        "type": "const float"
+      },
+      {
+        "name": "b",
+        "type": "const float"
+      },
+      {
+        "name": "scallback",
+        "type": "const sUpdateFuncPtr"
+      }
+    ]
+  }
+]

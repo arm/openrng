@@ -30,6 +30,8 @@ static inline CPUFeatures getMaxAllowedISA() {
       return CPUFeatures::neon;
     if (strcmp(maxISAEnvVar, "sha3") == 0)
       return CPUFeatures::sha3;
+    if (strcmp(maxISAEnvVar, "aes") == 0)
+      return CPUFeatures::aes;
   }
   assert(maxISAEnvVar == NULL || strcmp(maxISAEnvVar, "sve") == 0);
   /* Either the environment variable was not set or it was set to SVE. Either
@@ -54,6 +56,8 @@ const bool SupportedFeatures::hasNeon =
     is_enabled(AT_HWCAP, HWCAP_ASIMD, CPUFeatures::neon);
 const bool SupportedFeatures::hasSha3 =
     is_enabled(AT_HWCAP, HWCAP_SHA3, CPUFeatures::sha3);
+const bool SupportedFeatures::hasAes =
+    is_enabled(AT_HWCAP, HWCAP_AES, CPUFeatures::aes);
 const bool SupportedFeatures::hasSve =
     is_enabled(AT_HWCAP, HWCAP_SVE, CPUFeatures::sve);
 
@@ -67,6 +71,7 @@ const bool SupportedFeatures::hasSve =
 const bool SupportedFeatures::hasTrng = false;
 const bool SupportedFeatures::hasNeon = true;
 const bool SupportedFeatures::hasSha3 = false;
+const bool SupportedFeatures::hasAes = false;
 const bool SupportedFeatures::hasSve = false;
 
 #endif

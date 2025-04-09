@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -7,14 +7,15 @@
 
 #include <generator/neon/sfmt19937_neon.hpp>
 #include <utils/mt_skip_ahead.hpp>
+#include <utils/mt_skip_ahead_data.hpp>
 
 #include <cstring>
 
 namespace openrng {
 
 /**
- * Helper function that to transfer values from
- * a source, the state vector, to the values buffer
+ * Helper function that transforms values from a source, the state vector, to
+ * the values buffer.
  */
 template <typename T>
 void transform_sfmt19937(T buffer[], uint32_t source[], const size_t length,
@@ -25,21 +26,45 @@ void transform_sfmt19937(T buffer[], uint32_t source[], const size_t length,
     assert(u == 1);
     std::memcpy(buffer, source, length * sizeof(uint32_t));
   } else {
-    constexpr T norm = (T)1.0 / (T)(1ULL << 32);
-    constexpr T translation = (T)0.5;
     const T scale = u - l;
+    const T norm = scale / (1ULL << 32);
+    const T translation = l + scale / 2;
     size_t j = 0;
     constexpr size_t unroll = 24;
     for (; j + unroll <= length; j += unroll) {
       for (size_t k = 0; k < unroll; k += 1) {
-        buffer[j + k] =
-            (translation + (T)(int32_t)source[j + k] * norm) * scale + l;
+        buffer[j + k] = translation + (T)(int32_t)source[j + k] * norm;
       }
     }
 
     for (; j < length; j += 1) {
-      buffer[j] = (translation + (T)(int32_t)source[j] * norm) * scale + l;
+      buffer[j] = translation + (T)(int32_t)source[j] * norm;
     }
+  }
+}
+
+/**
+ * Helper function that transforms a unit32x4_t to the desired distribution.
+ */
+template <typename T>
+void transform_vector_sfmt19937(const uint32x4_t in, T *out, const T l,
+                                const T u) {
+  if constexpr (std::is_same<T, uint32_t>::value) {
+    assert(l == 0);
+    assert(u == 1);
+    vst1q_u32(out, in);
+  } else {
+    //
+    // Widening to double is a bit messy to do with intrinsics, but fortunately
+    // we can rely on autovectorisation to handle this.
+    //
+    const T scale = u - l;
+    const T norm = scale / (1ULL << 32);
+    const T translation = l + scale / 2;
+    out[0] = translation + (T)(int32_t)in[0] * norm;
+    out[1] = translation + (T)(int32_t)in[1] * norm;
+    out[2] = translation + (T)(int32_t)in[2] * norm;
+    out[3] = translation + (T)(int32_t)in[3] * norm;
   }
 }
 
@@ -145,13 +170,20 @@ int SFMT19937Generator<CF>::initialise(const int64_t key_length,
   return VSL_ERROR_OK;
 }
 
+/**
+ * Refresh the state and pass the old state into TransformFunc as a uint32x4_t.
+ *
+ * The TransformFunc enables transforming old state while generating new state.
+ * This enables better use of a CPU's vector throughput.
+ */
 template <CPUFeatures CF>
   requires(NeonOrSha3<CF>)
-void SFMT19937Generator<CF>::refresh_state() {
+template <typename TransformFunc>
+void SFMT19937Generator<CF>::refresh_state(TransformFunc transform) {
   auto x_2 = vld1q_u32((uint32_t *)&state.x[N - 2]);
   auto x_1 = vld1q_u32((uint32_t *)&state.x[N - 1]);
 
-  auto update = [&x_1, &x_2](auto x_n_ptr, auto x_nm_ptr) {
+  auto update = [&x_1, &x_2, &transform](auto x_n_ptr, auto x_nm_ptr) {
     const auto x_n = vld1q_u8((uint8_t *)x_n_ptr);
     const auto x_nm = vld1q_u32((uint32_t *)x_nm_ptr);
 
@@ -163,16 +195,26 @@ void SFMT19937Generator<CF>::refresh_state() {
 
     const auto x = x_a ^ x_b ^ x_c ^ x_d;
     vst1q_u8((uint8_t *)x_n_ptr, x);
+    transform(vreinterpretq_u32_u8(x_n));
 
     x_2 = x_1;
     x_1 = vreinterpretq_u32_u8(x);
   };
 
   int i = 0;
+  const int unroll = 2;
+  for (; i <= N - M - unroll; i += unroll) {
+    for (int j = 0; j < unroll; j++)
+      update(&state.x[i + j], &state.x[i + j + M]);
+  }
   for (; i < N - M; i++) {
     update(&state.x[i], &state.x[i + M]);
   }
 
+  for (; i <= N - unroll; i += unroll) {
+    for (int j = 0; j < unroll; j++)
+      update(&state.x[i + j], &state.x[i + j + M - N]);
+  }
   for (; i < N; i++) {
     update(&state.x[i], &state.x[i + M - N]);
   }
@@ -189,16 +231,29 @@ int SFMT19937Generator<CF>::advance(int64_t n, T buffer[], const T l,
   int i = 0;
   while (i != n) {
     if (state.current_idx == N * 4) {
-      refresh_state();
+      // TransformFunc is a nop, the state has already been used.
+      refresh_state([](uint32x4_t) {});
       state.current_idx = 0;
     }
+
     // Copy up until we need to do a state update
     const size_t copy_length = std::min(N * 4 - state.current_idx, n - i);
 
-    transform_sfmt19937(&buffer[i], &state_u32[state.current_idx], copy_length,
-                        l, u);
-
-    state.current_idx += copy_length;
+    if (copy_length == N * 4) {
+      //
+      // If we're consuming a whole buffer of state, we can refresh while
+      // transforming.
+      //
+      auto curr_buffer = buffer + i;
+      refresh_state([l, u, &curr_buffer](uint32x4_t in) {
+        transform_vector_sfmt19937(in, curr_buffer, l, u);
+        curr_buffer += 4;
+      });
+    } else {
+      transform_sfmt19937(&buffer[i], &state_u32[state.current_idx],
+                          copy_length, l, u);
+      state.current_idx += copy_length;
+    }
     i += copy_length;
   }
 
@@ -209,19 +264,6 @@ template <CPUFeatures CF>
   requires(NeonOrSha3<CF>)
 int SFMT19937Generator<CF>::fillBits(int64_t n, uint32_t buffer[]) {
   return advance(n, buffer, (uint32_t)0, (uint32_t)1);
-}
-
-template <CPUFeatures CF>
-  requires(NeonOrSha3<CF>)
-int SFMT19937Generator<CF>::fillBits32(int64_t n, uint32_t buffer[]) {
-  // SFMT19937 already generates uniformly distributed integers in [0, 2^32]
-  return fillBits(n, buffer);
-}
-
-template <CPUFeatures CF>
-  requires(NeonOrSha3<CF>)
-int SFMT19937Generator<CF>::fillBits64(int64_t n, uint64_t buffer[]) {
-  return fillBits32(2 * n, reinterpret_cast<uint32_t *>(buffer));
 }
 
 template <CPUFeatures CF>
@@ -259,33 +301,26 @@ int SFMT19937Generator<CF>::setStride(uint64_t) {
   return VSL_RNG_ERROR_LEAPFROG_UNSUPPORTED;
 }
 
-static void
-xorStatesInPlace(std::array<poly128_t, SFMT19937State::N> &result,
-                 const std::array<poly128_t, SFMT19937State::N> &other) {
-  for (size_t i = 0; i < SFMT19937State::N; i++) {
-    result[i] = result[i] ^ other[i];
-  }
-}
-
 template <CPUFeatures CF>
   requires(NeonOrSha3<CF>)
 void SFMT19937Generator<CF>::advanceOnceInPlace(
-    std::array<poly128_t, SFMT19937State::N> &x) {
+    ring_buffer<poly128_t, SFMT19937StateNeon::N> &x) {
 
-  auto x_2 = vld1q_u32((uint32_t *)&x[N - 2]);
-  auto x_1 = vld1q_u32((uint32_t *)&x[N - 1]);
+  auto x_2 = vld1q_u32((uint32_t *)&x[2]);
+  auto x_1 = vld1q_u32((uint32_t *)&x[1]);
 
-  const auto x_n = vld1q_u8((uint8_t *)&x[0]);
-  const auto x_nm = vld1q_u32((uint32_t *)&x[M]);
+  const auto x_n = vld1q_u8((uint8_t *)&x[N]);
+  const auto x_nm = vld1q_u32((uint32_t *)&x[N - M]);
 
   const auto x_a = veorq_u8(vextq_u8(vdupq_n_u8(0), x_n, 15), x_n);
   const auto x_b = vreinterpretq_u8_u32(vandq_u32(vshrq_n_u32(x_nm, 11), mask));
   const auto x_c = vextq_u8(vreinterpretq_u8_u32(x_2), vdupq_n_u8(0), 1);
   const auto x_d = vreinterpretq_u8_u32(vshlq_n_u32(x_1, 18));
 
-  vst1q_u8((uint8_t *)&x[0], x_a ^ x_b ^ x_c ^ x_d);
+  poly128_t x_0;
+  vst1q_u8((uint8_t *)&x_0, x_a ^ x_b ^ x_c ^ x_d);
 
-  std::rotate(x.begin(), x.begin() + 1, x.end());
+  x.push_back(x_0);
 }
 
 template <CPUFeatures CF>
@@ -298,22 +333,9 @@ int SFMT19937Generator<CF>::skipAhead(uint64_t n, const uint64_t nskip[]) {
   const auto newIdx = 1 + ((state.current_idx + nskip[0] - 1) % 4);
   const auto nStateUpdates = (state.current_idx + nskip[0] - 1) / 4;
 
-  DynamicArray<char> g = sfmt19937SkipAheadPolynomial(nStateUpdates);
+  mt_skip_ahead<poly128_t, N>(state.x, &advanceOnceInPlace, nStateUpdates,
+                              skipahead::data::sfmt19937_cache);
 
-  //
-  // Taking the skip ahead polynomial g, get the sum (xor) of each i'th state.x
-  // where the i'th coefficient of g is non-zero.
-  //
-  auto stateCopy = state.x;
-  decltype(state.x) resultState = {};
-  for (size_t i = 0; i < g.size(); i++) {
-    if (g[i]) {
-      xorStatesInPlace(resultState, stateCopy);
-    }
-    advanceOnceInPlace(stateCopy);
-  }
-
-  state.x = resultState;
   state.current_idx = newIdx;
 
   return VSL_ERROR_OK;

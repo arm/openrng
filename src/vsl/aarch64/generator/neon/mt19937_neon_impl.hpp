@@ -1,10 +1,11 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
  */
 
+#include <generator/mt_initialization.hpp>
 #include <generator/neon/mt19937_neon.hpp>
 #include <utils/dynamic_array.hpp>
 #include <utils/mt_skip_ahead.hpp>
@@ -63,34 +64,7 @@ template <CPUFeatures CF>
   requires(NeonOrSha3<CF>)
 int MT19937Generator<CF>::initialise(const int64_t n,
                                      const unsigned int params[]) {
-  const auto data = state.x.data();
-  data[0] = 19650218;
-  for (int i = 1; i < N; i++) {
-    data[i] = 1812433253ULL * (data[i - 1] ^ (data[i - 1] >> 30)) + i;
-  }
-
-  int i = 1;
-  for (int j = 0, k = 0; k < std::max(n, N); k++) {
-    data[i] ^= 1664525ULL * (data[i - 1] ^ (data[i - 1] >> 30));
-    data[i] += params[j] + j;
-    i = i == N - 1 ? 1 : i + 1;
-    j = j == n - 1 ? 0 : j + 1;
-    if (i == 1) {
-      data[0] = data[N - 1];
-    }
-  }
-
-  for (int k = 0; k < N - 1; k++) {
-    data[i] ^= 1566083941ULL * (data[i - 1] ^ (data[i - 1] >> 30));
-    data[i] -= i;
-    i = i == N - 1 ? 1 : i + 1;
-    if (i == 1) {
-      data[0] = data[N - 1];
-    }
-  }
-
-  data[0] = 1 << 31;
-  return VSL_ERROR_OK;
+  return mt_initialise_by_array<N>(n, params, state.x.data());
 }
 
 /**
@@ -225,19 +199,6 @@ int MT19937Generator<CF>::fillBits(int64_t n, uint32_t buffer[]) {
 
 template <CPUFeatures CF>
   requires(NeonOrSha3<CF>)
-int MT19937Generator<CF>::fillBits32(int64_t n, uint32_t buffer[]) {
-  // MT19937 already generates uniformly distributed integers in [0, 2^32]
-  return fillBits(n, buffer);
-}
-
-template <CPUFeatures CF>
-  requires(NeonOrSha3<CF>)
-int MT19937Generator<CF>::fillBits64(int64_t n, uint64_t buffer[]) {
-  return fillBits32(2 * n, reinterpret_cast<uint32_t *>(buffer));
-}
-
-template <CPUFeatures CF>
-  requires(NeonOrSha3<CF>)
 int MT19937Generator<CF>::fill(int64_t n, float buffer[]) {
   return fill(n, buffer, 0.0, 1.0);
 }
@@ -274,19 +235,9 @@ int MT19937Generator<CF>::setStride(uint64_t) {
 template <CPUFeatures CF>
   requires(NeonOrSha3<CF>)
 void MT19937Generator<CF>::advanceOnceInPlace(
-    std::array<uint32_t, MT19937State::N> &x) {
-  auto tmp = (x[0] & 0x80000000) | (x[1] & 0x7FFFFFFF);
-  x[0] = x[M] ^ ((tmp & 0x1) ? (tmp >> 1) ^ a : tmp >> 1);
-  std::rotate(x.begin(), x.begin() + 1, x.end());
-}
-
-template <CPUFeatures CF>
-  requires(NeonOrSha3<CF>)
-void xorStatesInPlace(std::array<uint32_t, MT19937State::N> &result,
-                      const std::array<uint32_t, MT19937State::N> &other) {
-  for (size_t i = 0; i < MT19937State::N; i++) {
-    result[i] ^= other[i];
-  }
+    ring_buffer<uint32_t, MT19937State::N> &x) {
+  auto tmp = (x[N] & 0x80000000) | (x[N - 1] & 0x7FFFFFFF);
+  x.push_back(x[N - M] ^ ((tmp & 0x1) ? (tmp >> 1) ^ a : tmp >> 1));
 }
 
 template <CPUFeatures CF>
@@ -296,32 +247,8 @@ int MT19937Generator<CF>::skipAhead(uint64_t n, const uint64_t nskip[]) {
     return VSL_RNG_ERROR_SKIPAHEADEX_UNSUPPORTED;
   }
 
-  auto skip = nskip[0];
-
-  DynamicArray<const DynamicArray<uint64_t> *> q(64);
-  int howmany_nnz = 0;
-  for (int j = 0; skip; ++j, skip >>= 1) {
-    if ((skip & 1) != 0) {
-      q[howmany_nnz] = &skipahead::data::mt19937_cache[j];
-      howmany_nnz += 1;
-    }
-  }
-
-  for (int hm = 0; hm < howmany_nnz; ++hm) {
-    auto stateCopy = state.x;
-    decltype(state.x) resultState = {};
-    auto coefficient = *q[hm];
-    for (size_t c_bit = 0; c_bit < coefficient.size(); ++c_bit) {
-      const uint64_t b = coefficient[c_bit];
-      for (int i = 0; i < 64; ++i) {
-        if (1 & b >> i) {
-          xorStatesInPlace<CF>(resultState, stateCopy);
-        }
-        advanceOnceInPlace(stateCopy);
-      }
-    }
-    state.x = resultState;
-  }
+  mt_skip_ahead<uint32_t, N>(state.x, &advanceOnceInPlace, nskip[0],
+                             skipahead::data::mt19937_cache);
 
   //
   // We need to recompute any cached state.

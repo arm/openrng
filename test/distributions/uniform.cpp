@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -18,8 +18,9 @@
 #include <utils/golden/uniform.hpp>
 #include <utils/names_map.hpp>
 
-#include <array>
-#include <map>
+#include <cmath>
+#include <memory>
+#include <set>
 #include <vector>
 
 using Catch::Matchers::WithinAbs;
@@ -65,6 +66,18 @@ template <> std::pair<double, double> getBoundsForType() {
   return {-(1LL << 61), -1.0};
 }
 
+/**
+ * Get the empirical absolute error of a Uniform distribution.
+ */
+template <typename T> T getAbsErrorBound(T l, T u) {
+  //
+  // Error analysis is difficult, but this seems like a reasonable tight bound.
+  // Feel free to loosen it a small bit if the bound is too tight.
+  //
+  const T scale = 2 * std::max(std::abs(u), std::abs(l));
+  return scale * std::numeric_limits<T>::epsilon();
+}
+
 } // namespace
 
 TEMPLATE_TEST_CASE("Uniform expected data", "[uniform]", float, double, int) {
@@ -94,10 +107,23 @@ TEMPLATE_TEST_CASE("Uniform expected data", "[uniform]", float, double, int) {
 }
 
 TEMPLATE_TEST_CASE("Uniform is approximately comparable to refng", "[uniform]",
-                   float, double, int) {
+                   float, double) {
 
-  const int lower = 1000;
-  const int upper = 10000;
+  using range = std::tuple<TestType, TestType>;
+  auto [lower, upper] = GENERATE(table<TestType, TestType>({
+      range{0,             1           },
+      range{0.5,           0.6         },
+      range{-1,            1           },
+      range{3,             7           },
+      range{-5,            -3          },
+      range{90,            100         },
+      range{9999,          10000       },
+      range{-0xf'ff'ff'ff, 0xf'ff'ff'ff},
+      range{0xf'ff'ff'f0,  0xf'ff'ff'ff},
+  }));
+
+  const int n = GENERATE(1, 2, 3, 4, 5, 10, 100, 1000, 4567);
+  const TestType tolerance = getAbsErrorBound(lower, upper);
 
   VSLStreamStatePtr vstream, rstream;
   int errcode;
@@ -111,7 +137,48 @@ TEMPLATE_TEST_CASE("Uniform is approximately comparable to refng", "[uniform]",
   errcode = refNewStream(&rstream, brngId, 0);
   REQUIRE(errcode == VSL_ERROR_OK);
 
-  const int n = 100;
+  std::vector<TestType> vslbuffer(n);
+  errcode = vRngUniform<TestType>(VSL_RNG_METHOD_UNIFORM_STD, vstream, n,
+                                  vslbuffer.data(), lower, upper);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  std::vector<TestType> refbuffer(n);
+  errcode = rRngUniform<TestType>(VSL_RNG_METHOD_UNIFORM_STD, rstream, n,
+                                  refbuffer.data(), lower, upper);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  for (int i = 0; i < vslbuffer.size(); i++) {
+    CAPTURE(i);
+    CAPTURE(tolerance);
+    REQUIRE_THAT(vslbuffer[i], WithinAbs(refbuffer[i], tolerance));
+  }
+
+  errcode = vslDeleteStream(&vstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  errcode = refDeleteStream(&rstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+}
+
+TEST_CASE("Uniform is approximately comparable to refng - int", "[uniform]") {
+
+  using TestType = int;
+  const int lower = 1000;
+  const int upper = 10000;
+  const int n = GENERATE(1, 2, 3, 4, 5, 10, 100, 1000, 4567);
+
+  VSLStreamStatePtr vstream, rstream;
+  int errcode;
+
+  const auto brngId = GENERATE(NEWSTREAM_SUPPORTED);
+  CAPTURE(brngToString(brngId));
+
+  errcode = vslNewStream(&vstream, brngId, 0);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  errcode = refNewStream(&rstream, brngId, 0);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
   std::vector<TestType> vslbuffer(n);
   errcode = vRngUniform<TestType>(VSL_RNG_METHOD_UNIFORM_STD, vstream, n,
                                   vslbuffer.data(), lower, upper);
@@ -172,6 +239,45 @@ TEMPLATE_TEST_CASE("Accurate uniform is approximately comparable to refng",
   REQUIRE(errcode == VSL_ERROR_OK);
 
   errcode = refDeleteStream(&rstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+}
+
+TEST_CASE("Uniform distribution generates lower bound for integers",
+          "[uniform]") {
+  using range = std::tuple<int, int>;
+  auto [lower, upper] = GENERATE(table<int, int>({
+      range{-10, -1},
+      range{-30, 20},
+      range{1,   30},
+  }));
+
+  const int n = 100;
+
+  VSLStreamStatePtr vstream;
+  int errcode;
+
+  const auto brngId = GENERATE(NEWSTREAM_SUPPORTED);
+  CAPTURE(brngToString(brngId));
+
+  errcode = vslNewStream(&vstream, brngId, 777);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  std::vector<int> vslbuffer(n);
+  errcode = viRngUniform(VSL_RNG_METHOD_UNIFORM_STD, vstream, n,
+                         vslbuffer.data(), lower, upper);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  bool generated_lower_bound = false;
+  for (int i = 0; i < vslbuffer.size(); i++) {
+    CAPTURE(i);
+    REQUIRE((vslbuffer[i] >= lower && vslbuffer[i] < upper));
+    if (vslbuffer[i] == lower) {
+      generated_lower_bound = true;
+    }
+  }
+  REQUIRE(generated_lower_bound == true);
+
+  errcode = vslDeleteStream(&vstream);
   REQUIRE(errcode == VSL_ERROR_OK);
 }
 

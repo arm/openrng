@@ -110,12 +110,6 @@ TEST_CASE("Skip ahead reference test") {
   const auto brngId = GENERATE(SKIPAHEAD_SUPPORTED);
   CAPTURE(seed, skipAhead, brngToString(brngId));
 
-  if (skipAhead >= INT_MAX && brngId == VSL_BRNG_SFMT19937) {
-    SKIP(
-        "The current implementation of SFMT19937 is too slow to unittest large "
-        "skip aheads");
-  }
-
   if (brngId == VSL_BRNG_SOBOL && skipAhead >= INT_MAX) {
     SKIP("Skipping past the end of SOBOL is not supported.");
   }

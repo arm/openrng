@@ -23,6 +23,13 @@ template <typename T, size_t N> class ring_buffer {
   size_t position = {0};
 
 public:
+  ring_buffer() = default;
+
+  /**
+   * Initialise the buffer with the elements of a std::array.
+   */
+  ring_buffer(const std::array<T, N> arr) { buffer = arr; }
+
   /**
    * Access the element located `i` elements prior to the buffer end.
    */
@@ -43,6 +50,11 @@ public:
    * Return a pointer to the underlying data.
    */
   T *data() { return buffer.data(); }
+
+  /**
+   * Return the position of the first element in the underlying data.
+   */
+  size_t get_position() { return position; }
 
   /**
    * Insert an element at the end of the buffer.

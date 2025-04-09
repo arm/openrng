@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -20,7 +20,7 @@ template <>
 class NondeterministicGenerator<CPUFeatures::generic>
     : public CopyableGenerator<EmptyState> {
 public:
-  NondeterministicGenerator() : CopyableGenerator{VSL_BRNG_NONDETERM} {}
+  NondeterministicGenerator(int64_t brng) : CopyableGenerator{brng} {}
 
   using CopyableGenerator::initialise;
   int initialise(const int64_t, const unsigned int[]);

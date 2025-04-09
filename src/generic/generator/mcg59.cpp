@@ -54,11 +54,6 @@ int Mcg59Generator<CPUFeatures::generic>::fillBits32(int64_t n,
   return VSL_ERROR_OK;
 }
 
-int Mcg59Generator<CPUFeatures::generic>::fillBits64(int64_t n,
-                                                     uint64_t buffer[]) {
-  return fillBits32(2 * n, reinterpret_cast<uint32_t *>(buffer));
-}
-
 int Mcg59Generator<CPUFeatures::generic>::fill(int64_t n, float buffer[]) {
   for (int64_t i = 0; i < n; i++) {
     buffer[i] = (float)state.x / (float)m;

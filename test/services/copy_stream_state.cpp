@@ -56,7 +56,7 @@ TEST_CASE("Copy stream state basic") {
   REQUIRE(errcode == VSL_ERROR_OK);
 }
 
-TEST_CASE("Copy stream state skip ahead") {
+TEST_CASE("Copy stream state skip ahead", "[openrng_only]") {
   VSLStreamStatePtr oldStream, newStream;
   VSLBRngProperties brngProperties;
   const int n = 1000;

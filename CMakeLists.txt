@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(rng VERSION 24.04 LANGUAGES C CXX)
+project(rng VERSION 25.04 LANGUAGES C CXX)
 include(CTest)
 
 # Set build type to Release if not specified.

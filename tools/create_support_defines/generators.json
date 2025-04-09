@@ -103,7 +103,49 @@
     {
         "method": "MT2203",
         "featureStatus": {
-        "newStream": "notImplemented"
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "unsupported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    },
+    {
+        "method": "MT2203 + 1",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "unsupported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    },
+    {
+        "method": "MT2203 + 1000",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "unsupported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
+      }
+    },
+    {
+        "method": "MT2203 + 3142",
+        "featureStatus": {
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "unsupported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
       }
     },
     {
@@ -150,7 +192,13 @@
     {
         "method": "ARS5",
         "featureStatus": {
-        "newStream": "notImplemented"
+        "newStream": "supported",
+        "newStreamEx": "supported",
+        "leapfrog": "unsupported",
+        "skipAhead": "supported",
+        "skipAheadEx": "supported",
+        "uniformBits32": "supported",
+        "uniformBits64": "supported"
       }
     },
     {

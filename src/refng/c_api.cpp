@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -10,6 +10,7 @@
 #include <distributions/cauchy.hpp>
 #include <distributions/exponential.hpp>
 #include <distributions/gaussian.hpp>
+#include <distributions/gaussianmv.hpp>
 #include <distributions/geometric.hpp>
 #include <distributions/gumbel.hpp>
 #include <distributions/laplace.hpp>
@@ -77,10 +78,17 @@ int rdRngGaussian(const refng_int_t method, VSLStreamStatePtr stream,
   return refng::distribution::gaussian::fill(method, generator, n, r, a, sigma);
 }
 
-int rdRngGaussianMV(const refng_int_t, VSLStreamStatePtr, const refng_int_t,
-                    double[], const refng_int_t, const refng_int_t,
-                    const double *, const double *) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int rdRngGaussianMV(const refng_int_t method, VSLStreamStatePtr stream,
+                    const refng_int_t n, double r[], const refng_int_t dimen,
+                    const refng_int_t mstorage, const double *a,
+                    const double *t) {
+  auto [generator, error] = refng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+
+  return refng::distribution::gaussianmv::fill(method, generator, n, dimen,
+                                               mstorage, r, a, t);
 }
 
 int rdRngGumbel(const refng_int_t method, VSLStreamStatePtr stream,
@@ -306,10 +314,17 @@ int rsRngGaussian(const refng_int_t method, VSLStreamStatePtr stream,
   return refng::distribution::gaussian::fill(method, generator, n, r, a, sigma);
 }
 
-int rsRngGaussianMV(const refng_int_t, VSLStreamStatePtr, const refng_int_t,
-                    float[], const refng_int_t, const refng_int_t,
-                    const float *, const float *) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int rsRngGaussianMV(const refng_int_t method, VSLStreamStatePtr stream,
+                    const refng_int_t n, float r[], const refng_int_t dimen,
+                    const refng_int_t mstorage, const float *a,
+                    const float *t) {
+  auto [generator, error] = refng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+
+  return refng::distribution::gaussianmv::fill(method, generator, n, dimen,
+                                               mstorage, r, a, t);
 }
 
 int rsRngGumbel(const refng_int_t method, VSLStreamStatePtr stream,
@@ -430,6 +445,18 @@ int refDeleteStream(VSLStreamStatePtr *ptr) {
 
 int refGetBrngProperties(const int brngId,
                          VSLBRngProperties *const properties) {
+  if (brngId >= VSL_BRNG_MT2203 && brngId < VSL_BRNG_MT2203 + 6024) {
+    properties->StreamStateSize = 0;
+    properties->InitStream = nullptr;
+    properties->sBRng = nullptr;
+    properties->dBRng = nullptr;
+    properties->iBRng = nullptr;
+    properties->NSeeds = 70;
+    properties->IncludesZero = 1;
+    properties->WordSize = 4;
+    properties->NBits = 32;
+    return VSL_ERROR_OK;
+  }
 
   switch (brngId) {
   case VSL_BRNG_MCG31:
@@ -516,6 +543,7 @@ int refGetBrngProperties(const int brngId,
     properties->WordSize = 8;
     properties->NBits = 59;
     break;
+
   case VSL_BRNG_SOBOL:
     properties->StreamStateSize = 0;
     properties->InitStream = nullptr;
@@ -527,13 +555,24 @@ int refGetBrngProperties(const int brngId,
     properties->WordSize = 4;
     properties->NBits = 32;
     break;
+
+  case VSL_BRNG_ARS5:
+    properties->StreamStateSize = 0;
+    properties->InitStream = nullptr;
+    properties->sBRng = nullptr;
+    properties->dBRng = nullptr;
+    properties->iBRng = nullptr;
+    properties->NSeeds = 8;
+    properties->IncludesZero = 1;
+    properties->WordSize = 4;
+    properties->NBits = 32;
+    break;
+
   case VSL_BRNG_WH:
   case VSL_BRNG_NIEDERR:
-  case VSL_BRNG_MT2203:
   case VSL_BRNG_IABSTRACT:
   case VSL_BRNG_DABSTRACT:
   case VSL_BRNG_SABSTRACT:
-  case VSL_BRNG_ARS5:
     return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
 
   default:

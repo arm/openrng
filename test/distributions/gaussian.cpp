@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
  */
 
-#include <array>
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -13,7 +12,6 @@
 #include <catch2/matchers/catch_matchers.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <cmath>
-#include <map>
 #include <openrng.h>
 #include <refng_vsl.h>
 #include <utils/distribution_templates.hpp>
@@ -67,9 +65,8 @@ void check(auto method, T vsl, T ref, T mean, T sigma, T tol) {
   // optimized implementation handles this differently to our reference, and we
   // accept relaxing our tests to just basic checks in these cases.
   if (method == VSL_RNG_METHOD_GAUSSIAN_ICDF) {
-    const auto cdf =
-        std::erf((ref - mean) * (std::sqrt(2) / 2) * std::sqrt(sigma));
-    const bool isExtreme = 1 - std::abs(cdf) < tol;
+    const auto cdf = std::erf((ref - mean) / (std::sqrt(2) * sigma));
+    const bool isExtreme = 1 - std::abs(cdf) < normalisedAbsErrorBound<T>;
     if (isExtreme)
       return;
   }

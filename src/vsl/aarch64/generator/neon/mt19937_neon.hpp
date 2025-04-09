@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -28,24 +28,18 @@ class MT19937Generator<CF> : public CopyableGenerator<MT19937StateNeon> {
   constexpr static int64_t M = 397;
   constexpr static uint32_t a = 0x9908B0DF;
 
-  void refresh_state();
-  void advanceOnceInPlace(std::array<uint32_t, N> &x);
   template <typename T>
   uint32_t advance(int64_t n, T buffer[], const T l, const T u);
-
-  template <openrng::FloatingPoint T>
-  void transform(T buffer[], uint32_t source[], const size_t length, const T l,
-                 const T u);
+  static void advanceOnceInPlace(ring_buffer<uint32_t, N> &x);
+  void refresh_state();
 
 public:
-  MT19937Generator() : CopyableGenerator{VSL_BRNG_MT19937} {}
+  MT19937Generator(int64_t brng) : CopyableGenerator{brng} {}
 
   using CopyableGenerator::initialise;
   int initialise(const int64_t, const unsigned int[]);
 
   int fillBits(int64_t n, uint32_t[]) final;
-  int fillBits32(int64_t n, uint32_t[]) final;
-  int fillBits64(int64_t n, uint64_t[]) final;
   int fill(int64_t n, float[]) final;
   int fill(int64_t n, double[]) final;
   int fill(int64_t n, float buffer[], const float l, const float u) final;
