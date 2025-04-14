@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -18,6 +18,7 @@ GEN_JSON = Path(__file__).parent / "generators.json"
 @dataclass
 class Generator:
     name: str
+    to_benchmark: bool
     newStream: str = "unsupported"
     newStreamEx: str = "unsupported"
     leapfrog: str = "unsupported"
@@ -35,7 +36,8 @@ def _discover(gen_json: Path) -> Iterable[Generator]:
     """
     data = json.loads(gen_json.read_text())
     for gen in data["generators"]:
-        yield Generator(gen["method"].lower(), **gen["featureStatus"])
+        to_benchmark = gen.get("to_benchmark", True)
+        yield Generator(gen["method"].lower(), to_benchmark, **gen["featureStatus"])
 
 
 generators = list(_discover(GEN_JSON))

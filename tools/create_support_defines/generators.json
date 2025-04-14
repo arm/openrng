@@ -114,6 +114,7 @@
     },
     {
         "method": "MT2203 + 1",
+        "to_benchmark": false,
         "featureStatus": {
         "newStream": "supported",
         "newStreamEx": "supported",
@@ -126,6 +127,7 @@
     },
     {
         "method": "MT2203 + 1000",
+        "to_benchmark": false,
         "featureStatus": {
         "newStream": "supported",
         "newStreamEx": "supported",
@@ -138,6 +140,7 @@
     },
     {
         "method": "MT2203 + 3142",
+        "to_benchmark": false,
         "featureStatus": {
         "newStream": "supported",
         "newStreamEx": "supported",
