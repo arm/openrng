@@ -15,8 +15,8 @@ template <>
 class NondeterministicGenerator<CPUFeatures::trng>
     : public NondeterministicGenerator<CPUFeatures::generic> {
 public:
-  NondeterministicGenerator()
-      : NondeterministicGenerator<CPUFeatures::generic>() {}
+  NondeterministicGenerator(int64_t brng)
+      : NondeterministicGenerator<CPUFeatures::generic>(brng) {}
 
   using CopyableGenerator::initialise;
   int initialise(const int64_t, const unsigned int[]);
