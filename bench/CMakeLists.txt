@@ -15,7 +15,7 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${DIST_JSON} ${GE
 # Invoke benchmark generation script at configure-time
 file(MAKE_DIRECTORY ${GENERATE_DIR})
 execute_process(
-  COMMAND python3 ${GENERATE_SCRIPT} ${GENERATE_DIR}
+  COMMAND ${Python3_EXECUTABLE} ${GENERATE_SCRIPT} ${GENERATE_DIR}
   INPUT_FILE ${DIST_JSON}
   RESULT_VARIABLE generate_status
   ERROR_VARIABLE generate_error

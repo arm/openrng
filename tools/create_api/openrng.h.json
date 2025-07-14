@@ -1507,5 +1507,23 @@
         "type": "const sUpdateFuncPtr"
       }
     ]
+  },
+  {
+    "returnType": "void",
+    "name": "openRngGetVersion",
+    "parameters": [
+      {
+        "name": "major",
+        "type": "int32_t*"
+      },
+      {
+        "name": "minor",
+        "type": "int32_t*"
+      },
+      {
+        "name": "patch",
+        "type": "int32_t*"
+      }
+    ]
   }
 ]

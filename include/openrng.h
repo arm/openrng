@@ -3607,6 +3607,21 @@ int vslsNewAbstractStream(VSLStreamStatePtr *stream, const openrng_int_t n,
                           const float sbuf[], const float a, const float b,
                           const sUpdateFuncPtr scallback);
 
+/**
+ * \ingroup groupService
+ *
+ * This function returns the current major, minor, and patch version of OpenRNG.
+ * For instance, for OpenRNG 25.04.1, the major version is 25, the minor version
+ * is 4 and, the patch version is 1. If any of three element is not set, for
+ * instance for release 24.10, then the missing element, that is the patch
+ * version would be set to -1 as default.
+ *
+ * \param[out] major The 32-bit integer representing the current major version.
+ * \param[out] minor The 32-bit integer representing the current minor version.
+ * \param[out] patch The 32-bit integer representing the current patch version.
+ */
+void openRngGetVersion(int32_t *major, int32_t *minor, int32_t *patch);
+
 #ifdef __cplusplus
 }
 #endif

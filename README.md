@@ -59,6 +59,32 @@ make install
 The install path is configured with `CMAKE_INSTALL_PREFIX`. The default value of
 `CMAKE_INSTALL_PREFIX` is system dependent.
 
+By default, OpenRNG builds with lp64 interface. To build with ilp64 interface, add
+the `-DOPENRNG_INTERFACE=ilp64` to the cmake command.
+
+By default, OpenRNG builds a static library. To build a shared library, add the
+`-DBUILD_SHARED_LIBS=On` to the cmake command.
+
+### Download, build and install OpenRNG on Windows
+
+This section describes the steps and the environment required to build and install
+OpenRNG on Windows. Before building the library, the following tools have to be
+installed:
+
+ - Python, version 3 required.
+ - LLVM
+ - CMake, version 3.15 required.
+ - Ninja
+
+The current build process on Windows was tested with LLVM-20 and Ninja 1.12.1.
+Once installed and the OpenRNG repo is cloned, run from the source folder,
+
+```
+cmake -B build -S . -G "Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+cmake --build build --target install
+```
+
+to build and install the library.
 
 ## Documentation
 

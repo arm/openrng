@@ -1,7 +1,7 @@
 default:
   image: ubuntu:22.04
   tags:
-    - arm64-shared
+    - arm64
   before_script:
     - apt update --yes
     - DEBIAN_FRONTEND=noninteractive apt install --yes cmake g++ git gcovr

@@ -19,6 +19,12 @@ All notable changes to this project will be documented in this file.
 ### Security
 
 
+## 25.07
+
+### Added
+  - New function returning the library version
+
+
 ## 25.04
 
 ### Added

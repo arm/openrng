@@ -23,6 +23,7 @@
 #include <distributions/weibull.hpp>
 #include <generator/generator.hpp>
 #include <utils/dynamic_array.hpp>
+#include <utils/version.hpp>
 
 #include <cassert>
 #include <climits>
@@ -793,5 +794,9 @@ int vslsNewAbstractStream(VSLStreamStatePtr *, const openrng_int_t,
                           const float[], const float, const float,
                           const sUpdateFuncPtr) {
   return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+}
+
+void openRngGetVersion(int32_t *major, int32_t *minor, int32_t *patch) {
+  return getLibraryVersion(major, minor, patch);
 }
 }

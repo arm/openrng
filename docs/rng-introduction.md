@@ -16,6 +16,14 @@ or floating point values might give different answers between Arm and x86
 systems because the accuracy of various operations is different between the
 two libraries.
 
+\if OPENRNG_STANDALONE
+
+In this page, the hyperlinks to the different sections of the documentation and
+those to the VSL functions will not work unless the documentation is built using
+doxygen as described in the README file.
+
+\endif
+
 This release does not include all of the random number functions from VSL. The
 documentation lists both the implemented and missing functionalities in the
 tables in the next sections. We will improve coverage of the missing functions

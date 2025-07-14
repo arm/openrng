@@ -1,5 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
-project(rng VERSION 25.04 LANGUAGES C CXX)
+
+# Defining the library version
+set(OPENRNG_MAJOR "25")
+set(OPENRNG_MINOR "07")
+set(OPENRNG_PATCH "-1")
+
+set(OPENRNG_VERSION "${OPENRNG_MAJOR}.${OPENRNG_MINOR}")
+if(NOT OPENRNG_PATCH STREQUAL "-1")
+  set(OPENRNG_VERSION "${OPENRNG_VERSION}.${OPENRNG_PATCH}")
+endif()
+
+project(rng VERSION ${OPENRNG_VERSION} LANGUAGES C CXX)
 include(CTest)
 
 # Set build type to Release if not specified.
@@ -59,6 +70,8 @@ endif()
 
 # Disable GLIBCXX assertions to avoid libstdc++ dependency
 add_compile_definitions(_GLIBCXX_NO_ASSERTIONS)
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 if (WIN32)
   # Disable _CRT_SECURE and _CRT_NONSTDC for portability. We want to continue

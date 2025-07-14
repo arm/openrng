@@ -228,10 +228,10 @@ TAB_SIZE               = 4
 # "Side Effects:". You can put \n's in the value part of an alias to insert
 # newlines.
 
-ALIASES                =  armplref="|pl| |release|" \
-                          feedback=":ref:\`feedback\`" \
-                          int64libs=":ref:\`int64libs\`" \
-                          accesspl=":ref:\`access-pl\`"
+ALIASES                =  armplref="OpenRng" \
+                          feedback="" \
+                          int64libs="the README.md file" \
+                          accesspl="the README.md file"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
@@ -641,7 +641,7 @@ GENERATE_DEPRECATEDLIST= YES
 # sections, marked by \if <section_label> ... \endif and \cond <section_label>
 # ... \endcond blocks.
 
-ENABLED_SECTIONS       =
+ENABLED_SECTIONS       = OPENRNG_STANDALONE
 
 # The MAX_INITIALIZER_LINES tag determines the maximum number of lines that the
 # initial value of a variable or macro / define can have for it to appear in the

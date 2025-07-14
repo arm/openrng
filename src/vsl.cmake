@@ -3,6 +3,11 @@ if(OPENRNG_LIB_SUFFIX)
   set_target_properties(openrng PROPERTIES OUTPUT_NAME "openrng_${OPENRNG_LIB_SUFFIX}")
 endif()
 
+# Passing the library version to the target
+target_compile_definitions(openrng PUBLIC OPENRNG_MAJOR=${OPENRNG_MAJOR})
+target_compile_definitions(openrng PUBLIC OPENRNG_MINOR=${OPENRNG_MINOR})
+target_compile_definitions(openrng PUBLIC OPENRNG_PATCH=${OPENRNG_PATCH})
+
 #
 # Set VERSION and SOVERSION. This can help system administrators with upgrading
 # or downgrading OpenRNG.
@@ -30,7 +35,7 @@ endif()
 # SOVERSION: If the ABI has changed since the previous release, this number
 # needs to be bumped.
 #
-set_target_properties(openrng PROPERTIES VERSION 25.04 SOVERSION 2)
+set_target_properties(openrng PROPERTIES VERSION ${OPENRNG_VERSION} SOVERSION 2)
 
 # CMAKE_SYSTEM_PROCESSOR is the target processor, if not set, it will default to
 # the host platform. If you want to change CMAKE_SYSTEM_PROCESSOR, you will also
@@ -104,6 +109,13 @@ target_link_libraries(test_linking_with_c_compiler openrng)
 set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
 set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "")
 set_target_properties(test_linking_with_c_compiler PROPERTIES LINKER_LANGUAGE C)
+
+# Test library version
+add_executable(library_version ${OPENRNG_ROOT}/tools/check_library_version/check_library.c)
+target_link_libraries(library_version openrng)
+set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "")
+set_target_properties(library_version PROPERTIES LINKER_LANGUAGE C)
 
 # Enable optimization records and inspect assembly (only in later versions of GCC/clang).
 # Outputs reports to the same directory as the obj files.

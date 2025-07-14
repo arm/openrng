@@ -40,7 +40,7 @@ else()
   set(CMAKE_CXX_CLANG_TIDY ${MY_ORIGINAL_CLANG_TIDY_CMD})
 endif(OPENRNG_LOCAL_CATCH)
 
-add_executable(tests
+set(TEST_SOURCES
     distributions/bernoulli.cpp
     distributions/binomial.cpp
     distributions/cauchy.cpp
@@ -73,6 +73,17 @@ add_executable(tests
     services/uniform_bit64.cpp
     services/save_load_state.cpp
 )
+
+if(NOT OPENRNG_TEST_TARGET)
+  list(APPEND TEST_SOURCES
+    services/get_library_version.cpp
+  )
+endif()
+
+add_executable(tests
+  ${TEST_SOURCES}
+)
+
 target_link_libraries(tests PRIVATE
   refng
   vsl
@@ -85,13 +96,15 @@ target_compile_options(tests PUBLIC
   -Wno-psabi # Disable warnings about std::pair ABI changing.
 )
 
+target_compile_definitions(tests PRIVATE $<TARGET_PROPERTY:vsl,INTERFACE_COMPILE_DEFINITIONS>)
+
 # Create the supports_autogen.h header at configure time.
 set(CREATE_SUPPORT_DEFINES_DIR ${OPENRNG_ROOT}/tools/create_support_defines)
 set(CREATE_SUPPORT_DEFINES_SCRIPT ${CREATE_SUPPORT_DEFINES_DIR}/create_support_defines.py)
 set(INPUT_JSON ${CREATE_SUPPORT_DEFINES_DIR}/generators.json)
 set(OUTPUT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/supports_autogen.h)
 execute_process(
-    COMMAND python3 ${CREATE_SUPPORT_DEFINES_SCRIPT}
+    COMMAND ${Python3_EXECUTABLE} ${CREATE_SUPPORT_DEFINES_SCRIPT}
     INPUT_FILE ${INPUT_JSON}
     OUTPUT_FILE ${OUTPUT_HEADER}
     RESULT_VARIABLE CREATE_SUPPORT_DEFINES_STATUS
@@ -119,14 +132,14 @@ catch_discover_tests(
 )
 
 add_test(NAME check-json-interface
-  COMMAND python3 ${OPENRNG_ROOT}/tools/create_api/create_api_from_header.py ${OPENRNG_ROOT}/include/openrng.h
+  COMMAND ${Python3_EXECUTABLE} ${OPENRNG_ROOT}/tools/create_api/create_api_from_header.py ${OPENRNG_ROOT}/include/openrng.h
   WORKING_DIRECTORY ${OPENRNG_ROOT}/tools/create_api
 )
 
 # check-copyright-headers relies on being in a git repository
 if (GIT_HASH)
   add_test(NAME check-copyright-headers
-      COMMAND python3 ${OPENRNG_ROOT}/tools/copyright_header/copyright_header.py
+      COMMAND ${Python3_EXECUTABLE} ${OPENRNG_ROOT}/tools/copyright_header/copyright_header.py
       WORKING_DIRECTORY ${OPENRNG_ROOT}
   )
 endif()

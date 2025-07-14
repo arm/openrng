@@ -33,13 +33,13 @@ def separate_arguments(arguments_str: str) -> list:
 
 def create_api_from_header(include_file: Path) -> list:
 
-    # We know the function declaration in OpenRNG returns an int and
-    # they are all of the form `int *`. Therefore this script does not
-    # support functions that return anything apart from int.
-    re_fct = '^int\s+([a-zA-Z0-9]+)\(([a-zA-Z\*\[\],\s]+)\);\n$'
+    # The interface functions are mostly of the form int * but there
+    # one exception due to the function getting the library version.
+    # Therefore the return argument of the regex is either void or int.
+    re_fct = '^(void|int)\s+([a-zA-Z0-9]+)\(([0-9_a-zA-Z\*\[\],\s]+)\);\n$'
     re_fct = re.compile(re_fct)
 
-    re_multiline_fct = '^int\s+([a-zA-Z0-9]+)\(([a-zA-Z0-9*_\[\],\s]+),\n$'
+    re_multiline_fct =  '^(void|int)\s+([a-zA-Z0-9]+)\(([a-zA-Z0-9*_\[\],\s]+),\n$'
     re_multiline_fct = re.compile(re_multiline_fct)
 
     otherlines_fct = '\s+([a-zA-Z0-9*_\[\],\s]+)(,|\);)\n'
@@ -57,22 +57,22 @@ def create_api_from_header(include_file: Path) -> list:
         more_than_one_line = re_multiline_fct.match(lines[l_c])
         if one_line_fct:
             details = {}
-            details['returnType' ] = 'int'
-            details['name'] = one_line_fct.group(1)
+            details['returnType' ] = one_line_fct.group(1)
+            details['name'] = one_line_fct.group(2)
 
             arguments = []
-            if one_line_fct.group(2) != "void":
-                arguments = separate_arguments(one_line_fct.group(2))
+            if one_line_fct.group(3) != "void":
+                arguments = separate_arguments(one_line_fct.group(3))
 
             details['parameters'] = arguments
             functions.append(details)
         if more_than_one_line:
             details = {}
-            details['returnType' ] = 'int'
-            details['name'] = more_than_one_line.group(1)
+            details['returnType' ] = more_than_one_line.group(1)
+            details['name'] = more_than_one_line.group(2)
 
-            assert more_than_one_line.group(2) != "void", f"{more_than_one_line.group(2)}"
-            arguments = separate_arguments(more_than_one_line.group(2))
+            assert more_than_one_line.group(3) != "void", f"{more_than_one_line.group(3)}"
+            arguments = separate_arguments(more_than_one_line.group(3))
 
             next_line = l_c + 1
             done_at_least_once = False
