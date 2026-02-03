@@ -71,6 +71,7 @@ This section describes the steps and the environment required to build and insta
 OpenRNG on Windows. Before building the library, the following tools have to be
 installed:
 
+ - Visual Studio Community
  - Python, version 3 required.
  - LLVM
  - CMake, version 3.15 required.

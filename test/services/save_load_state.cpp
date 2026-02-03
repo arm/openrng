@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -12,6 +12,7 @@
 #include <functional>
 #include <map>
 #include <openrng.h>
+#include <random>
 #include <refng_vsl.h>
 #include <string>
 #include <supports_autogen.h>
@@ -30,10 +31,8 @@ namespace {
 // Always seed rand with the process ID, this avoids collisions when tests are
 // run concurrently. VSL could have been used here, but we didn't provide
 // viRngUniform at the time of writing.
-static int srandInitialised = []() {
-  srand(getpid());
-  return 1;
-}();
+static std::mt19937 rng(getpid());
+static std::uniform_int_distribution<int> dist(0, 25);
 
 // Returns a random filename.
 //
@@ -49,7 +48,7 @@ static int srandInitialised = []() {
 std::string tmpFileName() {
   std::string result = "tmpFileForTesting-";
   for (int i = 0; i < 16; i++) {
-    auto u = rand() % 26;
+    auto u = dist(rng);
     result.push_back(u + 'A');
   }
   return result;

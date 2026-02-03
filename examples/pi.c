@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -23,10 +23,10 @@ int main() {
   const size_t nRandomNumbers = 2 * nIterations;
 
   //
-  // Declare and initialise the stream.
+  // Declare and initialize the stream.
   //
   // In this example, we've selected the PHILOX4X32X10 generator and seeded it
-  // with 42. We can then check that the method executed succesfully by checking
+  // with 42. We can then check that the method executed successfully by checking
   // the return value for VSL_ERROR_OK. Most methods return VSL_ERROR_OK on
   // success.
   //
@@ -45,7 +45,7 @@ int main() {
   //
   // First, we select the method used to generate the uniform distribution; in
   // this example, we use the standard method. We pass in a pointer to an
-  // initialised stream, the amount of random numbers we want, followed by a
+  // initialized stream, the amount of random numbers we want, followed by a
   // pointer to a buffer big enough to hold all the random numbers requested.
   // Finally, we pass in parameters specific to the distribution, in this case,
   // 0 and 1, meaning we want the range [0, 1).

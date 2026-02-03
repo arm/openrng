@@ -45,12 +45,14 @@ set(TEST_SOURCES
     distributions/binomial.cpp
     distributions/cauchy.cpp
     distributions/exponential.cpp
+    distributions/gamma.cpp
     distributions/gaussian.cpp
     distributions/gaussianmv.cpp
     distributions/geometric.cpp
     distributions/gumbel.cpp
     distributions/laplace.cpp
     distributions/lognormal.cpp
+    distributions/multinomial.cpp
     distributions/poisson.cpp
     distributions/rayleigh.cpp
     distributions/uniform.cpp
@@ -103,8 +105,9 @@ set(CREATE_SUPPORT_DEFINES_DIR ${OPENRNG_ROOT}/tools/create_support_defines)
 set(CREATE_SUPPORT_DEFINES_SCRIPT ${CREATE_SUPPORT_DEFINES_DIR}/create_support_defines.py)
 set(INPUT_JSON ${CREATE_SUPPORT_DEFINES_DIR}/generators.json)
 set(OUTPUT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/supports_autogen.h)
+
 execute_process(
-    COMMAND ${Python3_EXECUTABLE} ${CREATE_SUPPORT_DEFINES_SCRIPT}
+    COMMAND ${Python3_EXECUTABLE} ${CREATE_SUPPORT_DEFINES_SCRIPT} --incompatible_gens "${OPENRNG_INCOMPATIBLE_GENERATORS}"
     INPUT_FILE ${INPUT_JSON}
     OUTPUT_FILE ${OUTPUT_HEADER}
     RESULT_VARIABLE CREATE_SUPPORT_DEFINES_STATUS

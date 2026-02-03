@@ -18,6 +18,15 @@ All notable changes to this project will be documented in this file.
 
 ### Security
 
+## 26.01
+
+### Added
+
+#### Distributions:
+  - POISNORM method for Poisson distribution, both reference amd Neon-optimized implementations.
+  - Multinomial, reference implementation
+  - Gamma, reference implementation
+
 
 ## 25.07
 

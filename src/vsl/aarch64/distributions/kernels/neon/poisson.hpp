@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -12,6 +12,36 @@
 #include <math/log.hpp>
 
 namespace openrng::distribution::poisson {
+
+/**
+ * Approximate Poisson CDF as a Gaussian CDF for inverse transform.
+ */
+template <> struct poisnorm<CPUFeatures::neon> {
+  void run(Generator *generator, const int64_t N, int32_t *buffer,
+           const double lambda) {
+    static_assert(sizeof(*buffer) == sizeof(float));
+    auto *floatView = reinterpret_cast<float *>(buffer);
+
+    /*
+      We subtract 0.5 from lambda when calculating the mean to achieve
+      a result equivalent to continuity correction:
+        P(X <= k) ~ P(Y <= k + 0.5),
+      where X and Y are Poisson and Gaussian distributions, respectively.
+      This reduces error size by about 4 times compared to the naive
+      approximation:
+        P(X <= k) ~ P(Y <= k).
+    */
+    const float mean = lambda - 0.5;
+    const float sigma = std::sqrt(lambda);
+
+    gaussian::ICDF<CPUFeatures::neon>::fill(generator, N, floatView, mean,
+                                            sigma);
+
+    for (int i = 0; i < N; i++) {
+      buffer[i] = std::ceil(std::max(0.0F, floatView[i]));
+    }
+  }
+};
 
 /**
  * Implements the inverse transformation.
@@ -244,6 +274,24 @@ template <> struct PTPE<CPUFeatures::neon> {
 
     if (lambda >= 27) {
       ptpe<CPUFeatures::neon>().run(generator, N, buffer, lambda);
+    } else {
+      icdf<CPUFeatures::neon>().run(generator, N, buffer, lambda);
+    }
+    return VSL_ERROR_OK;
+  }
+};
+
+template <> struct Poisnorm<CPUFeatures::neon> {
+  static int fill(Generator *generator, const int64_t N, int32_t buffer[],
+                  const double lambda) {
+    assert(N > 0);
+    assert(generator != nullptr);
+    /*
+      Use a Gaussian approximation for lambda >= 10.
+      For cases where this is not satisfied, we use inverse transform.
+    */
+    if (lambda >= 10) {
+      poisnorm<CPUFeatures::neon>().run(generator, N, buffer, lambda);
     } else {
       icdf<CPUFeatures::neon>().run(generator, N, buffer, lambda);
     }

@@ -16,6 +16,6 @@ endif ()
 set_property(TARGET armpl PROPERTY INTERFACE_INCLUDE_DIRECTORIES
              ${ARMPL_ROOT}/include)
 
-# Configure test target
 add_library(vsl ALIAS armpl)
 set(OPENRNG_TEST_SPEC "~[no_openrng]" PARENT_SCOPE)
+set(OPENRNG_INCOMPATIBLE_GENERATORS "" PARENT_SCOPE)

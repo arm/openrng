@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -57,6 +57,7 @@ const std::unordered_map<std::string_view, int> defines = {
     {"CAUCHY_ICDF",               VSL_RNG_METHOD_CAUCHY_ICDF              },
     {"POISSON_PTPE",              VSL_RNG_METHOD_POISSON_PTPE             },
     {"POISSON_POISNORM",          VSL_RNG_METHOD_POISSON_POISNORM         },
+    {"MULTINOMIAL_MULTPOISSON",   VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON  },
 };
 
 const auto get_define(const std::string &string_define) {

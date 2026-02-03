@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -33,6 +33,7 @@ be
 import json
 from pathlib import Path
 import platform
+import argparse
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
@@ -61,7 +62,7 @@ def checkInput(data):
                 exit(1)
 
 
-def transformData(data):
+def transformData(data, incompatible_generators):
     """
     Transform input into a more useable mapping of the form
 
@@ -82,10 +83,16 @@ def transformData(data):
     statuses = data['statuses']
     generatorDataList = data['generators']
 
-    # Because the MT2203 does not satisfy bitwise reproducibility with any
-    # other VSL library and we rely on its separate statistical testing,
-    # unless on aarch64, MT2203 is not tested against refng.
-    include_mt2203 = platform.machine() == "aarch64"
+    def is_compatible_generator(method):
+        for exclude_gen in incompatible_generators:
+            # If the method starts with a string contained in the
+            # list of incompatible generators, we do not want to include
+            # it in the list for a given #define.
+            # We can't do an exact match because we want `MT2203`
+            # to also exclude generators like `MT2203 + 3`
+            if method.startswith(exclude_gen):
+                return False
+        return True
 
     return {
         feature: {
@@ -93,7 +100,7 @@ def transformData(data):
                 f'VSL_BRNG_{gen["method"]}'
                 for gen in generatorDataList
                 if gen["featureStatus"].get(feature) == status and
-                (include_mt2203 or not gen["method"].startswith("MT2203"))
+                is_compatible_generator(gen['method'])
             ]
             for status in statuses
         }
@@ -115,10 +122,26 @@ def outputDefines(featureSupport):
 
 
 def main():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--incompatible_gens",
+        type=str,
+        required=True,
+        help="Comma-separated list of generators to exclude"
+    )
+
+    args = parser.parse_args()
+
+    incompatible_generators = []
+    if args.incompatible_gens.strip():
+        incompatible_generators = args.incompatible_gens.split(";")
+
     data = json.loads(Path(f'{SCRIPTS_DIR}/generators.json').read_text())
 
     checkInput(data)
-    featureSupport = transformData(data)
+    featureSupport = transformData(data, incompatible_generators)
     outputDefines(featureSupport)
 
 

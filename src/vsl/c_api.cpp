@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -11,12 +11,14 @@
 #include <distributions/binomial.hpp>
 #include <distributions/cauchy.hpp>
 #include <distributions/exponential.hpp>
+#include <distributions/gamma.hpp>
 #include <distributions/gaussian.hpp>
 #include <distributions/gaussianmv.hpp>
 #include <distributions/geometric.hpp>
 #include <distributions/gumbel.hpp>
 #include <distributions/laplace.hpp>
 #include <distributions/lognormal.hpp>
+#include <distributions/multinomial.hpp>
 #include <distributions/poisson.hpp>
 #include <distributions/rayleigh.hpp>
 #include <distributions/uniform.hpp>
@@ -64,9 +66,16 @@ int vdRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
                                                   beta);
 }
 
-int vdRngGamma(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-               double[], const double, const double, const double) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int vdRngGamma(const openrng_int_t method, VSLStreamStatePtr stream,
+               const openrng_int_t n, double r[], const double alpha,
+               const double a, const double beta) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+
+  return openrng::distribution::gamma::fill(method, generator, n, r, alpha, a,
+                                            beta);
 }
 
 int vdRngGaussian(const openrng_int_t method, VSLStreamStatePtr stream,
@@ -192,10 +201,15 @@ int viRngHypergeometric(const openrng_int_t, VSLStreamStatePtr,
   return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
 }
 
-int viRngMultinomial(const openrng_int_t, VSLStreamStatePtr,
-                     const openrng_int_t, int[], const int, const int,
-                     const double[]) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int viRngMultinomial(const openrng_int_t method, VSLStreamStatePtr stream,
+                     const openrng_int_t n, int r[], const int ntrial,
+                     const int k, const double p[]) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return openrng::distribution::multinomial::fill(method, generator, n, r,
+                                                  ntrial, k, p);
 }
 
 int viRngNegBinomial(const openrng_int_t, VSLStreamStatePtr,
@@ -304,9 +318,16 @@ int vsRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
                                                   beta);
 }
 
-int vsRngGamma(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-               float[], const float, const float, const float) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int vsRngGamma(const openrng_int_t method, VSLStreamStatePtr stream,
+               const openrng_int_t n, float r[], const float alpha,
+               const float a, const float beta) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+
+  return openrng::distribution::gamma::fill(method, generator, n, r, alpha, a,
+                                            beta);
 }
 
 int vsRngGaussian(const openrng_int_t method, VSLStreamStatePtr stream,

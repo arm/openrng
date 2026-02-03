@@ -71,9 +71,9 @@ The following is a list of all PRNGs that \armplref implements.
 
 All generators produce random number in single or double precision.
 
-The following is a list of all PRNGs that exist in the API but have _not_ been
-implemented in \armplref. The API will returns \ref
-VSL_ERROR_FEATURE_NOT_IMPLEMENTED is any of these are selected.
+The following is a list of all PRNGs that exist in the API but have **not** been
+implemented in \armplref. The API will return \ref
+VSL_ERROR_FEATURE_NOT_IMPLEMENTED if any of these are selected.
 
 | Generator     | Description                                                        |
 | :------------ | :----------------------------------------------------------------- |
@@ -126,10 +126,11 @@ An instance of a BRNG is referred to as a stream. \armplref provides service
 functions for creating, initializing, copying, modifying and deleting streams,
 see \ref groupService. For example, you create a stream with the PHILOX4X32X10
 generator and a single seed as follows:
-
+```
     VSLStreamStatePtr stream;
     int seed = 42;
     int errcode = vslNewStream(&stream, VSL_BRNG_PHILOX4X32X10, seed);
+```
 
 See the \ref pi.c example for a complete example of creating and using a
 stream.
@@ -142,13 +143,13 @@ distributions, both discrete and continuous. To access random numbers from the
 stream, you must request numbers with a specific distribution, and \armplref
 advances your stream in the background. For example, you create a uniform
 distribution over the interval [0, 1) as follows:
-
+```
     float randomNumbers[nRandomNumbers];
     const float a = 0.0f;
     const float b = 1.0f;
     int errcode = vsRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, nRandomNumbers,
                                &randomNumbers, a, b);
-
+```
 This snippet fills the buffer, `randomNumbers`, with random numbers from a
 uniform distribution. On return, the amount your stream has advanced by depends
 on the distribution method used. See the \ref pi.c example for a complete
@@ -298,8 +299,8 @@ the \ref skipahead.c example for an example of generating disjoint sequences.
 # API access
 
 The API definitions are exposed via `openrng.h`. For convenience `armpl.h` also
-includes `openrng.h`. See \accesspl for instructions on how to build and link
-with \armplref.
+includes `openrng.h`. See \armplref documentation for instructions on how to build
+and link with \armplref.
 
 # Cryptographic purposes
 

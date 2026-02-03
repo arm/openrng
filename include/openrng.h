@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -17,8 +17,11 @@ extern "C" {
  * \example pi.c
  *
  * This example demonstrates usage of OpenRNG to fill a buffer with uniformly
- * distributed random numbers. It uses \ref vslNewStream, \ref vsRngUniform and
- * \ref vslDeleteStream. The behavior of the example is documented inline.
+ * distributed random numbers. It uses vslNewStream, vsRngUniform and
+ * vslDeleteStream. The behavior of the example is documented inline.
+ *
+ * For more information, see \ref vslNewStream, \ref vsRngUniform, and \ref
+ * vslDeleteStream.
  *
  * Example output:
  * \code
@@ -46,12 +49,15 @@ extern "C" {
  *
  * This example shows how to process the direction numbers supplied by S.
  * Joe and F. Y. Kuo (available at https://web.maths.unsw.edu.au/~fkuo/sobol/),
- * and organise the input array so that they can be used with \ref
- * VSL_BRNG_SOBOL. The code expects three arguments:
+ * and organize the input array so that they can be used with VSL_BRNG_SOBOL.
+ * The code expects three arguments:
  *
  *  - a path to the list of numbers
  *  - the number of dimensions
  *  - the number of elements to generate
+ *
+ * For more information, see [https://web.maths.unsw.edu.au/~fkuo/sobol/](
+ * https://web.maths.unsw.edu.au/~fkuo/sobol/) and \ref VSL_BRNG_SOBOL.
  *
  * Example output:
  * \code{.sh}
@@ -94,7 +100,8 @@ extern "C" {
  *
  * This section describes the different types of Basic random number generators
  * (BRNG) available in OpenRNG. A BRNG is any source of randomness that can
- * produce uniform distributions on `[0, 1)`. OpenRNG supports 3 types of BRNG
+ * produce uniform distributions on \f$[0, 1)\f$. OpenRNG supports 3 types of
+ * BRNG
  *
  *  - Pseudorandom number generators
  *  - Quasirandom number generators
@@ -126,8 +133,8 @@ extern "C" {
  *  - fast mode, which does not require any suffix
  *
  * Most distributions support an Inverse Cumulative Distribution Function
- * (ICDF) method. The ICDF method generates a number in the range [0, 1) and
- * maps it on to the cumulative distribution function for that distribution.
+ * (ICDF) method. The ICDF method generates a number in the range \f$[0, 1)\f$
+ * and maps it on to the cumulative distribution function for that distribution.
  * In some cases, the ICDF method cannot be computed efficiently. In these
  * cases accept-reject methods are applied, or a method more specific to the
  * distribution is used.
@@ -149,7 +156,7 @@ extern "C" {
 /**
  * \defgroup groupQRNG QRNG flags.
  *
- * The following section documents special flags for initialising QRNGs.
+ * The following section documents special flags for initializing QRNGs.
  */
 
 /**
@@ -293,66 +300,89 @@ extern "C" {
 #define VSL_RNG_ERROR_NONDETERM_NOT_SUPPORTED -0x100c
 
 /**
+ * \ingroup groupError
+ *
+ * Error raised when the category probabilities for the multinomial
+ * distribution do not sum to 1.0 within the tolerance of 1.0e-3.
+ */
+#define VSL_DISTR_MULTINOMIAL_BAD_PROBABILITY_ARRAY -0x100d
+
+/**
  * \ingroup groupQRNG
  *
- * Second element of `params` argument to \ref vslNewStreamEx indicates custom
+ * Second element of `params` argument to vslNewStreamEx indicates custom
  * direction numbers and/or primitive polynomials.
+ *
+ * For more information, see \ref vslNewStreamEx.
  */
 #define VSL_USER_QRNG_INITIAL_VALUES 0x1
 
 /**
  * \ingroup groupQRNG
  *
- * \ref VSL_USER_PRIMITIVE_POLYMS can be passed, possibly combined with other
- * flags using `|`, as third element of `params` array to \ref vslNewStreamEx to
- * indicate the user-defined primitive polynomials to use. If \ref
+ * VSL_USER_PRIMITIVE_POLYMS can be passed, possibly combined with other
+ * flags using `|`, as third element of `params` array to vslNewStreamEx to
+ * indicate the user-defined primitive polynomials to use. If
  * VSL_USER_INIT_DIRECTION_NUMBERS is not also set, the number of dimensions
  * must be less than 41.
+ *
+ * For more information, see \ref VSL_USER_PRIMITIVE_POLYMS, \ref
+ * vslNewStreamEx, and \ref VSL_USER_INIT_DIRECTION_NUMBERS.
  */
 #define VSL_USER_PRIMITIVE_POLYMS 0x1
 
 /**
  * \ingroup groupQRNG
  *
- * \ref VSL_USER_INIT_DIRECTION_NUMBERS can be passed, possibly combined with
- * other flags using `|`, as third element of `params` array to \ref
- * vslNewStreamEx to indicate the user-defined initial direction numbers to use.
- * If \ref VSL_USER_PRIMITIVE_POLYMS is not also set, the number of dimensions
- * must be less than 41. Use \ref VSL_USER_DIRECTION_NUMBERS to pass the full
- * set of 32 direction numbers per dimension instead of relying on polynomials
- * to generate them.
+ * VSL_USER_INIT_DIRECTION_NUMBERS can be passed, possibly combined with
+ * other flags using `|`, as third element of `params` array to vslNewStreamEx
+ * to indicate the user-defined initial direction numbers to use. If
+ * VSL_USER_PRIMITIVE_POLYMS is not also set, the number of dimensions must be
+ * less than 41. Use VSL_USER_DIRECTION_NUMBERS to pass the full set of 32
+ * direction numbers per dimension instead of relying on polynomials to generate
+ * them.
+ *
+ * For more information, see \ref VSL_USER_INIT_DIRECTION_NUMBERS, \ref
+ * vslNewStreamEx, \ref VSL_USER_PRIMITIVE_POLYMS, and \ref
+ * VSL_USER_DIRECTION_NUMBERS.
  */
 #define VSL_USER_INIT_DIRECTION_NUMBERS 0x2
 
 /**
  * \ingroup groupQRNG
  *
- * \ref VSL_USER_DIRECTION_NUMBERS can be passed, possibly combined with other
- * flags using `|`, as third element of `params` array to \ref vslNewStreamEx to
- * indicate the user-defined direction numbers to use. \ref
- * VSL_USER_PRIMITIVE_POLYMS is ignored if set - params array must contain the
- * full set of 32 direction numbers per dimension.
+ * VSL_USER_DIRECTION_NUMBERS can be passed, possibly combined with other
+ * flags using `|`, as third element of `params` array to vslNewStreamEx to
+ * indicate the user-defined direction numbers to use. VSL_USER_PRIMITIVE_POLYMS
+ * is ignored if set - params array must contain the full set of 32 direction
+ * numbers per dimension.
+ *
+ * For more information, see \ref VSL_USER_DIRECTION_NUMBERS, \ref
+ * vslNewStreamEx, and \ref VSL_USER_PRIMITIVE_POLYMS.
  */
 #define VSL_USER_DIRECTION_NUMBERS 0x4
 
 /**
  * \ingroup groupQRNG
  *
- * \ref VSL_QRNG_OVERRIDE_1ST_DIM_INIT can be passed, possibly combined with
- * other flags using `|`, as third element of `params` array to \ref
- * vslNewStreamEx to indicate that the default values for dimension 0 must be
+ * VSL_QRNG_OVERRIDE_1ST_DIM_INIT can be passed, possibly combined with
+ * other flags using `|`, as third element of `params` array to vslNewStreamEx
+ * to indicate that the default values for dimension 0 must be
  * overridden by the custom settings. Direction numbers for dimension 0 are
  * ordinarily set to the special-case from Bratley & Fox 1988. This option is
  * ignored unless both `VSL_USER_INIT_DIRECTION_NUMBERS` and
  * `VSL_USER_PRIMITIVE_POLYMS` are set, and is implicit for
  * `VSL_USER_DIRECTION_NUMBERS`.
+ *
+ * For more information, see \ref VSL_QRNG_OVERRIDE_1ST_DIM_INIT and \ref
+ * vslNewStreamEx.
  */
 #define VSL_QRNG_OVERRIDE_1ST_DIM_INIT 0x8
 
 /**
  * \ingroup groupBrng
  *
- * A multiplicative congruential pseudorandom number generator. It's a
+ * A multiplicative congruential pseudorandom number generator. It is a
  * specialized linear congruential generator without a displacement term.
  * MCG31m1 uses the following constants which originated from [1]:
  *
@@ -419,10 +449,10 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
- * \ref vslLeapfrogStream | Yes
- * \ref vslSkipAheadStream | Yes
- * \ref vslSkipAheadStreamEx | No
+ * -------| ----------
+ *  \ref vslLeapfrogStream | Yes
+ *  \ref vslSkipAheadStream | Yes
+ *  \ref vslSkipAheadStreamEx | No
  *
  * Example
  * =======
@@ -436,7 +466,7 @@ extern "C" {
  *
  * References
  * ==========
- * [1] L’Ecuyer, P. Tables of Linear Congruential Generators of Different Sizes
+ * [1] L'Ecuyer, P. Tables of Linear Congruential Generators of Different Sizes
  * and Good Lattice Structure. Mathematics of Computation, 68, 225, 249-260,
  * 1999.
  */
@@ -469,9 +499,9 @@ extern "C" {
  *
  *  - If `n >= 250`, use the first 250 elements of `params` to initialize the
  *    sequence, ignoring any subsequent elements.
- *  - Otherwise, if n > 0, initialize as for \ref vslNewStream, ignoring all but
- *    the first element of `params`.
- *  - If n == 0, `x[0]` is set to 1.
+ *  - Otherwise, if `n > 0`, initialize as for \ref vslNewStream, ignoring all
+ *    but the first element of `params`.
+ *  - If `n == 0`, `x[0]` is set to 1.
  *
  * Recurrence relation
  * ===================
@@ -504,7 +534,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * ------- | ----------
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | No
  * \ref vslSkipAheadStreamEx | No
@@ -597,7 +627,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | Yes
  * \ref vslSkipAheadStreamEx | Yes
@@ -615,7 +645,7 @@ extern "C" {
  * References
  * ==========
  *
- * [1] Fischer, G., Carmon, Z., Zauberman, G., and L’Ecuyer, P.
+ * [1] Fischer, G., Carmon, Z., Zauberman, G., and L'Ecuyer, P.
  * (1999). Good Parameters and Implementations for Combined Multiple Recursive
  * Random Number Generators. Operations Research. 47. 159-164.
  */
@@ -691,7 +721,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | Yes
  * \ref vslSkipAheadStream | Yes
  * \ref vslSkipAheadStreamEx | No
@@ -752,23 +782,23 @@ extern "C" {
  * | Index | Value |
  * |-------|-------|
  * | 0     | `n_dimensions` |
- * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 1     | `VSL_USER_QRNG_INITIAL_VALUES` |
  * | 2     | `VSL_USER_INIT_DIRECTION_NUMBERS \| VSL_USER_PRIMITIVE_POLYMS` |
  * | 3 to 2 + `n_dimensions` | Primitive polynomials |
  * | 2 + `n_dimensions` | Max degree of any polynomial (`max_deg`) |
  * | 3 + `n_dimensions` to 3 + `n_dimensions` + `max_deg` * (`n_dimensions` - 1) | Initial direction numbers, in dimension-major order and zero-padded to `max_deg` elements each |
  *
- * See \ref sobol_joe_kuo.cpp for an example of how to initialise a
+ * See \ref sobol_joe_kuo.cpp for an example of how to initialize a
  * stream using this layout.
  *
- * By default dimension 0 is still initialised using default
+ * By default dimension 0 is still initialized using default
  * parameters. set `params[2] |= VSL_QRNG_OVERRIDE_1ST_DIM_INIT` to
  * override dimension 0 - layout then has to be:
  *
  * | Index | Value |
  * |-------|-------|
  * | 0     | `n_dimensions` |
- * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 1     | `VSL_USER_QRNG_INITIAL_VALUES` |
  * | 2     | `VSL_USER_INIT_DIRECTION_NUMBERS \| VSL_USER_PRIMITIVE_POLYMS \| VSL_QRNG_OVERRIDE_1ST_DIM_INIT` |
  * | 3 to 3 + `n_dimensions` | Primitive polynomials |
  * | 3 + `n_dimensions` | Max degree of any polynomial (`max_deg`) |
@@ -787,7 +817,7 @@ extern "C" {
  * | Index | Value |
  * |-------|-------|
  * | 0     | `n_dimensions` |
- * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 1     | `VSL_USER_QRNG_INITIAL_VALUES` |
  * | 2     | `VSL_USER_PRIMITIVE_POLYMS` |
  * | 3 to 2 + `n_dimensions` | Primitive polynomials |
  *
@@ -807,7 +837,7 @@ extern "C" {
  * | Index | Value |
  * |-------|-------|
  * | 0     | `n_dimensions` |
- * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 1     | `VSL_USER_QRNG_INITIAL_VALUES` |
  * | 2     | `VSL_USER_INIT_DIRECTION_NUMBERS` |
  * | 3     | `max_deg` |
  * | 4 to 4 + `max_deg` * (`n_dimensions` - 1) | Initial direction numbers, in dimension-major order and zero-padded to `max_deg` elements each |
@@ -823,7 +853,7 @@ extern "C" {
  * | Index | Value |
  * |-------|-------|
  * | 0     | `n_dimensions` |
- * | 1     | `\ref VSL_USER_QRNG_INITIAL_VALUES` |
+ * | 1     | `VSL_USER_QRNG_INITIAL_VALUES` |
  * | 2     | `VSL_USER_DIRECTION_NUMBERS` |
  * | 3 to 3 + 32 * `n_dimensions` | Direction numbers, in dimension-major order |
  *
@@ -872,7 +902,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | Yes
  * \ref vslSkipAheadStream | Yes
  * \ref vslSkipAheadStreamEx | No
@@ -984,7 +1014,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | Yes
  * \ref vslSkipAheadStreamEx | No
@@ -1035,7 +1065,7 @@ extern "C" {
  * ===================
  *
  * In our implementation, `k=69`, `m=34`, and `j` is the index of the `j`-th
- * generator, with \f$j in \{0, 1, 2, \ldots, 6023\}\f$. Below, we omit the
+ * generator, with \f$j \in \{0, 1, 2, \ldots, 6023\}\f$. Below, we omit the
  * index of the generator `j` in the notation used to indicate the `n`-th
  * element of the sequence generated by a MT2203 generator. Each element will be
  * indicated by `x[n]`, instead of `x_j[n]`. Successive elements of the sequence
@@ -1094,7 +1124,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | No
  * \ref vslSkipAheadStreamEx | No
@@ -1181,8 +1211,10 @@ extern "C" {
  * \ingroup groupBrng
  *
  * A SIMD-oriented Mersenne Twister pseudorandom number generator, with a period
- * of \f$2^{19937}-1\f$. It's a modified version of \ref VSL_BRNG_MT19937 which
- * is designed to perform well on SIMD architectures.
+ * of \f$2^{19937}-1\f$. It is a modified version of VSL_BRNG_MT19937 which is
+ * designed to perform well on SIMD architectures.
+ *
+ * For more information, see \ref VSL_BRNG_MT19937.
  *
  * See [1] for the recurrence relation and computation of integer/floating-point
  * output.
@@ -1209,10 +1241,10 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
- * \ref vslLeapfrogStream | No
- * \ref vslSkipAheadStream | Yes (not implemented)
- * \ref vslSkipAheadStreamEx | No
+ *  --------|------------
+ *  \ref vslLeapfrogStream | No
+ *  \ref vslSkipAheadStream | Yes (not implemented)
+ *  \ref vslSkipAheadStreamEx | No
  *
  * Example
  * =======
@@ -1245,7 +1277,9 @@ extern "C" {
  *
  * All initialization parameters are ignored. If nondeterminism is not
  * supported by the architecture, initialization returns
- * \ref VSL_RNG_ERROR_NONDETERM_NOT_SUPPORTED.
+ * VSL_RNG_ERROR_NONDETERM_NOT_SUPPORTED.
+ *
+ * For more information, see \ref VSL_RNG_ERROR_NONDETERM_NOT_SUPPORTED.
  *
  * Integers
  * ========
@@ -1267,7 +1301,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | No
  * \ref vslSkipAheadStreamEx | No
@@ -1318,13 +1352,13 @@ extern "C" {
  * - | ---- | ------
  * 0 | 0    | 0
  * 1 | `p[0]` | 0
- * 2 | sum_{i=0}^1( p[i]*2^(32*i)) | 0
- * 3 | sum_{i=0}^2( p[i]*2^(32*i)) | 0
- * 4 | sum_{i=0}^3( p[i]*2^(32*i)) | 0
- * 5 | sum_{i=0}^3( p[i]*2^(32*i)) | `p[4]`
- * 6 | sum_{i=0}^3( p[i]*2^(32*i)) | sum_{i=4}^5( p[i]*2^(32*(i-4)))
- * 7 | sum_{i=0}^3( p[i]*2^(32*i)) | sum_{i=4}^6( p[i]*2^(32*(i-4)))
- * >=8 | sum_{i=0}^3( p[i]*2^(32*i)) | sum_{i=4}^7( p[i]*2^(32*(i-4)))
+ * 2 | `sum_{i=0}^1( p[i]*2^(32*i))` | 0
+ * 3 | `sum_{i=0}^2( p[i]*2^(32*i))` | 0
+ * 4 | `sum_{i=0}^3( p[i]*2^(32*i))` | 0
+ * 5 | `sum_{i=0}^3( p[i]*2^(32*i))` | `p[4]`
+ * 6 | `sum_{i=0}^3( p[i]*2^(32*i))` | `sum_{i=4}^5( p[i]*2^(32*(i-4)))`
+ * 7 | `sum_{i=0}^3( p[i]*2^(32*i))` | `sum_{i=4}^6( p[i]*2^(32*(i-4)))`
+ * >=8 | `sum_{i=0}^3( p[i]*2^(32*i))` | `sum_{i=4}^7(p[i]*2^(32*(i-4)))`
  *
  * Recurrence relation
  * ===================
@@ -1385,7 +1419,7 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
+ * --------|------------
  * \ref vslLeapfrogStream | No
  * \ref vslSkipAheadStream | Yes
  * \ref vslSkipAheadStreamEx | Yes
@@ -1414,7 +1448,7 @@ extern "C" {
  * \ingroup groupBrng
  *
  * A counter-based pseudorandom number generator, using a 128-bit counter `c`
- * and two 32-bit integer 'keys'; `k0` and `k1`.
+ * and two 32-bit integer 'keys': `k0` and `k1`.
  *
  * Initialization with vslNewStream
  * ================================
@@ -1444,7 +1478,7 @@ extern "C" {
  * 5 | `p[0]` | `p[1]` | `p[2]` | `p[3]` | `p[4]` | 0
  * >= 6 | `p[0]` | `p[1]` | `p[2]` | `p[3]` | `p[4]` | `p[5]`
  *
- * (Note `c` is assumed here to be little-endian, so `c[0]` is the
+ * Note `c` is assumed here to be little-endian, so `c[0]` is the
  * least significant word of `c`. For example, for `n == 4`:
  *
  * \code{.cpp}
@@ -1511,10 +1545,10 @@ extern "C" {
  * generating subsequences:
  *
  * Method | Supported?
- * ------------- | -------------
- * \ref vslLeapfrogStream | No
- * \ref vslSkipAheadStream | Yes
- * \ref vslSkipAheadStreamEx | Yes
+ * --------|------------
+ *  \ref vslLeapfrogStream | No
+ *  \ref vslSkipAheadStream | Yes
+ *  \ref vslSkipAheadStreamEx | Yes
  *
  * Example
  * =======
@@ -1539,11 +1573,12 @@ extern "C" {
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_UNIFORM_STD initially invokes the generation of a
+ * VSL_RNG_METHOD_UNIFORM_STD initially invokes the generation of a
  * sequence of uniformly distributed numbers within the interval \f$[0, 1)\f$
- * through the chosen generator, see \ref groupBrng.
+ * through the chosen generator, see the section about basic random number
+ * generator constants.
  *
- * In the case of single or double precision floating point uniform
+ * In the case of single or double-precision floating point uniform
  * distribution, this transforms the generated floating point numbers into
  * numbers within the interval \f$[a, b)\f$, with \f$a\f$ and \f$b\f$ both
  * real numbers. For some values of the lower and upper bounds of
@@ -1555,6 +1590,8 @@ extern "C" {
  * For the integer uniform distribution, this method invokes the floor
  * operation on the generated, possibly scaled and translated, random number
  * \f$u\in[a, b)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_UNIFORM_STD and \ref groupBrng.
  */
 #define VSL_RNG_METHOD_UNIFORM_STD 0
 
@@ -1565,7 +1602,7 @@ extern "C" {
  * a sequence of uniformly distributed numbers within the interval \f$[0, 1)\f$
  * through the chosen generator.
  *
- * In the case of single or double precision floating point uniform
+ * In the case of single or double-precision floating point uniform
  * distribution, this transforms the generated floating point numbers into
  * numbers within the interval \f$[a, b)\f$, with \f$a\f$ and \f$b\f$ both real
  * numbers. This method guarantees that every generated value is in
@@ -1581,9 +1618,11 @@ extern "C" {
  * As part of the generation of a uniformly distributed sequence of numbers
  * within the \f$[0, 1)\f$ interval, each BRNG produces a sequence of integer
  * numbers, which then get normalized to return a floating point number in the
- * interval \f$[0, 1)\f$. \ref VSL_RNG_METHOD_UNIFORMBITS_STD returns the
+ * interval \f$[0, 1)\f$. VSL_RNG_METHOD_UNIFORMBITS_STD returns the
  * interpretation of each integer value as 32-bit integer output using the
  * integer recurrence relation of each BRNG.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_UNIFORMBITS_STD.
  */
 #define VSL_RNG_METHOD_UNIFORMBITS_STD 0
 
@@ -1591,7 +1630,7 @@ extern "C" {
  * \ingroup groupDistMethods
  *
  * Given a BRNG for which this method is
- * supported, \ref VSL_RNG_METHOD_UNIFORMBITS32_STD transforms the underlying
+ * supported, VSL_RNG_METHOD_UNIFORMBITS32_STD transforms the underlying
  * BRNG integer recurrence so that all bits in 32-bit chunks are uniformly
  * distributed.
  *
@@ -1600,14 +1639,16 @@ extern "C" {
  *   - \ref VSL_BRNG_R250
  *   - \ref VSL_BRNG_MRG32K3A
  *   - \ref VSL_BRNG_SOBOL
+ *
+ * For more information, see \ref VSL_RNG_METHOD_UNIFORMBITS32_STD.
  */
 #define VSL_RNG_METHOD_UNIFORMBITS32_STD 0
 
 /**
  * \ingroup groupDistMethods
  *
- * Similar to the \ref VSL_RNG_METHOD_UNIFORMBITS32_STD,
- * \ref VSL_RNG_METHOD_UNIFORMBITS64_STD transforms the underlying BRNG integer
+ * Similar to the VSL_RNG_METHOD_UNIFORMBITS32_STD,
+ * VSL_RNG_METHOD_UNIFORMBITS64_STD transforms the underlying BRNG integer
  * recurrence so that all bits in 64-bit chunks are uniformly distributed.
  *
  * This method is not supported by the following BRNGs:
@@ -1615,26 +1656,31 @@ extern "C" {
  *   - \ref VSL_BRNG_R250
  *   - \ref VSL_BRNG_MRG32K3A
  *   - \ref VSL_BRNG_SOBOL
+ *
+ * For more information, see \ref VSL_RNG_METHOD_UNIFORMBITS32_STD and
+ * \ref VSL_RNG_METHOD_UNIFORMBITS64_STD.
  */
 #define VSL_RNG_METHOD_UNIFORMBITS64_STD 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER invokes the BoxMuller method to
+ * VSL_RNG_METHOD_GAUSSIAN_BOXMULLER invokes the BoxMuller method to
  * generate a normally distributed random number \f$x\f$ from a pair of
  * uniformly distributed numbers \f$u_1\f$ \f$u_2\f$, with \f$u_1\f$ and
  * \f$u_2\f$ in the interval \f$[0, 1)\f$, according to the formulas:
  * \f[
  *     x = \sqrt{(-2\ln{u_1})} \sin(2\pi u_2)
  * \f]
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER.
  */
 #define VSL_RNG_METHOD_GAUSSIAN_BOXMULLER 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2 invokes the BoxMuller2 method to
+ * VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2 invokes the BoxMuller2 method to
  * generate normally distributed random numbers \f$x_1\f$ and \f$x_2\f$ from a
  * pair of uniformly distributed numbers \f$u_1\f$ \f$u_2\f$, with \f$u_1\f$ and
  * \f$u_2\f$ in \f$[0, 1)\f$, according to the formulas: \f[ \begin{array}{ll}
@@ -1642,92 +1688,113 @@ extern "C" {
  *     x_2 = \sqrt{(-2\ln{u_1})} \cos(2\pi u_2) \\
  *  \end{array}
  * \f]
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2.
  */
 #define VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2 1
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GAUSSIAN_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_GAUSSIAN_ICDF invokes the ICDF method to calculate the
  * Gaussian distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAUSSIAN_ICDF.
  */
 #define VSL_RNG_METHOD_GAUSSIAN_ICDF 2
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER generates numbers from the
+ * VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER generates numbers from the
  * multivariate Gaussian distribution by transforming numbers from standard
- * normal distribution generated using \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER.
+ * normal distribution generated using VSL_RNG_METHOD_GAUSSIAN_BOXMULLER.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER and
+ * \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER.
  */
 #define VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER2 generates numbers from the
+ * VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER2 generates numbers from the
  * multivariate Gaussian distribution by transforming numbers from standard
- * normal distribution generated using \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2.
+ * normal distribution generated using VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER2 and
+ * \ref VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2.
  */
 #define VSL_RNG_METHOD_GAUSSIANMV_BOXMULLER2 1
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GAUSSIANMV_ICDF generates numbers from the multivariate
+ * VSL_RNG_METHOD_GAUSSIANMV_ICDF generates numbers from the multivariate
  * Gaussian distribution by transforming numbers from standard normal
- * distribution generated using \ref VSL_RNG_METHOD_GAUSSIAN_ICDF.
+ * distribution generated using VSL_RNG_METHOD_GAUSSIAN_ICDF.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAUSSIANMV_ICDF and
+ * \ref VSL_RNG_METHOD_GAUSSIAN_ICDF.
  */
 #define VSL_RNG_METHOD_GAUSSIANMV_ICDF 2
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_LAPLACE_ICDF invokes the ICDF to calculate the Laplace
+ * VSL_RNG_METHOD_LAPLACE_ICDF invokes the ICDF to calculate the Laplace
  * distribution from a set of uniformly distributed numbers in the interval
  * \f$[0, 1)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_LAPLACE_ICDF.
  */
 #define VSL_RNG_METHOD_LAPLACE_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_LOGNORMAL_ICDF invokes the generation of Gaussian
+ * VSL_RNG_METHOD_LOGNORMAL_ICDF invokes the generation of Gaussian
  * distributed numbers through the ICDF method, from a set of uniformly
  * distributed numbers in the interval \f$[0, 1)\f$, and then applies an
  * appropriate transformation to produce random numbers in a lognormal
  * distribution.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_LOGNORMAL_ICDF.
  */
 #define VSL_RNG_METHOD_LOGNORMAL_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_LOGNORMAL_BOXMULLER2 invokes the generation of Gaussian
+ * VSL_RNG_METHOD_LOGNORMAL_BOXMULLER2 invokes the generation of Gaussian
  * distributed numbers through the BoxMuller2 method, from a set of uniformly
  * distributed numbers in the interval \f$[0, 1)\f$, and then applies an
  * appropriate transformation to produce random numbers in a lognormal
  * distribution.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_LOGNORMAL_BOXMULLER2.
  */
 #define VSL_RNG_METHOD_LOGNORMAL_BOXMULLER2 2
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_EXPONENTIAL_ICDF invokes the ICDF method to calculate
+ * VSL_RNG_METHOD_EXPONENTIAL_ICDF invokes the ICDF method to calculate
  * the exponential distribution from a set of uniformly distributed numbers in
  * the interval \f$[0, 1)\f$. It might happen that for certain values of the
  * displacement quantity and scale factor for the exponential distribution, the
  * generated values are outside the domain. To fix this issue, use the
  * `ACCURATE` version of this method.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_EXPONENTIAL_ICDF.
  */
 #define VSL_RNG_METHOD_EXPONENTIAL_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_EXPONENTIAL_ICDF_ACCURATE invokes the ICDF method to
+ * VSL_RNG_METHOD_EXPONENTIAL_ICDF_ACCURATE invokes the ICDF method to
  * calculate the exponential distribution from a set of uniformly distributed
  * numbers in the interval \f$[0, 1)\f$. It might happen that for certain
  * values of the displacement quantity and scale factor for the exponential
@@ -1735,84 +1802,151 @@ extern "C" {
  * `VSL_RNG_METHOD_EXPONENTIAL_ICDF_ACCURATE` invokes the ICDF method to
  * generate values that follow an exponential distribution and enforces that all
  * returned values are within the domain.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_EXPONENTIAL_ICDF_ACCURATE.
  */
 #define VSL_RNG_METHOD_EXPONENTIAL_ICDF_ACCURATE 1
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_RAYLEIGH_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_RAYLEIGH_ICDF invokes the ICDF method to calculate the
  * Rayleigh distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$. It might happen that for certain values of the shape
  * parameter, displacement quantity, and scale factor for the Rayleigh
  * distribution, the generated values are outside the domain. To fix this
  * issue, use the `ACCURATE` version of this method.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_RAYLEIGH_ICDF.
  */
 #define VSL_RNG_METHOD_RAYLEIGH_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_RAYLEIGH_ICDF_ACCURATE invokes the ICDF method to
+ * VSL_RNG_METHOD_RAYLEIGH_ICDF_ACCURATE invokes the ICDF method to
  * calculate the Rayleigh distribution from a set of uniformly distributed
  * numbers in the interval \f$[0, 1)\f$. It might happen that, for certain
  * values of the distribution parameters, the generated values are outside the
  * domain. This method invokes the ICDF method to generate values that follow a
  * Rayleigh distribution and enforces that all returned values are within
  * the domain.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_RAYLEIGH_ICDF_ACCURATE.
  */
 #define VSL_RNG_METHOD_RAYLEIGH_ICDF_ACCURATE 1
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_WEIBULL_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_WEIBULL_ICDF invokes the ICDF method to calculate the
  * Weibull distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$. It might happen that for certain values of the shape
  * parameter, displacement quantity, and scale factor for the Weibull
  * distribution, the generated values are outside the domain. To fix this
  * issue, use the `ACCURATE` version of this method.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_WEIBULL_ICDF.
  */
 #define VSL_RNG_METHOD_WEIBULL_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_WEIBULL_ICDF_ACCURATE invokes the ICDF method to
+ * VSL_RNG_METHOD_WEIBULL_ICDF_ACCURATE invokes the ICDF method to
  * calculate the Weibull distribution from a set of uniformly distributed
  * numbers in the interval \f$[0, 1)\f$. It might happen that, for certain
  * values of the distribution parameters, the generated values are outside the
  * domain. This method invokes the ICDF method to generate values that follow a
  * Weibull distribution and enforces that all returned values are within the
  * domain.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_WEIBULL_ICDF_ACCURATE.
  */
 #define VSL_RNG_METHOD_WEIBULL_ICDF_ACCURATE 1
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GUMBEL_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_GUMBEL_ICDF invokes the ICDF method to calculate the
  * Gumbel distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GUMBEL_ICDF.
  */
 #define VSL_RNG_METHOD_GUMBEL_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_BERNOULLI_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_GAMMA_GNORM invokes the GNorm method to calculate
+ * the Gamma distribution from a set of normally distributed numbers with the
+ * help of a uniform number in the interval \f$[0, 1)\f$.
+ *
+ * Given the three parameters \f$a\f$, \f$\alpha>0\f$ and \f$\beta>0\f$
+ * representing the location, the shape and the scale, this algorithm uses:
+ *
+ *   - Acceptance/Rejection method using squeeze technique described in [1] for
+ *     \f$\alpha > 1\f$
+ *   - Exponential distribution with params \f$a\f$ and \f$\beta\f$ for
+ *     \f$\alpha = 1\f$
+ *   - Ahrens and Dieter method described [2] for \f$\alpha < 0.6\f$
+ *   - Rejection method from Weibull distribution described in [2][3] for
+ *     \f$\alpha >= 0.6\f$ and \f$\alpha < 1\f$
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAMMA_GNORM.
+ *
+ * References
+ * ==========
+ *
+ * [1] Marsaglia, G., and Tsang, W. W. A simple method for generating gamma
+ * variables, ACM Transactions on Mathematical Software, Vol. 26, No. 3, Pages
+ * 363-373, September 2000.
+ *
+ * [2] Devroye, L. Non-Unifrom Random Variate Generation, Springer-Verlag,
+ * New-York, 1986.
+ *
+ * [3] Vaduva, I. On computer generation of gamma random variables by rejection
+ * and composition procedures. Matematische Operationsforschung und Statistik,
+ * Series Statistics, vol. 8, 545-576, 1977.
+ */
+#define VSL_RNG_METHOD_GAMMA_GNORM 0
+
+/**
+ * \ingroup groupDistMethods
+ *
+ * VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE invokes the GNORM method to
+ * calculate the Gamma distribution with parameters alpha, a, beta. The
+ * different underlying random values required by the different generation
+ * algorithms, see VSL_RNG_METHOD_GAMMA_GNORM documentation, will be
+ * generated using the corresponding ACCURATE methods, see their documentations
+ * for reference.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE and
+ * \ref VSL_RNG_METHOD_GAMMA_GNORM
+ */
+#define VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE 1
+
+/**
+ * \ingroup groupDistMethods
+ *
+ * VSL_RNG_METHOD_BERNOULLI_ICDF invokes the ICDF method to calculate the
  * Bernoulli distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_BERNOULLI_ICDF.
  */
 #define VSL_RNG_METHOD_BERNOULLI_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_BINOMIAL_BTPE invokes the BTPE (Binomial, Triangle,
+ * VSL_RNG_METHOD_BINOMIAL_BTPE invokes the BTPE (Binomial, Triangle,
  * Parallelogram, Exponential) method, see [1], using accept/reject approach, to
  * transform a sequence of uniformly distributed numbers in the interval
  * \f$[0, 1)\f$ into a sequence following a binomial distribution.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_BINOMIAL_BTPE.
  *
  * References
  * ==========
@@ -1827,37 +1961,136 @@ extern "C" {
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_GEOMETRIC_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_GEOMETRIC_ICDF invokes the ICDF method to calculate the
  * geometric distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_GEOMETRIC_ICDF.
  */
 #define VSL_RNG_METHOD_GEOMETRIC_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_CAUCHY_ICDF invokes the ICDF method to calculate the
+ * VSL_RNG_METHOD_CAUCHY_ICDF invokes the ICDF method to calculate the
  * Cauchy distribution from a set of uniformly distributed numbers in the
  * interval \f$[0, 1)\f$.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_CAUCHY_ICDF.
  */
 #define VSL_RNG_METHOD_CAUCHY_ICDF 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_POISSON_PTPE invokes the Poisson PTPE algorithm to
- * calculate a Poisson distribution.
+ * VSL_RNG_METHOD_POISSON_PTPE invokes the Poisson PTPE algorithm to
+ * calculate a Poisson distribution from the Inversion method, see algorithm
+ * PINV in [1], or from the PTPE algorithm.
+ *
+ * Given a parameter \f$\lambda>0\f$, representing the average of the Poisson
+ * distribution, this algorithm uses:
+ *   - Inversion method for \f$\lambda < 27\f$
+ *   - PTPE algorithm otherwise
+ *
+ * PTPE algorithm is described in [1].
+ *
+ * For more information, see \ref VSL_RNG_METHOD_POISSON_PTPE.
+ *
+ * References
+ * ==========
+ *
+ * [1] B. Schmeiser and V. Kachitvichyanukul, "Poisson Random Variate
+ * Generation". Research Memorandum 81-4, School of Industrial Engineering,
+ * Purdue University, 1981.
  */
 #define VSL_RNG_METHOD_POISSON_PTPE 0
 
 /**
  * \ingroup groupDistMethods
  *
- * \ref VSL_RNG_METHOD_POISSON_POISNORM invokes the Poisson POISNORM algorithm
- * to calculate a Poisson distribution from normally distributed random
- * numbers.
+ * VSL_RNG_METHOD_POISSON_POISNORM invokes the Poisson POISNORM algorithm
+ * to calculate a Poisson distribution from the Inversion method, see algorithm
+ * PINV in [2], or from normally distributed values.
+ *
+ * Given a parameter \f$\lambda>0\f$, representing the average of the Poisson
+ * distribution, this algorithm uses:
+ *   - Inversion method for \f$\lambda < 10\f$
+ *   - Gaussian approximation through ICDF algorithm otherwise
+ *
+ * The threshold, \f$\lambda = 10\f$, differs from other VSL libraries.
+ * With \f$\lambda = 10\f$ as threshold, our statistical testing showed:
+ *  - much smaller errors on sample mean and sample variance for
+ *    \f$\lambda < 10\f$ and comparable errors between Gaussian
+ *    approximation and Inversion methods for \f$\lambda >= 10\f$.
+ *  - sample moments (i.e. mean and variance) more closely match the
+ *    theoretical moments.
+ *
+ * This threshold is the same as suggested in [1] to separate
+ * regions of low/moderate parameter \f$\lambda\f$ from regions where
+ * other approximations can be used.
+ *
+ * The chosen Gaussian approximation showed smaller errors on mean and variance
+ * compared to using the other Normal approximations available in the library.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_POISSON_POISNORM.
+ *
+ * References
+ * ==========
+ *
+ * [1] W. Hormann, "The Transformed Rejection Method For Generating Poisson
+ * Random Variables", Department of Applied Statistics and Data Processing,
+ * Wirtschaftsuniversität Wien, April 1992
+ *
+ * [2] B. Schmeiser and V. Kachitvichyanukul, "Poisson Random Variate
+ * Generation", Research Memorandum 81-4, School of Industrial Engineering,
+ * Purdue University, 1981.
  */
 #define VSL_RNG_METHOD_POISSON_POISNORM 1
+
+/**
+ * \ingroup groupDistMethods
+ *
+ * VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON invokes the algorithm described
+ * in [1] for the generation on multinomial variates through the generation of
+ * Poisson distributed variates using the VSL_RNG_METHOD_POISSON_POISNORM
+ * algorithm. This method generates random numbers of a multinomial distribution
+ * with number of trials equal to \f$M\f$, number of possible outcomes \f$K\f$
+ * and vector of probabilities for each possible outcomes \f$p\f$.
+ *
+ * As in [1], in the first stage of the algorithm, \f$K\f$ independent Poisson
+ * values \f$(X_1,\ldots, X_K)\f$ are generated using the
+ * VSL_RNG_METHOD_POISSON_POISNORM method. Afterwards, we calculate the sum of
+ * the generated Poisson values and we indicate that value with \f$M^*\f$. Then:
+ *
+ *  - if \f$M^* == M\f$, the first stage sample has the required distribution.
+ *  - if \f$M^* > M\f$, the sample is discarded and we generate another set of
+ * \f$K\f$ Poisson variates
+ *  - if \f$M^* < M\f$, \f$M^*-M\f$ observations are generated by a direct
+ * method (see [2]). For this case the authors in [1] use an alias method
+ * instead.
+ *
+ * To generate \f$M^*-M\f$ variates, we
+ *
+ *     - generate \f$M^*-M\f$ uniformly distributed independent random variates
+ * \f$U_i\f$ between 0 and 1.
+ *     - The Poisson variate \f$X_i\f$ is incremented by \f$1\f$ if \f$p^*_{i-1}
+ * < U_i \leq p^*_{i}\f$, where \f$p^*_i = \sum_{j=1}^{i}p_j\f$, with \f$p^*_0 =
+ * 0\f$, that is each \f$p^*_i\f$ for outcome \f$i\f$ is the sum of the
+ * probabilities for the previous outcomes.
+ *
+ * For more information, see \ref VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON.
+ *
+ * References
+ * ==========
+ *
+ * [1] M.B. Brown and J. Bromberg, "An efficient two-stage procedure for
+ * generating random variates from the multinomial distribution", The American
+ * Statistician, 38, 1984, 216-219.
+ *
+ * [2] C.S. Davis, "The computer generation of multinomial random variates",
+ * Computational Statistics and Data Analysis, 16, 1993, 205-217,
+ */
+#define VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON 0
 
 /**
  * \ingroup groupMatrixStorage
@@ -2158,8 +2391,6 @@ int vdRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
  * Generates double-precision random numbers distributed according to the Gamma
  * distribution.
  *
- * \warning Not implemented in \armplref.
- *
  * The parameters of this distribution are its shape parameter
  * \f$\alpha\f$, a displacement \f$a\f$, and, a scale factor
  * \f$\beta\f$.
@@ -2177,22 +2408,24 @@ int vdRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
  *
  * for \f$-\infty < x < \infty\f$, where \f$\alpha, \beta, a \in
  * \mathbb{R}\f$ and \f$\alpha>0\f$ and \f$\beta>0\f$.
- * \param[in] method Method used for transforming from a uniform
- * distribution to a Gamma distribution.
+ * \param[in] method Method used for transforming from a uniform distribution to
+ * a Gamma distribution. Valid values for `method` are:
+ *  - \ref VSL_RNG_METHOD_GAMMA_GNORM.
+ *  - \ref VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE.
  * \param[in] stream Pointer to an initialized stream.
  * \param[in] n Number of output elements.
  * \param[out] r Pre-allocated buffer, of at least size `n`. On
  * return, this contains `n` elements of a Gamma distribution.
- * \param[in] a Displacement quantity.
  * \param[in] alpha Shape parameter for the Gamma function.
  * Constraint: `alpha` > 0.
+ * \param[in] a Displacement quantity.
  * \param[in] beta Scale factor.
  * Constraint: `beta` > 0.
  * \return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED
  */
 int vdRngGamma(const openrng_int_t method, VSLStreamStatePtr stream,
-               const openrng_int_t n, double r[], const double a,
-               const double alpha, const double beta);
+               const openrng_int_t n, double r[], const double alpha,
+               const double a, const double beta);
 
 /**
  * \ingroup groupContinuous
@@ -2586,7 +2819,7 @@ int viRngBinomial(const openrng_int_t method, VSLStreamStatePtr stream,
  *   - \ref VSL_RNG_METHOD_GEOMETRIC_ICDF.
  * \param[in] stream Pointer to an initialized stream.
  * \param[in] n Number of output elements.
- * \param[in] r Pre-allocated buffer, of at least size `n`. On
+ * \param[out] r Pre-allocated buffer, of at least size `n`. On
  * return, this contains `n` elements of a geometric distribution.
  * \param[in] p Trial success probability.
  * Constraint: `p` in `(0, 1)`.
@@ -2597,6 +2830,8 @@ int viRngGeometric(const openrng_int_t method, VSLStreamStatePtr stream,
 
 /**
  * \ingroup groupDiscrete
+ *
+ * Generates integer variates according to the Hypergeometric distribution.
  *
  * \warning Not implemented in \armplref.
  *
@@ -2616,16 +2851,44 @@ int viRngHypergeometric(const openrng_int_t method, VSLStreamStatePtr stream,
 /**
  * \ingroup groupDiscrete
  *
- * \warning Not implemented in \armplref.
+ * Generates integer variates according to the Multinomial distribution.
  *
- * \param[in] method
- * \param[in] stream
- * \param[in] n
- * \param[in] r
- * \param[in] ntrial
- * \param[in] k
- * \param[in] p
- * \return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED
+ * The probability function can be defined as
+ *
+ * \f[
+ * P(X_1 = x_1, \ldots, X_k = x_k) =
+ * \frac{M!}{\prod_{i=1}^{K}x_i!}\prod_{i=1}^{K} p_{i}^{x_i}, \f]
+ *
+ * where \f$M\f$ is the number of independent trials, \f$K\f$ is the number of
+ * possible mutually exclusive outcomes, with corresponding probabilities
+ * \f$p_i\f$ for \f$i \in \{1, 2, \ldots, K\}\f$, where \f$p_i\in\mathbf{R}\f$,
+ * \f$p_i \in [0,1]\f$ for every \f$i \in \{1, 2, \ldots, K\}\f$. The vector of
+ * probabilities and the vector of counts \f$x_i\f$ for each category outcome
+ * are subject to
+ *
+ * \f[
+ * \sum_{i=1}^{K} p_i = 1.0
+ * \f]
+ *
+ * and
+ *
+ * \f[
+ * \sum_{i=1}^{K} x_i = M
+ * \f]
+ *
+ * \param[in] method Method used for generating values distributed according to
+ * a multinomial distribution. Valid value for `method` is:
+ *   - \ref VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON.
+ * \param[in] stream Pointer to an initialized stream.
+ * \param[in] n Number of multinomial observations to be generated.
+ * \param[out] r Pre-allocated buffer, of at least size `n*k`. On
+ * return, this contains `n` elements of a multinomial distribution.
+ * \param[in] ntrial Number of independent trials M.
+ * \param[in] k Number of mutually exclusive possible outcomes.
+ * \param[in] p Pre-allocated buffer, of at least size `K`. It
+ * contains the vector of probabilities for each of the K possible outcomes.
+ * Constraint: `p_i` in `[0, 1]` for each i.
+ * \return See \ref groupError.
  */
 int viRngMultinomial(const openrng_int_t method, VSLStreamStatePtr stream,
                      const openrng_int_t n, int r[], const int ntrial,
@@ -2633,6 +2896,8 @@ int viRngMultinomial(const openrng_int_t method, VSLStreamStatePtr stream,
 
 /**
  * \ingroup groupDiscrete
+ *
+ * Generates integer variates according to the Negative binomial distribution.
  *
  * \warning Not implemented in \armplref.
  *
@@ -2650,6 +2915,8 @@ int viRngNegBinomial(const openrng_int_t method, VSLStreamStatePtr stream,
 
 /**
  * \ingroup groupDiscrete
+ *
+ * Generates integer variates according to the Negative binomial distribution.
  *
  * \warning Not implemented in \armplref.
  *
@@ -2680,10 +2947,10 @@ int viRngNegbinomial(const openrng_int_t method, VSLStreamStatePtr stream,
  *
  * @param[in] method Method used for transforming from a uniform sequence.
  *   Valid values are `VSL_RNG_METHOD_POISSON_PTPE` and
- *   `VSL_RNG_METHOD_POISSON_POISNORM` (not implemented in \armplref).
+ *   `VSL_RNG_METHOD_POISSON_POISNORM`.
  * @param[in] stream Pointer to an initialized stream.
  * @param[in] n Number of output elements.
- * @param[in] r Buffer for storing output elements.
+ * @param[out] r Buffer for storing output elements.
  * @param[in] lambda Expected rate of occurrences \f$\lambda>0\f$.
  * @return See \ref groupError.
  */
@@ -2692,6 +2959,9 @@ int viRngPoisson(const openrng_int_t method, VSLStreamStatePtr stream,
 
 /**
  * \ingroup groupDiscrete
+ *
+ * Generates integer variates according to the Poisson distribution with
+ * varying \f$\lambda\f$.
  *
  * \warning Not implemented in \armplref.
  *
@@ -2757,7 +3027,7 @@ int viRngUniform(const openrng_int_t method, VSLStreamStatePtr stream,
  *   - \ref VSL_RNG_METHOD_UNIFORMBITS_STD.
  * \param[in] stream Pointer to an initialized stream.
  * \param[in] n Number of output elements.
- * \param[in, out] buffer On input, a pre-allocated buffer, of at least size
+ * \param[out] buffer Pre-allocated buffer, of at least size
  *   `n*WordSize`, where `WordSize` is dependent on the generator being used. A
  *   generator's `WordSize` can be queried using \ref VSLBRngProperties. On
  *   output, the buffer contains the bit representation of `n` elements from the
@@ -2780,7 +3050,7 @@ int viRngUniformBits(const openrng_int_t method, VSLStreamStatePtr stream,
  *   - \ref VSL_RNG_METHOD_UNIFORMBITS32_STD.
  * \param[in] stream Pointer to an initialized stream.
  * \param[in] n Number of output elements.
- * \param[in, out] buffer On input, a buffer of length greater or equal to `n`.
+ * \param[out] buffer On input, a buffer of length greater or equal to `n`.
  * On output, a buffer of 32-bit random integer numbers with uniformly
  * distributed bits.
  * \return See \ref groupError.
@@ -2960,8 +3230,6 @@ int vsRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
  * Generates single-precision random numbers distributed according to the Gamma
  * distribution.
  *
- * \warning Not implemented in \armplref.
- *
  * The parameters of this distribution are: its shape parameter \f$\alpha\f$, a
  * displacement \f$a\f$, and, a scale factor \f$\beta\f$.
  *
@@ -2977,22 +3245,24 @@ int vsRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
  *
  * for \f$-\infty < x < \infty\f$, where \f$\alpha, \beta, a \in
  * \mathbb{R}\f$ and \f$\alpha>0\f$ and \f$\beta>0\f$.
- * \param[in] method Method used for transforming from a uniform
- * distribution to a Gamma distribution.
+ * \param[in] method Method used for transforming from a uniform distribution to
+ * a Gamma distribution. Valid values for `method` are:
+ *   - \ref VSL_RNG_METHOD_GAMMA_GNORM.
+ *   - \ref VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE.
  * \param[in] stream Pointer to an initialized stream.
  * \param[in] n Number of output elements.
  * \param[out] r Pre-allocated buffer, of at least size `n`. On
  * return, this contains `n` elements of a Gamma distribution.
- * \param[in] a Displacement quantity.
  * \param[in] alpha Shape parameter for the Gamma function.
  * Constraint: `alpha` > 0.
+ * \param[in] a Displacement quantity.
  * \param[in] beta Scale factor.
  * Constraint: `beta` > 0.
  * \return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED
  */
 int vsRngGamma(const openrng_int_t method, VSLStreamStatePtr stream,
-               const openrng_int_t n, float r[], const float a,
-               const float alpha, const float beta);
+               const openrng_int_t n, float r[], const float alpha,
+               const float a, const float beta);
 
 /**
  * \ingroup groupContinuous
@@ -3303,9 +3573,11 @@ int vsRngWeibull(const openrng_int_t method, VSLStreamStatePtr stream,
  *
  * The function creates a stream using the same BRNG and state as `srcstream`.
  * On output, `newStream` points to a newly allocated and initialized stream.
- * See \ref vslCopyStreamState if you want to copy the state into a stream that
- * has previously been created with the same BRNG. Any resources can be later
- * released with \ref vslDeleteStream.
+ * vslCopyStreamState can copy the state into a stream that has previously
+ * been created with the same BRNG. Any resources can be later released with
+ * vslDeleteStream.
+ *
+ * For more information, see \ref vslCopyStreamState and \ref vslDeleteStream.
  *
  * \param[out] newstream On output, pointer to a newly created stream.
  * \param[in] srcstream An initialized stream.
@@ -3319,7 +3591,9 @@ int vslCopyStream(VSLStreamStatePtr *newstream,
  *
  * This function copies the state of `srcstream` into the state of `dststream`.
  * `dststream` should have been previously created with the same BRNG as
- * `srcstream`. See \ref vslCopyStream if you also want to create a new stream.
+ * `srcstream`. See vslCopyStream if you also want to create a new stream.
+ *
+ * For more information, see \ref vslCopyStream.
  *
  * \param[in, out] dststream On input, a pre-existing stream with the same BRNG
  * as `srcstream`. On output, a copy of `srcstream`.
@@ -3358,6 +3632,8 @@ int vslGetBrngProperties(const int brngId, VSLBRngProperties *const properties);
 /**
  * \ingroup groupService
  *
+ * Returns the number of registered basic random number generators (BRNGs).
+ *
  * \warning Not implemented in \armplref.
  *
  * \return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED
@@ -3367,8 +3643,11 @@ int vslGetNumRegBrngs(void);
 /**
  * \ingroup groupService
  *
- * This function computes the minimum buffer size needed for storing
- * the state of a stream in a memory buffer, see \ref vslSaveStreamM.
+ * Computes the minimum buffer size needed for storing
+ * the state of a stream in a memory buffer. The state of the stream can then
+ * be saved using vslSaveStreamM.
+ *
+ * For more information, see \ref vslSaveStreamM.
  *
  * \param[in] stream An initialized random stream.
  * \return On success, the required size in bytes. On failure, a negative value
@@ -3422,8 +3701,10 @@ int vslLeapfrogStream(VSLStreamStatePtr stream, const openrng_int_t k,
  * \ingroup groupService
  *
  * This function creates a `stream` with data from a file. The file should have
- * been created by the \ref vslSaveStreamF function from the same version of
- * OpenRNG. Any resources can be later released with \ref vslDeleteStream.
+ * been created by the vslSaveStreamF function from the same version of
+ * OpenRNG. Any resources can be later released with vslDeleteStream.
+ *
+ * For more information, see \ref vslSaveStreamF and \ref vslDeleteStream.
  *
  * \param[out] stream On output, a pointer to a random stream.
  * \param[in] fname File containing stream data.
@@ -3435,9 +3716,10 @@ int vslLoadStreamF(VSLStreamStatePtr *stream, const char *fname);
  * \ingroup groupService
  *
  * This function creates a `stream` with data from a memory buffer. The buffer
- * should have been filled using the \ref vslSaveStreamM function from the same
- * version of OpenRNG. Any resources can be later released with \ref
- * vslDeleteStream.
+ * should have been filled using the vslSaveStreamM function from the same
+ * version of OpenRNG. Any resources can be later released with vslDeleteStream.
+ *
+ * For more information, see \ref vslSaveStreamM and \ref vslDeleteStream.
  *
  * \param[out] stream On output, a pointer to a random stream.
  * \param[in] memptr Memory buffer containing stream data.
@@ -3449,9 +3731,12 @@ int vslLoadStreamM(VSLStreamStatePtr *stream, const char *memptr);
  * \ingroup groupService
  *
  * This function creates a stream of type `brng` with initial seed of `seed`.
- * For the list of BRNGs and the meaning of their seed, see \ref groupBrng. For
- * more complex initialization involving multiple seeds/parameters, see \ref
- * vslNewStreamEx. Any resources can be later released with \ref
+ * For the list of BRNGs and the meaning of their seed, see the basic random
+ * number generator constants. For more complex initialization involving
+ * multiple seeds/parameters, see vslNewStreamEx. Any resources can be later
+ * released with vslDeleteStream.
+ *
+ * For more information, see \ref groupBrng, \ref vslNewStreamEx, and \ref
  * vslDeleteStream.
  *
  * \param[out] stream On output, an initialized random stream.
@@ -3467,9 +3752,12 @@ int vslNewStream(VSLStreamStatePtr *stream, const openrng_int_t brng,
  *
  * This function creates a stream of type `brng` with an array of `n`
  * parameters, `params`. For the list of BRNGs and the meaning of `params`, see
- * \ref groupBrng. In general, `params` is used to store multiple seed values
- * when more data is required than is permitted by \ref vslNewStream. Any
- * resources can be later released with \ref vslDeleteStream.
+ * the basic random number generator constants. In general, `params` is used to
+ * store multiple seed values when more data is required than is permitted by
+ * vslNewStream. Any resources can be later released with vslDeleteStream.
+ *
+ * For more information, see \ref groupBrng, \ref vslNewStream, and \ref
+ * vslDeleteStream.
  *
  * \param[out] stream On output, an initialized random stream.
  * \param[in] brng See \ref groupBrng for the list of BRNGs supported.
@@ -3484,6 +3772,10 @@ int vslNewStreamEx(VSLStreamStatePtr *stream, const openrng_int_t brng,
 /**
  * \ingroup groupService
  *
+ * Registers a new BRNG using a VSLBRngProperties object.
+ *
+ * For more information, see \ref VSLBRngProperties.
+ *
  * \warning Not implemented in \armplref.
  *
  * \param[in] properties
@@ -3494,7 +3786,7 @@ int vslRegisterBrng(const VSLBRngProperties *properties);
 /**
  * \ingroup groupService
  *
- * This function saves `stream` and its corresponding state to the file path
+ * Saves `stream` and its corresponding state to the file path
  * specified by `fname`.
  *
  * \param[in] stream An initialized random stream.
@@ -3507,8 +3799,10 @@ int vslSaveStreamF(const VSLStreamStatePtr stream, const char *fname);
  * \ingroup groupService
  *
  * This function saves `stream` and its associated state to a memory buffer. The
- * size of the buffer must be at least the number of bytes reported by \ref
+ * size of the buffer must be at least the number of bytes reported by
  * vslGetStreamSize.
+ *
+ * For more information, see \ref vslGetStreamSize.
  *
  * \param[in] stream An initialized random stream.
  * \param[in, out] memptr On input, a buffer of at least the number of bytes
@@ -3527,9 +3821,13 @@ int vslSaveStreamM(const VSLStreamStatePtr stream, char *memptr);
  * provided the period of the generator has not been exceeded. By extension,
  * this can be used to guarantee non-overlapping sequences per thread, if each
  * thread skips ahead a unique amount. Skip ahead is only supported by a subset
- * of BRNGs, see the subsequence support tables in \ref groupBrng. If you need
- * to skip ahead by more than \f$2^{63}\f$ elements, see \ref
- * vslSkipAheadStreamEx. See \ref skipahead.c for an example use of this method.
+ * of BRNGs, see the subsequence support tables in the basic random number
+ * generator constants section. If you need to skip ahead by more than
+ * \f$2^{63}\f$ elements, see vslSkipAheadStreamEx. See skipahead.c for an
+ * example use of this method.
+ *
+ * For more information, see \ref groupBrng, \ref vslSkipAheadStreamEx, and \ref
+ * skipahead.c.
  *
  * \param[in] stream An initialized stream.
  * \param[in] nskip The number of elements to skip.
@@ -3541,9 +3839,11 @@ int vslSkipAheadStream(VSLStreamStatePtr stream, const long long int nskip);
  * \ingroup groupService
  *
  * This function skips a stream by the number of elements specified by the
- * `nskip` array. See \ref vslSkipAheadStream for a description of how skip
+ * `nskip` array. See vslSkipAheadStream for a description of how skip
  * ahead works. This function is useful for skipping ahead in a stream by more
  * than \f$2^{63}\f$ elements.
+ *
+ * For more information, see \ref vslSkipAheadStream.
  *
  * The nskip array is interpreted as follows:
  *
@@ -3562,6 +3862,8 @@ int vslSkipAheadStreamEx(VSLStreamStatePtr stream, const openrng_int_t n,
 /**
  * \ingroup groupService
  *
+ * Creates and initializes a new abstract stream for double-precision variates.
+ *
  * \warning Not implemented in \armplref.
  *
  * \param[out] stream
@@ -3579,6 +3881,8 @@ int vsldNewAbstractStream(VSLStreamStatePtr *stream, const openrng_int_t n,
 /**
  * \ingroup groupService
  *
+ * Creates and initializes a new abstract stream for integer variates.
+ *
  * \warning Not implemented in \armplref.
  *
  * \param[out] stream
@@ -3592,6 +3896,8 @@ int vsliNewAbstractStream(VSLStreamStatePtr *stream, const openrng_int_t n,
 
 /**
  * \ingroup groupService
+ *
+ * Creates and initializes a new abstract stream for single-precision variates.
  *
  * \warning Not implemented in \armplref.
  *
@@ -3612,9 +3918,9 @@ int vslsNewAbstractStream(VSLStreamStatePtr *stream, const openrng_int_t n,
  *
  * This function returns the current major, minor, and patch version of OpenRNG.
  * For instance, for OpenRNG 25.04.1, the major version is 25, the minor version
- * is 4 and, the patch version is 1. If any of three element is not set, for
- * instance for release 24.10, then the missing element, that is the patch
- * version would be set to -1 as default.
+ * is 4 and, the patch version is 1. If any of the three elements is not set,
+ * then it is set to -1 as default. For example, for release 24.10 the returned
+ * patch version would be -1.
  *
  * \param[out] major The 32-bit integer representing the current major version.
  * \param[out] minor The 32-bit integer representing the current minor version.

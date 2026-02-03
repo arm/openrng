@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -96,7 +96,8 @@ double calculateMeanSquaredError(const vector<double> &predicted,
 TEST_CASE("Poisson bad arguments", "[poisson]") {
   const int n = 100;
   const double lambda = 0.5;
-  const auto method = VSL_RNG_METHOD_POISSON_PTPE;
+  const auto method =
+      GENERATE(VSL_RNG_METHOD_POISSON_PTPE, VSL_RNG_METHOD_POISSON_POISNORM);
   int buffer[n];
 
   VSLStreamStatePtr stream;
@@ -137,15 +138,15 @@ TEST_CASE("Poisson bad arguments", "[poisson]") {
 
 TEST_CASE("Poisson outputs only in the correct range", "[poisson]") {
   const int n = 100'000;
-  const double lambda = GENERATE(0.001, 0.1, 1, 10, 27, 100, 500, 1000);
+  const double lambda =
+      GENERATE(0.001, 0.1, 1, 2, 3, 9.998, 10.002, 15, 27, 100, 500, 1000);
   const uint32_t seed = GENERATE(0, 1, 0x123);
-  CAPTURE(n, lambda, seed);
+  const auto method =
+      GENERATE(VSL_RNG_METHOD_POISSON_PTPE, VSL_RNG_METHOD_POISSON_POISNORM);
+  CAPTURE(n, lambda, seed, method);
 
   const auto brngId = VSL_BRNG_MCG59;
   CAPTURE(brngToString(brngId));
-
-  const auto method = VSL_RNG_METHOD_POISSON_PTPE;
-  CAPTURE(method);
 
   VSLStreamStatePtr stream;
   int errcode = vslNewStream(&stream, brngId, seed);
@@ -165,17 +166,17 @@ TEST_CASE("Poisson outputs only in the correct range", "[poisson]") {
 
 TEST_CASE("Poisson output has approximately expected mean", "[poisson]") {
   const int n = 100'000;
-  const double lambda = GENERATE(0.001, 0.1, 1, 10, 27, 100, 500, 1000);
+  const double lambda =
+      GENERATE(0.1, 1, 2, 3, 9.998, 10.002, 15, 27, 100, 500, 1000);
   const uint32_t seed = GENERATE(0, 1, 0x123);
+  const auto method =
+      GENERATE(VSL_RNG_METHOD_POISSON_PTPE, VSL_RNG_METHOD_POISSON_POISNORM);
   const double predictedMean = lambda;
-  const double allowedRelativeError = 0.10; // 10% error
-  CAPTURE(n, lambda, seed, allowedRelativeError);
+  const double allowedRelativeError = 0.05; // 5% error
+  CAPTURE(n, lambda, seed, method, allowedRelativeError);
 
   const auto brngId = VSL_BRNG_MCG59;
-  CAPTURE(brngToString(brngId));
-
-  const auto method = VSL_RNG_METHOD_POISSON_PTPE;
-  CAPTURE(method);
+  CAPTURE(method, brngToString(brngId));
 
   VSLStreamStatePtr stream;
   int errcode = vslNewStream(&stream, brngId, seed);
@@ -196,17 +197,19 @@ TEST_CASE("Poisson output has approximately expected mean", "[poisson]") {
 
 TEST_CASE("Poisson output has approximately expected variance", "[poisson]") {
   const int n = 100'000;
-  const double lambda = GENERATE(0.001, 0.1, 1, 10, 27, 100, 500, 1000);
+  const double lambda =
+      GENERATE(0.1, 1, 2, 3, 9.998, 10.002, 15, 27, 100, 500, 1000);
   const int seed = GENERATE(0, 0x123);
+  const auto method =
+      GENERATE(VSL_RNG_METHOD_POISSON_PTPE, VSL_RNG_METHOD_POISSON_POISNORM);
   const double predictedVariance = lambda;
-  const double allowedRelativeError = 0.11; // 11% error
-  CAPTURE(n, lambda, seed, allowedRelativeError);
 
-  const auto brngId = VSL_BRNG_MCG59;
-  CAPTURE(brngToString(brngId));
+  const double allowedRelativeError = 0.05; // 5% error
 
-  const auto method = VSL_RNG_METHOD_BINOMIAL_BTPE;
-  CAPTURE(method);
+  CAPTURE(n, lambda, seed, method, allowedRelativeError);
+
+  const auto brngId = VSL_BRNG_MT19937;
+  CAPTURE(method, brngToString(brngId));
 
   VSLStreamStatePtr stream;
   int errcode = vslNewStream(&stream, brngId, seed);
@@ -270,17 +273,114 @@ TEST_CASE("Poisson ICDF output comparable to refng", "[poisson]") {
   REQUIRE(errcode == VSL_ERROR_OK);
 }
 
+TEST_CASE("Poisson POISNORM output comparable to refng for inversion method",
+          "[poisson]") {
+  const int n = GENERATE(10'000, 100'000);
+  const double lambda = GENERATE(0.001, 0.01, 0.1, 1, 9.5);
+  const int seed = GENERATE(0, 0x123);
+  const double maxFailuresFraction = 0.05; // 5%
+  CAPTURE(n, lambda, seed, maxFailuresFraction);
+
+  const auto brngId = VSL_BRNG_MT19937;
+  CAPTURE(brngToString(brngId));
+
+  const auto method = VSL_RNG_METHOD_POISSON_POISNORM;
+  CAPTURE(method);
+
+  VSLStreamStatePtr vstream, rstream;
+
+  int errcode = vslNewStream(&vstream, brngId, seed);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  errcode = refNewStream(&rstream, brngId, seed);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  vector<int> vbuffer(n);
+  errcode = viRngPoisson(method, vstream, n, vbuffer.data(), lambda);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  vector<int> rbuffer(n);
+  errcode = riRngPoisson(method, rstream, n, rbuffer.data(), lambda);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  int failures = 0;
+  for (int i = 0; i < n; i++) {
+    failures += vbuffer[i] == rbuffer[i] ? 0 : 1;
+  }
+
+  const double failuresFraction = (double)failures / n;
+  CAPTURE(failures, failuresFraction);
+  REQUIRE(failuresFraction <= maxFailuresFraction);
+
+  errcode = vslDeleteStream(&vstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  errcode = refDeleteStream(&rstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+}
+
+TEST_CASE(
+    "Poisson POISNORM output comparable to refng for normal approximation",
+    "[poisson]") {
+  const int n = GENERATE(10'000, 100'000, 1'000'000);
+  const double lambda = GENERATE(11.5, 25.0, 37.5, 101.0);
+  const int seed = GENERATE(0, 0x123);
+
+  /*
+  For this test, the number of allowed failures is slightly
+  relaxed, due to the Normal approximation
+  */
+  const double maxFailuresFraction = 0.20; // 20%
+  CAPTURE(n, lambda, seed, maxFailuresFraction);
+
+  const auto brngId = VSL_BRNG_MT19937;
+  CAPTURE(brngToString(brngId));
+
+  const auto method = VSL_RNG_METHOD_POISSON_POISNORM;
+  CAPTURE(method);
+
+  VSLStreamStatePtr vstream, rstream;
+
+  int errcode = vslNewStream(&vstream, brngId, seed);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  errcode = refNewStream(&rstream, brngId, seed);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  vector<int> vbuffer(n);
+  errcode = viRngPoisson(method, vstream, n, vbuffer.data(), lambda);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  vector<int> rbuffer(n);
+  errcode = riRngPoisson(method, rstream, n, rbuffer.data(), lambda);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  int failures = 0;
+  for (int i = 0; i < n; i++) {
+    failures += vbuffer[i] == rbuffer[i] ? 0 : 1;
+  }
+
+  const double failuresFraction = (double)failures / n;
+  CAPTURE(failures, failuresFraction);
+  REQUIRE(failuresFraction <= maxFailuresFraction);
+
+  errcode = vslDeleteStream(&vstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  errcode = refDeleteStream(&rstream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+}
+
 TEST_CASE("Poisson passes mean squared error test", "[poisson]") {
   const int n = 10'000;
-  const double lambda = GENERATE(0.001, 0.1, 1, 10, 27, 100, 500, 1000);
+  const double lambda = GENERATE(0.001, 0.1, 1, 2, 3, 10, 27, 100, 500, 1000);
+  const auto method =
+      GENERATE(VSL_RNG_METHOD_POISSON_PTPE, VSL_RNG_METHOD_POISSON_POISNORM);
   const double allowedMeanSquaredError = 1e-3;
-  CAPTURE(n, lambda);
+  CAPTURE(n, lambda, method);
 
   const auto brngId = VSL_BRNG_MCG59;
   CAPTURE(brngToString(brngId));
-
-  const auto method = VSL_RNG_METHOD_POISSON_PTPE;
-  CAPTURE(method);
 
   VSLStreamStatePtr stream;
   int errcode = vslNewStream(&stream, brngId, 0);

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -40,7 +40,7 @@ int fill(const int64_t method, Generator *generator, const int64_t n,
     return choose<PTPE>(generator, n, r, lambda);
 
   case VSL_RNG_METHOD_POISSON_POISNORM:
-    return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+    return choose<Poisnorm>(generator, n, r, lambda);
 
   default:
     return VSL_ERROR_BADARGS;

@@ -49,11 +49,11 @@ The available distributions in the API, both continuous and discrete, are:
 | Geometric         | Implemented             |
 | Binomial          | Implemented             |
 | Poisson           | Implemented             |
+| Gamma             | Implemented             |
+| Multinomial       | Implemented             |
 | Beta              | Not Implemented         |
 | Chi-Square        | Not Implemented         |
-| Gamma             | Not Implemented         |
 | Hypergeometric    | Not Implemented         |
-| Multinomial       | Not Implemented         |
 | Negative binomial | Not Implemented         |
 | PoissonV          | Not Implemented         |
 

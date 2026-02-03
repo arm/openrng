@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -14,7 +14,7 @@ import re
 
 cc_header = """\
 /\*
- \* SPDX-FileCopyrightText: <text>Copyright ([0-9,-]+) Arm Limited and/or its
+ \* SPDX-FileCopyrightText: <text>Copyright ([0-9, \-]+) Arm Limited and/or its
  \* affiliates <open-source-office@arm.com></text>
  \*
  \* SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -24,7 +24,7 @@ cc_header = """\
 py_header= """\
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright ([0-9,-]+) Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright ([0-9, \-]+) Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception

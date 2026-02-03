@@ -138,6 +138,11 @@ if(OPENRNG_ENABLE_OPT_RECORDS)
   endif(HAS_ASSEMBLY_SAVE)
 endif(OPENRNG_ENABLE_OPT_RECORDS)
 
-# Configure test target
+# Configure test target and list all incompatible generators that are to be excluded
+# from bitwise compatible unit tests when testing OpenRNG against other VSL libraries,
+# such as ArmPL. The variable is a semicolon separated string, e.g. "MT2203;NIEDERR",
+# The code will exclude all generators of the form VSL_BRNG_{gen_name}, where gen_name
+# is an item of the list
 add_library(vsl ALIAS openrng)
 set(OPENRNG_TEST_SPEC "~[no_openrng]" PARENT_SCOPE)
+set(OPENRNG_INCOMPATIBLE_GENERATORS "" PARENT_SCOPE)

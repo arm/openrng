@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -24,6 +24,19 @@ template <> auto vRngCauchy<double> = vdRngCauchy;
 template <typename T> rngCauchyFunction<T> *rRngCauchy;
 template <> auto rRngCauchy<float> = rsRngCauchy;
 template <> auto rRngCauchy<double> = rdRngCauchy;
+
+template <typename T>
+using rngGammaFunction = int(const openrng_int_t method,
+                             VSLStreamStatePtr stream, const openrng_int_t n,
+                             T r[], const T alpha, const T a, const T beta);
+
+template <typename T> rngGammaFunction<T> *vRngGamma;
+template <> auto vRngGamma<float> = vsRngGamma;
+template <> auto vRngGamma<double> = vdRngGamma;
+
+template <typename T> rngGammaFunction<T> *rRngGamma;
+template <> auto rRngGamma<float> = rsRngGamma;
+template <> auto rRngGamma<double> = rdRngGamma;
 
 template <typename T>
 using rngExponentialFunction = int(const openrng_int_t method,

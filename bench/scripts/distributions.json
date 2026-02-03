@@ -37,7 +37,16 @@
   },
   "Poisson": {
     "type": "discrete",
-    "params": ["lambda"]
+    "params": ["lambda"],
+    "default_args": [1.0],
+    "supported_methods": ["ptpe", "poisnorm"]
+  },
+  "Multinomial": {
+    "type": "discrete",
+    "params": ["ntrial", "k", "p[k]"],
+    "params_type": ["const int", "const int", "dtype"],
+    "supported_methods": ["multpoisson"],
+    "elem_size": "k"
   },
   "NegBinomial": {
     "type": "discrete",

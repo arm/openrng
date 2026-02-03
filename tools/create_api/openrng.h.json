@@ -144,11 +144,11 @@
         "type": "double*"
       },
       {
-        "name": "a",
+        "name": "alpha",
         "type": "const double"
       },
       {
-        "name": "alpha",
+        "name": "a",
         "type": "const double"
       },
       {
@@ -920,11 +920,11 @@
         "type": "float*"
       },
       {
-        "name": "a",
+        "name": "alpha",
         "type": "const float"
       },
       {
-        "name": "alpha",
+        "name": "a",
         "type": "const float"
       },
       {
