@@ -43,7 +43,7 @@ distributed bitstreams. OpenRNG supports different types of BRNGs:
 See \ref groupBrng for a list of all BRNGs supported by the API. This release
 does not include all BRNGs supported by the API. All generators that have not
 been implemented have a banner in their documentation which says "Not
-implemented in \armplref".
+implemented in \armplrefmd".
 
 
 # Pseudorandom number generators
@@ -59,15 +59,15 @@ The following is a list of all PRNGs that \armplref implements.
 
 | Generator     | Description                                       |
 | :------------ | :------------------------------------------------ |
+| ARS5          | An ARS5 counter-based generator                   |
 | MCG31m1       | A 31-bit multiplicative congruential generator    |
 | MCG59         | A 59-bit multiplicative congruential generator    |
 | MRG32K3A      | Combined multiple recursive generator             |
 | MT19937       | Mersenne-Twiser generator                         |
-| SFMT19937     | SIMD oriented Fast Mersenne-Twister generator     |
 | MT2203        | Set of 6024 Mersenne-Twister generators           |
-| R250          | Generalized feedback shift register generator     |
 | PHILOX4x32x10 | A Philox counter-based generator                  |
-| ARS5          | An ARS5 counter-based generator                   |
+| R250          | Generalized feedback shift register generator     |
+| SFMT19937     | SIMD oriented Fast Mersenne-Twister generator     |
 
 All generators produce random number in single or double precision.
 
@@ -92,19 +92,10 @@ values in the returned buffer.
 The following is a list of all QRNGs that have been implemented in
 \armplref.
 
-| Generator     | Description                                              |
-| :------------ | :------------------------------------------------------- |
-| SOBOL         | Up to 40-dimensional low-discrepancy sequences generator |
-
-It returns random numbers in single or double precision. The other
-QRNG that exist in the API but has _not_ been implemented in \armplref
-is
-
-| Generator     | Description |
+| Generator     | Description                                               |
 | :------------ | :-------------------------------------------------------- |
 | NIEDERR       | Up to 318-dimensional low-discrepancy sequences generator |
-
-The API returns \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED if it is selected.
+| SOBOL         | Up to 40-dimensional low-discrepancy sequences generator  |
 
 # Nondeterministic random number generators
 
@@ -114,8 +105,8 @@ than PRNGs and the sequences are not reproducible.
 
 \armplref implements the only value for nondeterministic generators:
 
-| Generator     | Description |
-| :------------ | :-----------------------------------------------------|
+| Generator        | Description                                        |
+| :--------------- | :--------------------------------------------------|
 | Nondeterministic | Random generator based on hardware entropy sources |
 
 It returns random numbers in single or double precision.
@@ -168,30 +159,34 @@ The following is a list of all continuous distributions available in \armplref.
 
 | Distribution | Description                                |
 | :----------- | :----------------------------------------- |
-| Uniform      | Uniform distribution on the interval [a,b) |
+| Cauchy       | Cauchy distribution                        |
+| Chi-Square   | Chi-Square distribution                    |
+| Exponential  | Exponential distribution                   |
+| Gamma        | Gamma distribution                         |
 | Gaussian     | Single variable Gaussian distribution      |
 | GaussianMV   | Multivariate Gaussian distribution         |
-| Exponential  | Exponential distribution                   |
-| Laplace      | Laplace distribution                       |
-| Weibull      | Weibull distribution                       |
-| Cauchy       | Cauchy distribution                        |
-| Rayleigh     | Rayleigh distribution                      |
-| Lognormal    | Lognormal distribution                     |
 | Gumbel       | Gumbel distribution                        |
+| Laplace      | Laplace distribution                       |
+| Lognormal    | Lognormal distribution                     |
+| Rayleigh     | Rayleigh distribution                      |
+| Uniform      | Uniform distribution on the interval [a,b) |
+| Weibull      | Weibull distribution                       |
 
 The available continuous distributions are invoked through the following API
 functions:
 
-  * \ref vsRngUniform, \ref vdRngUniform
+  * \ref vsRngCauchy, \ref vdRngCauchy
+  * \ref vsRngChiSquare, \ref vdRngChiSquare
+  * \ref vsRngExponential, \ref vdRngExponential
+  * \ref vsRngGamma, \ref vdRngGamma
   * \ref vsRngGaussian, \ref vdRngGaussian
   * \ref vsRngGaussianMV, \ref vdRngGaussianMV
-  * \ref vsRngExponential, \ref vdRngExponential
-  * \ref vsRngLaplace, \ref vdRngLaplace
-  * \ref vsRngWeibull, \ref vdRngWeibull
-  * \ref vsRngCauchy, \ref vdRngCauchy
-  * \ref vsRngRayleigh, \ref vdRngRayleigh
-  * \ref vsRngLognormal, \ref vdRngLognormal
   * \ref vsRngGumbel, \ref vdRngGumbel
+  * \ref vsRngLaplace, \ref vdRngLaplace
+  * \ref vsRngLognormal, \ref vdRngLognormal
+  * \ref vsRngRayleigh, \ref vdRngRayleigh
+  * \ref vsRngUniform, \ref vdRngUniform
+  * \ref vsRngWeibull, \ref vdRngWeibull
 
 The following is a list of all continuous distributions that exist in
 the API but have _not_ been implemented in \armplref.
@@ -199,14 +194,10 @@ the API but have _not_ been implemented in \armplref.
 | Distribution      | Description                     |
 | :---------------- | :------------------------------ |
 | Beta              | Beta distribution               |
-| Chi-Square        | Chi-Square distribution         |
-| Gamma             | Gamma distribution              |
 
 They correspond to the following API functions:
 
   * \ref vsRngBeta, \ref vdRngBeta
-  * \ref vsRngChiSquare, \ref vdRngChiSquare
-  * \ref vsRngGamma, \ref vdRngGamma
 
 These methods return \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED.
 
@@ -224,7 +215,9 @@ in \armplref.
 | Bernoulli    | Bernoulli distribution                      |
 | Binomial     | Binomial distribution                       |
 | Geometric    | Geometric distribution                      |
+| Multinomial  | Multinomial distribution                    |
 | Poisson      | Poisson distribution                        |
+| PoissonV     | Poisson distribution with varying mean      |
 | Uniform (int)| Uniform distribution on the interval [a,b)  |
 | UniformBits32| Uniformly distributed bits in 32-bit chunks |
 | UniformBits64| Uniformly distributed bits in 64-bit chunks |
@@ -234,7 +227,9 @@ These distributions correspond to the following API functions:
   * \ref viRngBernoulli
   * \ref viRngBinomial
   * \ref viRngGeometric
+  * \ref viRngMultinomial
   * \ref viRngPoisson
+  * \ref viRngPoissonV
   * \ref viRngUniform
   * \ref viRngUniformBits
   * \ref viRngUniformBits32
@@ -246,16 +241,13 @@ have _not_ been implemented in \armplref.
 | Distribution      | Description                            |
 | :---------------- | :------------------------------------- |
 | Hypergeometric    | Hypergeometric distribution            |
-| Multinomial       | Multinomial distribution               |
 | Negative binomial | Negative binomial distribution         |
-| PoissonV          | Poisson distribution with varying mean |
 
 These distributions correspond to the following API functions:
 
   * \ref viRngHypergeometric
-  * \ref viRngMultinomial
   * \ref viRngNegbinomial
-  * \ref viRngPoissonV
+
 
 The API returns \ref VSL_ERROR_FEATURE_NOT_IMPLEMENTED if any of these functions
 is selected.

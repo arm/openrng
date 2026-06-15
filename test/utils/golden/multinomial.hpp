@@ -10,6 +10,12 @@
 #include <map>
 #include <vector>
 
+/*
+ * All the data in this file was created by using openrng's
+ * viRngMultinomial with the input parameters
+ * described in the MultinomialGolden::key struct.
+ */
+
 namespace MultinomialGolden {
 struct key {
   int brng;

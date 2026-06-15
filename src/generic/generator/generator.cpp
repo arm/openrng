@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -12,6 +12,7 @@
 #include <generator/mrg32k3a.hpp>
 #include <generator/mt19937.hpp>
 #include <generator/mt2203.hpp>
+#include <generator/niederr.hpp>
 #include <generator/nondeterministic.hpp>
 #include <generator/optimised_generators.hpp>
 #include <generator/philox4x3210.hpp>
@@ -45,7 +46,7 @@ Expected<Generator> Generator::create(const int64_t brng, Args &&...args) {
   case VSL_BRNG_SOBOL:
     return Generator::create<SobolGenerator>(brng, args...);
   case VSL_BRNG_NIEDERR:
-    return {nullptr, VSL_ERROR_FEATURE_NOT_IMPLEMENTED};
+    return Generator::create<NiederrGenerator>(brng, args...);
   case VSL_BRNG_IABSTRACT:
     return {nullptr, VSL_ERROR_FEATURE_NOT_IMPLEMENTED};
   case VSL_BRNG_DABSTRACT:

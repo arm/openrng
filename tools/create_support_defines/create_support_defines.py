@@ -32,7 +32,6 @@ be
 
 import json
 from pathlib import Path
-import platform
 import argparse
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -48,9 +47,9 @@ def checkInput(data):
     Check that there are no unlisted features or statuses being used to describe
     a generator.
     """
-    features = data['features']
-    statuses = data['statuses']
-    generatorDataList = data['generators']
+    features = data["features"]
+    statuses = data["statuses"]
+    generatorDataList = data["generators"]
 
     for genData in generatorDataList:
         for feature, status in genData["featureStatus"].items():
@@ -79,9 +78,9 @@ def transformData(data, incompatible_generators):
         }
 
     """
-    features = data['features']
-    statuses = data['statuses']
-    generatorDataList = data['generators']
+    features = data["features"]
+    statuses = data["statuses"]
+    generatorDataList = data["generators"]
 
     def is_compatible_generator(method):
         for exclude_gen in incompatible_generators:
@@ -99,8 +98,8 @@ def transformData(data, incompatible_generators):
             status: [
                 f'VSL_BRNG_{gen["method"]}'
                 for gen in generatorDataList
-                if gen["featureStatus"].get(feature) == status and
-                is_compatible_generator(gen['method'])
+                if gen["featureStatus"].get(feature) == status
+                and is_compatible_generator(gen["method"])
             ]
             for status in statuses
         }
@@ -117,7 +116,7 @@ def outputDefines(featureSupport):
             defines.append(
                 f"#define {feature.upper()}_{status.upper()} {', '.join(statuses[status])}"
             )
-    output = template.format(defines='\n'.join(defines))
+    output = template.format(defines="\n".join(defines))
     print(output)
 
 
@@ -129,7 +128,7 @@ def main():
         "--incompatible_gens",
         type=str,
         required=True,
-        help="Comma-separated list of generators to exclude"
+        help="Comma-separated list of generators to exclude",
     )
 
     args = parser.parse_args()
@@ -138,7 +137,7 @@ def main():
     if args.incompatible_gens.strip():
         incompatible_generators = args.incompatible_gens.split(";")
 
-    data = json.loads(Path(f'{SCRIPTS_DIR}/generators.json').read_text())
+    data = json.loads(Path(f"{SCRIPTS_DIR}/generators.json").read_text())
 
     checkInput(data)
     featureSupport = transformData(data, incompatible_generators)

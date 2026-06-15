@@ -26,6 +26,19 @@ template <> auto rRngCauchy<float> = rsRngCauchy;
 template <> auto rRngCauchy<double> = rdRngCauchy;
 
 template <typename T>
+using rngChiSquareFunction = int(const openrng_int_t method,
+                                 VSLStreamStatePtr stream,
+                                 const openrng_int_t n, T r[], const int v);
+
+template <typename T> rngChiSquareFunction<T> *vRngChiSquare;
+template <> auto vRngChiSquare<float> = vsRngChiSquare;
+template <> auto vRngChiSquare<double> = vdRngChiSquare;
+
+template <typename T> rngChiSquareFunction<T> *rRngChiSquare;
+template <> auto rRngChiSquare<float> = rsRngChiSquare;
+template <> auto rRngChiSquare<double> = rdRngChiSquare;
+
+template <typename T>
 using rngGammaFunction = int(const openrng_int_t method,
                              VSLStreamStatePtr stream, const openrng_int_t n,
                              T r[], const T alpha, const T a, const T beta);

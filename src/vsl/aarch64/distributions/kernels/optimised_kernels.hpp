@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -10,11 +10,13 @@
 #include <distributions/kernels/neon/box_muller.hpp>
 #include <distributions/kernels/neon/box_muller_2.hpp>
 #include <distributions/kernels/neon/exponential.hpp>
+#include <distributions/kernels/neon/gamma_gnorm.hpp>
 #include <distributions/kernels/neon/gaussian_icdf.hpp>
 #include <distributions/kernels/neon/gaussianmv.hpp>
 #include <distributions/kernels/neon/geometric.hpp>
 #include <distributions/kernels/neon/laplace.hpp>
 #include <distributions/kernels/neon/poisson.hpp>
+#include <distributions/kernels/neon/poissonv.hpp>
 #include <distributions/kernels/neon/rayleigh.hpp>
 #include <distributions/kernels/neon/weibull.hpp>
 

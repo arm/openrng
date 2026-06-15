@@ -41,6 +41,13 @@
     "default_args": [1.0],
     "supported_methods": ["ptpe", "poisnorm"]
   },
+  "PoissonV": {
+    "type": "discrete",
+    "params": ["lambda[nelems]"],
+    "params_type": ["dtype"],
+    "default_args": [1.0],
+    "supported_methods": ["poisnorm"]
+  },
   "Multinomial": {
     "type": "discrete",
     "params": ["ntrial", "k", "p[k]"],
@@ -106,7 +113,8 @@
   },
   "Gamma": {
     "type": "continuous",
-    "params": ["a", "alpha", "beta"]
+    "params": ["alpha", "a", "beta"],
+    "supported_methods": ["gnorm","gnorm_accurate"]
   },
   "Beta": {
     "type": "continuous",
@@ -114,6 +122,8 @@
   },
   "ChiSquare": {
     "type": "continuous",
-    "params": ["v"]
+    "params": ["v"],
+    "default_args": [1],
+    "supported_methods": ["chi2gamma"]
   }
 }

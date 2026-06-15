@@ -44,6 +44,7 @@ set(TEST_SOURCES
     distributions/bernoulli.cpp
     distributions/binomial.cpp
     distributions/cauchy.cpp
+    distributions/chisquare.cpp
     distributions/exponential.cpp
     distributions/gamma.cpp
     distributions/gaussian.cpp
@@ -54,6 +55,7 @@ set(TEST_SOURCES
     distributions/lognormal.cpp
     distributions/multinomial.cpp
     distributions/poisson.cpp
+    distributions/poissonv.cpp
     distributions/rayleigh.cpp
     distributions/uniform.cpp
     distributions/weibull.cpp
@@ -67,13 +69,14 @@ set(TEST_SOURCES
     services/mt2203.cpp
     services/new_stream_ex.cpp
     services/new_stream.cpp
+    services/niederr.cpp
     services/nondeterm.cpp
+    services/save_load_state.cpp
     services/skip_ahead_ex.cpp
     services/skip_ahead.cpp
     services/sobol.cpp
     services/uniform_bit32.cpp
     services/uniform_bit64.cpp
-    services/save_load_state.cpp
 )
 
 if(NOT OPENRNG_TEST_TARGET)
@@ -135,7 +138,7 @@ catch_discover_tests(
 )
 
 add_test(NAME check-json-interface
-  COMMAND ${Python3_EXECUTABLE} ${OPENRNG_ROOT}/tools/create_api/create_api_from_header.py ${OPENRNG_ROOT}/include/openrng.h
+  COMMAND ${Python3_EXECUTABLE} ${OPENRNG_ROOT}/tools/create_api/create_api_from_header.py ${OPENRNG_ROOT}/include/openrng_vsl.h ${OPENRNG_ROOT}/include/openrng_extended.h
   WORKING_DIRECTORY ${OPENRNG_ROOT}/tools/create_api
 )
 

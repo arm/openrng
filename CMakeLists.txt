@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 # Defining the library version
 set(OPENRNG_MAJOR "26")
-set(OPENRNG_MINOR "01")
+set(OPENRNG_MINOR "07")
 set(OPENRNG_PATCH "-1")
 
 set(OPENRNG_VERSION "${OPENRNG_MAJOR}.${OPENRNG_MINOR}")

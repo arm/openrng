@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -8,7 +8,6 @@
 
 
 import argparse
-import json
 import re
 import textwrap
 
@@ -30,7 +29,7 @@ def generate_cpp(bench):
         ptype = bench.params_type.get(p, "const auto")
         pval = f"std::stod(argv[{i + common_params}])"
 
-        if re.match("^\w+\[.+\]$", p):
+        if re.match(r"^\w+\[.+\]$", p):
             pname, psize = p[:-1].split("[")
             param_args.append(f"std::vector<{ptype}> {pname}_vec({psize}, {pval});")
             param_args.append(f"{ptype} *{pname} = {pname}_vec.data();")

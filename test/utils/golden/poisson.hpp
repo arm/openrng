@@ -10,6 +10,12 @@
 #include <map>
 #include <vector>
 
+/*
+ * All the data in this file was created by using openrng's
+ * viRngPoisson with the input parameters
+ * described in the PoissonGolden::key struct.
+ */
+
 namespace PoissonGolden {
 struct key {
   int brng;

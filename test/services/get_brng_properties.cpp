@@ -68,3 +68,13 @@ TEST_CASE("Stream not implemented", "[openrng_only]") {
   const int errcode = vslGetBrngProperties(brngId, &vslProperties);
   REQUIRE(errcode == VSL_ERROR_FEATURE_NOT_IMPLEMENTED);
 }
+
+TEST_CASE("Get properties from nullptr", "[openrng_only]") {
+  const auto brngId = GENERATE(NEWSTREAM_SUPPORTED, NEWSTREAM_NONDETERM);
+  CAPTURE(brngToString(brngId));
+
+  int errorcode = vslGetBrngProperties(brngId, nullptr);
+  REQUIRE(errorcode == VSL_ERROR_NULL_PTR);
+  errorcode = refGetBrngProperties(brngId, nullptr);
+  REQUIRE(errorcode == VSL_ERROR_NULL_PTR);
+}

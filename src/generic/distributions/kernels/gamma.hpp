@@ -7,11 +7,13 @@
 
 #pragma once
 
+#include <distributions/kernels/exponential.hpp>
 #include <distributions/kernels/gaussian_icdf.hpp>
 #include <generator/generator.hpp>
 #include <openrng.h>
 #include <utils/concepts.hpp>
 #include <utils/cpu_features.hpp>
+#include <utils/dynamic_array.hpp>
 
 #include <cassert>
 #include <cmath>
@@ -50,19 +52,32 @@ template <> struct GNorm<CPUFeatures::generic> {
 
     const T d = alpha - static_cast<T>(1) / 3;
     const T c = 1 / std::sqrt(9 * d);
+    DynamicArray<T> gaussians(n);
+    DynamicArray<T> uniforms(n);
+    int64_t gaussianIndex = n;
+    int64_t uniformIndex = n;
 
     for (int64_t i = 0; i < n;) {
-      T nv, v;
-      do {
-        gaussian::ICDF<CPUFeatures::generic>::fill(generator, 1, &nv, (T)0,
-                                                   (T)1);
-        v = static_cast<T>(1) + c * nv;
-      } while (v <= 0);
+      if (gaussianIndex == n) {
+        gaussian::ICDF<CPUFeatures::generic>::fill(
+            generator, n - i, gaussians.data() + i, (T)0, (T)1);
+        gaussianIndex = i;
+      }
+
+      const T nv = gaussians[gaussianIndex++];
+      T v = static_cast<T>(1) + c * nv;
+      if (v <= 0) {
+        continue;
+      }
+
       v = v * v * v;
 
-      // Now generate one uniform number
-      T u;
-      generator->fill(1, &u);
+      if (uniformIndex == n) {
+        generator->fill(n - i, uniforms.data() + i);
+        uniformIndex = i;
+      }
+
+      const T u = uniforms[uniformIndex++];
 
       if (u < 1 - static_cast<T>(0.0331) * std::pow(nv, 4)) {
         r[i] = d * v;

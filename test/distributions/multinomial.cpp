@@ -71,6 +71,12 @@ TEST_CASE("Multinomial bad arguments", "[multinomial]") {
     REQUIRE(errcode == VSL_ERROR_BADARGS);
   }
 
+  SECTION("Testing the seventh parameter (p) - nullptr") {
+    errcode = viRngMultinomial(VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON, stream,
+                               n, buffer, ntrial, k, nullptr);
+    REQUIRE(errcode == VSL_ERROR_BADARGS);
+  }
+
   SECTION("Testing the seventh parameter (p) - Wrong Sum") {
     errcode = viRngMultinomial(VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON, stream,
                                n, buffer, ntrial, k, p);
@@ -203,6 +209,34 @@ TEST_CASE("Multinomial values sum to N", "[multinomial]") {
     }
     CAPTURE(r);
     REQUIRE(total == ntrial);
+  }
+
+  errcode = vslDeleteStream(&stream);
+  REQUIRE(errcode == VSL_ERROR_OK);
+}
+
+TEST_CASE("Multinomial with 1 family returns ntrial for each realization",
+          "[multinomial]") {
+  const int n = GENERATE(5, 10, 100);
+  const int ntrial = GENERATE(2, 4, 10);
+  const int k = 1;
+  const auto method = VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON;
+  const auto brngId = VSL_BRNG_MT19937;
+
+  std::vector<double> p = {1.0};
+
+  VSLStreamStatePtr stream;
+  int errcode = vslNewStream(&stream, brngId, 0);
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  std::vector<int> buffer(n * k);
+  errcode =
+      viRngMultinomial(method, stream, n, buffer.data(), ntrial, k, p.data());
+  REQUIRE(errcode == VSL_ERROR_OK);
+
+  for (int r = 0; r < n; r++) {
+    CAPTURE(r);
+    REQUIRE(buffer[r] == ntrial);
   }
 
   errcode = vslDeleteStream(&stream);

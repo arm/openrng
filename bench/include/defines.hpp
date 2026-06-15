@@ -37,6 +37,8 @@ const std::unordered_map<std::string_view, int> defines = {
     {"UNIFORMBITS64_STD",         VSL_RNG_METHOD_UNIFORMBITS64_STD        },
     {"UNIFORM_STD",               VSL_RNG_METHOD_UNIFORM_STD              },
     {"UNIFORM_STD_ACCURATE",      VSL_RNG_METHOD_UNIFORM_STD_ACCURATE     },
+    {"GAMMA_GNORM",               VSL_RNG_METHOD_GAMMA_GNORM              },
+    {"GAMMA_GNORM_ACCURATE",      VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE     },
     {"GAUSSIAN_BOXMULLER",        VSL_RNG_METHOD_GAUSSIAN_BOXMULLER       },
     {"GAUSSIAN_BOXMULLER2",       VSL_RNG_METHOD_GAUSSIAN_BOXMULLER2      },
     {"GAUSSIAN_ICDF",             VSL_RNG_METHOD_GAUSSIAN_ICDF            },
@@ -57,7 +59,9 @@ const std::unordered_map<std::string_view, int> defines = {
     {"CAUCHY_ICDF",               VSL_RNG_METHOD_CAUCHY_ICDF              },
     {"POISSON_PTPE",              VSL_RNG_METHOD_POISSON_PTPE             },
     {"POISSON_POISNORM",          VSL_RNG_METHOD_POISSON_POISNORM         },
+    {"POISSONV_POISNORM",         VSL_RNG_METHOD_POISSONV_POISNORM        },
     {"MULTINOMIAL_MULTPOISSON",   VSL_RNG_METHOD_MULTINOMIAL_MULTPOISSON  },
+    {"CHISQUARE_CHI2GAMMA",       VSL_RNG_METHOD_CHISQUARE_CHI2GAMMA      },
 };
 
 const auto get_define(const std::string &string_define) {

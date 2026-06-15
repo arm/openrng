@@ -166,23 +166,22 @@ TEMPLATE_TEST_CASE("Gamma output has approximately expected variance",
 TEMPLATE_TEST_CASE("Gamma GNorm is approximately comparable to refng",
                    "[openrng_only]", float, double) {
   const int valuesToGenerate = 600;
-  const auto skipAhead = GENERATE(0, 1, 2, 3, 100, 1000);
   const auto a = GENERATE(as<TestType>{}, -1, -2, 0, 1, 2, 123.2);
   const auto alpha = GENERATE(as<TestType>{}, 0.0001, 0.001, 0.01, 0.1, 0.5,
-                              0.31756, 1, 2, 123.2);
+                              0.31756, 0.63, 0.78, 0.9, 1, 2, 3, 7.5);
   const auto beta = GENERATE(as<TestType>{}, 0.1, 0.5, 1, 2, 123.2);
   const auto bufferSize = GENERATE_COPY(1, 2, 3, 100, valuesToGenerate);
   const int seed = GENERATE(0, 1, 0x1234);
   const TestType absErrorBound = getGammaErrBound(beta);
 
-  CAPTURE(valuesToGenerate, skipAhead, a, beta, bufferSize, seed);
+  CAPTURE(valuesToGenerate, alpha, a, beta, bufferSize, seed);
 
   VSLStreamStatePtr vStream, rStream;
   int errcode;
-  errcode = vslNewStream(&vStream, VSL_BRNG_MCG31, seed);
+  errcode = vslNewStream(&vStream, VSL_BRNG_MT19937, seed);
   REQUIRE(errcode == VSL_ERROR_OK);
 
-  errcode = refNewStream(&rStream, VSL_BRNG_MCG31, seed);
+  errcode = refNewStream(&rStream, VSL_BRNG_MT19937, seed);
   REQUIRE(errcode == VSL_ERROR_OK);
 
   // We test generation of valuesToGenerate numbers, either by filling a buffer
@@ -218,7 +217,6 @@ TEMPLATE_TEST_CASE(
     "Gamma GNorm has same numbers for refng and vsl when alpha >= 0.6 && < 1",
     "[gnorm]", float, double) {
   const int valuesToGenerate = 600;
-  const auto skipAhead = GENERATE(0, 1, 2, 3, 100, 1000);
   const auto a = GENERATE(as<TestType>{}, -1, -2, 0, 1, 2, 123.2);
   const auto alpha = GENERATE(as<TestType>{}, 0.6012, 0.753, 0.99);
   const auto beta = GENERATE(as<TestType>{}, 0.1, 0.5, 1, 2, 123.2);
@@ -226,7 +224,7 @@ TEMPLATE_TEST_CASE(
   const int seed = GENERATE(0, 1, 0x1234);
   const TestType absErrorBound = getGammaErrBound(beta);
 
-  CAPTURE(valuesToGenerate, skipAhead, a, beta, bufferSize, seed);
+  CAPTURE(valuesToGenerate, alpha, a, beta, bufferSize, seed);
 
   VSLStreamStatePtr vStream, rStream;
   int errcode;
@@ -299,8 +297,7 @@ TEMPLATE_TEST_CASE("Gamma expected data", "[gamma][openrng_only]", float,
   }
 }
 
-TEMPLATE_TEST_CASE("Gamma bad arguments", "[gamma][openrng_only]", float,
-                   double) {
+TEMPLATE_TEST_CASE("Gamma bad arguments", "[gamma]", float, double) {
   auto n = 1000;
   TestType a = 5;
   TestType alpha = 2;

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024, 2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -149,12 +149,24 @@ TEST_CASE("Copy stream bad stream") {
   REQUIRE(errcode == VSL_RNG_ERROR_BAD_STREAM);
 }
 
-TEST_CASE("Copy stream nullptr") {
-  VSLStreamStatePtr oldStream, newStream;
-  const int nullBufferSize = 4096;
-  const int seed = 0;
+TEST_CASE("Copy stream from nullptr") {
+  VSLStreamStatePtr newStream = nullptr;
   int errcode;
 
   errcode = vslCopyStream(&newStream, nullptr);
+  REQUIRE(errcode == VSL_ERROR_NULL_PTR);
+
+  errcode = refCopyStream(&newStream, nullptr);
+  REQUIRE(errcode == VSL_ERROR_NULL_PTR);
+}
+
+TEST_CASE("Copy stream into nullptr", "[openrng_only]") {
+  VSLStreamStatePtr oldStream = nullptr;
+  int errcode;
+
+  errcode = vslCopyStream(nullptr, oldStream);
+  REQUIRE(errcode == VSL_ERROR_NULL_PTR);
+
+  errcode = refCopyStream(nullptr, oldStream);
   REQUIRE(errcode == VSL_ERROR_NULL_PTR);
 }
