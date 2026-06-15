@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -110,8 +110,9 @@ TEST_CASE("Skip ahead reference test") {
   const auto brngId = GENERATE(SKIPAHEAD_SUPPORTED);
   CAPTURE(seed, skipAhead, brngToString(brngId));
 
-  if (brngId == VSL_BRNG_SOBOL && skipAhead >= INT_MAX) {
-    SKIP("Skipping past the end of SOBOL is not supported.");
+  if ((brngId == VSL_BRNG_SOBOL || brngId == VSL_BRNG_NIEDERR) &&
+      skipAhead >= INT_MAX) {
+    SKIP("Skipping past the end of SOBOL or NIEDERR is not supported.");
   }
 
   errcode = vslGetBrngProperties(brngId, &brngProperties);

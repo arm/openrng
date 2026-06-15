@@ -77,6 +77,8 @@ target_compile_definitions(openrng PRIVATE GIT_HASH=0x${GIT_HASH}ull)
 include(GNUInstallDirs)
 set(OPENRNG_PUBLIC_HEADERS
   ../include/openrng.h
+  ../include/openrng_vsl.h
+  ../include/openrng_extended.h
 )
 set_target_properties(openrng PROPERTIES PUBLIC_HEADER "${OPENRNG_PUBLIC_HEADERS}")
 install(TARGETS openrng)

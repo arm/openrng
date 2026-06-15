@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -30,6 +30,7 @@ ExpectedDataMap<2> expectedData = {
     {VSL_BRNG_SFMT19937,     {0x5b889b2f, 0xda3af938}},
     {VSL_BRNG_PHILOX4X32X10, {0x6627e8d5, 0xe169c58d}},
     {VSL_BRNG_SOBOL,         {0x80000000, 0xc0000000}},
+    {VSL_BRNG_NIEDERR,       {0x80000000, 0xc0000000}},
     {VSL_BRNG_ARS5,          {0x7ecce06f, 0x7cdc3bca}},
     {VSL_BRNG_MT2203 + 1,    {0x6733ca2e, 0xc9f4ebb4}},
     {VSL_BRNG_MT2203 + 1000, {0xe258aa1d, 0x6c9b5386}},
@@ -83,10 +84,10 @@ TEST_CASE("New stream reference test") {
   VSLStreamStatePtr vstream, rstream;
   VSLBRngProperties brngProperties;
   const auto valuesToGenerate = 600;
-  /* 40 is not included arbitrarily - this ensures that every dimension is
-     tested using the default params for SOBOL.  */
-  const auto seed = GENERATE(as<openrng_int_t>{}, 0, 1, 2, 40, 0xffff, INT_MAX,
-                             UINT_MAX, UINT_MAX + 1, UINT64_MAX);
+  /* 40 and 318 are not included arbitrarily - this ensures that every dimension
+   * is tested using the default params for SOBOL and NIEDERR, respectively.  */
+  const auto seed = GENERATE(as<openrng_int_t>{}, 0, 1, 2, 40, 318, 0xffff,
+                             INT_MAX, UINT_MAX, UINT_MAX + 1, UINT64_MAX);
 
   const auto brngId = GENERATE(NEWSTREAM_SUPPORTED);
   const auto n = GENERATE_COPY(1, 2, 3, 4, 100, valuesToGenerate);
@@ -128,4 +129,11 @@ TEST_CASE("New stream reference test") {
 
   errcode = refDeleteStream(&rstream);
   REQUIRE(errcode == VSL_ERROR_OK);
+}
+
+TEST_CASE("New stream from nullptr stream state", "[openrng_only]") {
+  int errcode = vslNewStream(nullptr, 0xff'ff'ff'ff, 0);
+  REQUIRE(errcode == VSL_ERROR_NULL_PTR);
+  errcode = refNewStream(nullptr, 0xff'ff'ff'ff, 0);
+  REQUIRE(errcode == VSL_ERROR_NULL_PTR);
 }

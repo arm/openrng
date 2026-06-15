@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024, 2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -24,4 +24,10 @@ TEST_CASE("Delete stream errors") {
     const int errcode = vslDeleteStream(&stream);
     REQUIRE(errcode == VSL_RNG_ERROR_BAD_STREAM);
   }
+}
+
+TEST_CASE("vslDeleteStream with nullptr returns VSL_ERROR_NULL_PTR",
+          "[openrng_only]") {
+  const int errcode = vslDeleteStream(nullptr);
+  REQUIRE(errcode == VSL_ERROR_NULL_PTR);
 }

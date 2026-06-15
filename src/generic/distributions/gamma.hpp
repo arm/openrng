@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <distributions/kernels/exponential.hpp>
 #include <distributions/kernels/gamma.hpp>
 #include <generator/generator.hpp>
 #include <openrng.h>
@@ -44,12 +43,15 @@ int fill(const int64_t method, Generator *generator, const int64_t n, T r[],
   }
 
   switch (method) {
+  /*
+   * GNORM_ACCURATE and GNORM methods call the same methodologies as no
+   * parameters values have been identified that would return values
+   * outside the definitional domain for which the GNORM_ACCURATE method
+   * would guarantee values of a gamma distribution within the definitional
+   * domain.
+   */
   case VSL_RNG_METHOD_GAMMA_GNORM:
   case VSL_RNG_METHOD_GAMMA_GNORM_ACCURATE: {
-    /*
-     * The accurate mode calls the fast mode as no parameters values have been
-     * identified that would return values outside the definitioninal domain.
-     */
     if (alpha > 1) {
       return choose<GNorm>(generator, n, r, alpha, a, beta);
     } else if (alpha == 1) {

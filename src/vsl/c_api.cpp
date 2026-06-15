@@ -10,6 +10,7 @@
 #include <distributions/bernoulli.hpp>
 #include <distributions/binomial.hpp>
 #include <distributions/cauchy.hpp>
+#include <distributions/chisquare.hpp>
 #include <distributions/exponential.hpp>
 #include <distributions/gamma.hpp>
 #include <distributions/gaussian.hpp>
@@ -20,6 +21,7 @@
 #include <distributions/lognormal.hpp>
 #include <distributions/multinomial.hpp>
 #include <distributions/poisson.hpp>
+#include <distributions/poissonv.hpp>
 #include <distributions/rayleigh.hpp>
 #include <distributions/uniform.hpp>
 #include <distributions/weibull.hpp>
@@ -50,9 +52,13 @@ int vdRngCauchy(const openrng_int_t method, VSLStreamStatePtr stream,
   return openrng::distribution::cauchy::fill(method, generator, n, r, a, beta);
 }
 
-int vdRngChiSquare(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-                   double[], const int) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int vdRngChiSquare(const openrng_int_t method, VSLStreamStatePtr stream,
+                   const openrng_int_t n, double r[], const int v) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return openrng::distribution::chisquare::fill(method, generator, n, r, v);
 }
 
 int vdRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
@@ -231,9 +237,13 @@ int viRngPoisson(const openrng_int_t method, VSLStreamStatePtr stream,
   return openrng::distribution::poisson::fill(method, generator, n, r, lambda);
 }
 
-int viRngPoissonV(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-                  int[], const double[]) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int viRngPoissonV(const openrng_int_t method, VSLStreamStatePtr stream,
+                  const openrng_int_t n, int r[], const double lambda[]) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return openrng::distribution::poissonv::fill(method, generator, n, r, lambda);
 }
 
 int viRngUniform(const openrng_int_t method, VSLStreamStatePtr stream,
@@ -301,9 +311,13 @@ int vsRngCauchy(const openrng_int_t method, VSLStreamStatePtr stream,
   return openrng::distribution::cauchy::fill(method, generator, n, r, a, beta);
 }
 
-int vsRngChiSquare(const openrng_int_t, VSLStreamStatePtr, const openrng_int_t,
-                   float[], const int) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int vsRngChiSquare(const openrng_int_t method, VSLStreamStatePtr stream,
+                   const openrng_int_t n, float r[], const int v) {
+  auto [generator, error] = openrng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return openrng::distribution::chisquare::fill(method, generator, n, r, v);
 }
 
 int vsRngExponential(const openrng_int_t method, VSLStreamStatePtr stream,
@@ -422,6 +436,10 @@ int vsRngWeibull(const openrng_int_t method, VSLStreamStatePtr stream,
 int vslCopyStream(VSLStreamStatePtr *newstream,
                   const VSLStreamStatePtr srcstream) {
 
+  if (newstream == nullptr) {
+    return VSL_ERROR_NULL_PTR;
+  }
+
   auto [srcGenerator, errorExtract] = openrng::Generator::extract(srcstream);
   if (errorExtract) {
     return errorExtract;
@@ -476,6 +494,10 @@ int vslDeleteStream(VSLStreamStatePtr *ptr) {
 
 int vslGetBrngProperties(const int brngId,
                          VSLBRngProperties *const properties) {
+  if (properties == nullptr) {
+    return VSL_ERROR_NULL_PTR;
+  }
+
   if (brngId >= VSL_BRNG_MT2203 && brngId < VSL_BRNG_MT2203 + 6024) {
     properties->StreamStateSize = 0;
     properties->InitStream = nullptr;
@@ -599,8 +621,19 @@ int vslGetBrngProperties(const int brngId,
     properties->NBits = 32;
     break;
 
-  case VSL_BRNG_WH:
   case VSL_BRNG_NIEDERR:
+    properties->StreamStateSize = 0;
+    properties->InitStream = nullptr;
+    properties->sBRng = nullptr;
+    properties->dBRng = nullptr;
+    properties->iBRng = nullptr;
+    properties->NSeeds = 2604;
+    properties->IncludesZero = 0;
+    properties->WordSize = 4;
+    properties->NBits = 32;
+    break;
+
+  case VSL_BRNG_WH:
   case VSL_BRNG_IABSTRACT:
   case VSL_BRNG_DABSTRACT:
   case VSL_BRNG_SABSTRACT:
@@ -644,6 +677,7 @@ int vslLeapfrogStream(VSLStreamStatePtr stream, const openrng_int_t k,
 
 int vslLoadStreamF(VSLStreamStatePtr *stream, const char *fname) {
 
+  constexpr auto openrng_statewrapper_size = sizeof(openrng::StateWrapperBase);
   const auto fileHandle = fopen(fname, "rb");
   if (fileHandle == nullptr) {
     return VSL_RNG_ERROR_FILE_OPEN;
@@ -659,9 +693,15 @@ int vslLoadStreamF(VSLStreamStatePtr *stream, const char *fname) {
     return VSL_RNG_ERROR_FILE_READ;
   }
 
-  DynamicArray<char> buffer(size);
-  const auto bytesRead = fread(buffer.data(), 1, size, fileHandle);
-  if (bytesRead == 0) {
+  const size_t file_size = size;
+  if (file_size < openrng_statewrapper_size) {
+    fclose(fileHandle);
+    return VSL_RNG_ERROR_FILE_READ;
+  }
+
+  DynamicArray<char> buffer(file_size);
+  const auto bytesRead = fread(buffer.data(), 1, file_size, fileHandle);
+  if (bytesRead != file_size) {
     fclose(fileHandle);
     return VSL_RNG_ERROR_FILE_READ;
   }
@@ -707,6 +747,10 @@ int vslNewStream(VSLStreamStatePtr *stream, const openrng_int_t brng,
 
 int vslNewStreamEx(VSLStreamStatePtr *stream, const openrng_int_t brng,
                    const openrng_int_t n, const unsigned int params[]) {
+
+  if (stream == nullptr) {
+    return VSL_ERROR_NULL_PTR;
+  }
 
   auto [generator, error] =
       openrng::Generator::create(brng, int64_t{n}, params);

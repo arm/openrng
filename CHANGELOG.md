@@ -18,6 +18,36 @@ All notable changes to this project will be documented in this file.
 
 ### Security
 
+## 26.07
+
+### Added
+  - POISSONV method for Poisson distribution with variable lambda
+  - Chi-Square distribution, single and double precision reference implementations
+  - Niederr generator, reference implementation
+  - Gamma distribution, Neon-optimized implementation
+
+### Performance
+  - Gamma distribution, improved the single and double precision reference
+    implementations
+
+### Changed
+  - Split openrng.h into two files, one only containing the VSL interface and another
+    one containing all OpenRNG extensions to the VSL interface
+
+### Deprecated
+
+### Removed
+
+### Fixed
+  - Fixed `vslLoadStreamF` and `refLoadStreamF` file loading validation by checking
+    minimum file size and exact bytes read
+  - Fixed `viRngMultinomial` input validation for null probability vectors and the
+    `k < 2` case
+  - Fixed null pointer handling in stream functions including `vslCopyStream`,
+    `vslNewStreamEx`, and `vslGetBrngProperties`, with corresponding reference implementations
+
+### Security
+
 ## 26.01
 
 ### Added

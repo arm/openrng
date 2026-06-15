@@ -28,6 +28,10 @@ int fill(const int64_t method, Generator *generator, const int64_t n,
     return VSL_ERROR_BADARGS;
   }
 
+  if (p == nullptr) {
+    return VSL_ERROR_BADARGS;
+  }
+
   if (n == 0) {
     return VSL_ERROR_OK;
   }
@@ -67,7 +71,9 @@ int fill(const int64_t method, Generator *generator, const int64_t n,
     return VSL_DISTR_MULTINOMIAL_BAD_PROBABILITY_ARRAY;
   }
 
-  assert(cumulative_prob[k - 2] <= 1.0);
+  if (k >= 2) {
+    assert(cumulative_prob[k - 2] <= 1.0);
+  }
   cumulative_prob[k - 1] = 1.0;
 
   return choose<Multinomial>(generator, n, r, ntrial, k, p,

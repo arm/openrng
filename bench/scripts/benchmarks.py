@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its affiliates
+# SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its affiliates
 # <open-source-office@arm.com></text>
 #
 # SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -51,10 +51,34 @@ def _discover_benchmarks(dist_json: Path) -> Iterable[DistBenchmark]:
         defaults = dist.get("default_args", [])
         elem_size = dist.get("elem_size", "1")
         if dist["type"] == "continuous":
-            yield DistBenchmark(dist_name, "float", dist["params"], params_type, methods, defaults, elem_size)
-            yield DistBenchmark(dist_name, "double", dist["params"], params_type, methods, defaults, elem_size)
+            yield DistBenchmark(
+                dist_name,
+                "float",
+                dist["params"],
+                params_type,
+                methods,
+                defaults,
+                elem_size,
+            )
+            yield DistBenchmark(
+                dist_name,
+                "double",
+                dist["params"],
+                params_type,
+                methods,
+                defaults,
+                elem_size,
+            )
         else:
-            yield DistBenchmark(dist_name, None, dist["params"], params_type, methods, defaults, elem_size)
+            yield DistBenchmark(
+                dist_name,
+                None,
+                dist["params"],
+                params_type,
+                methods,
+                defaults,
+                elem_size,
+            )
 
 
 dist_benchmarks = list(_discover_benchmarks(DIST_JSON))

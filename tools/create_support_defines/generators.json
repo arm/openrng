@@ -97,7 +97,13 @@
     {
         "method": "NIEDERR",
         "featureStatus": {
-        "newStream": "notImplemented"
+        "newStream": "supported",
+        "newStreamEx": "notImplemented",
+        "leapfrog": "quasi",
+        "skipAhead": "supported",
+        "skipAheadEx": "unsupported",
+        "uniformBits32": "unsupported",
+        "uniformBits64": "unsupported"
       }
     },
     {

@@ -8,6 +8,7 @@
 #include <distributions/bernoulli.hpp>
 #include <distributions/binomial.hpp>
 #include <distributions/cauchy.hpp>
+#include <distributions/chisquare.hpp>
 #include <distributions/exponential.hpp>
 #include <distributions/gamma.hpp>
 #include <distributions/gaussian.hpp>
@@ -18,6 +19,7 @@
 #include <distributions/lognormal.hpp>
 #include <distributions/multinomial.hpp>
 #include <distributions/poisson.hpp>
+#include <distributions/poissonv.hpp>
 #include <distributions/rayleigh.hpp>
 #include <distributions/uniform.hpp>
 #include <distributions/weibull.hpp>
@@ -48,9 +50,13 @@ int rdRngCauchy(const refng_int_t method, VSLStreamStatePtr stream,
   return refng::distribution::cauchy::fill(method, generator, n, r, a, beta);
 }
 
-int rdRngChiSquare(const refng_int_t, VSLStreamStatePtr, const refng_int_t,
-                   double[], const int) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int rdRngChiSquare(const refng_int_t method, VSLStreamStatePtr stream,
+                   const refng_int_t n, double r[], const int v) {
+  auto [generator, error] = refng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return refng::distribution::chisquare::fill(method, generator, n, r, v);
 }
 
 int rdRngExponential(const refng_int_t method, VSLStreamStatePtr stream,
@@ -226,9 +232,13 @@ int riRngPoisson(const refng_int_t method, VSLStreamStatePtr stream,
   return refng::distribution::poisson::fill(method, generator, n, r, lambda);
 }
 
-int riRngPoissonV(const refng_int_t, VSLStreamStatePtr, const refng_int_t,
-                  int[], const double[]) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int riRngPoissonV(const refng_int_t method, VSLStreamStatePtr stream,
+                  const refng_int_t n, int r[], const double lambda[]) {
+  auto [generator, error] = refng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return refng::distribution::poissonv::fill(method, generator, n, r, lambda);
 }
 
 int riRngUniform(const refng_int_t method, VSLStreamStatePtr stream,
@@ -296,9 +306,13 @@ int rsRngCauchy(const refng_int_t method, VSLStreamStatePtr stream,
   return refng::distribution::cauchy::fill(method, generator, n, r, a, beta);
 }
 
-int rsRngChiSquare(const refng_int_t, VSLStreamStatePtr, const refng_int_t,
-                   float[], const int) {
-  return VSL_ERROR_FEATURE_NOT_IMPLEMENTED;
+int rsRngChiSquare(const refng_int_t method, VSLStreamStatePtr stream,
+                   const refng_int_t n, float r[], const int v) {
+  auto [generator, error] = refng::Generator::extract(stream);
+  if (error) {
+    return error;
+  }
+  return refng::distribution::chisquare::fill(method, generator, n, r, v);
 }
 
 int rsRngExponential(const refng_int_t method, VSLStreamStatePtr stream,
@@ -414,6 +428,10 @@ int rsRngWeibull(const refng_int_t method, VSLStreamStatePtr stream,
 int refCopyStream(VSLStreamStatePtr *newstream,
                   const VSLStreamStatePtr srcstream) {
 
+  if (newstream == nullptr) {
+    return VSL_ERROR_NULL_PTR;
+  }
+
   auto [srcGenerator, errorExtract] = refng::Generator::extract(srcstream);
   if (errorExtract) {
     return errorExtract;
@@ -467,6 +485,11 @@ int refDeleteStream(VSLStreamStatePtr *ptr) {
 
 int refGetBrngProperties(const int brngId,
                          VSLBRngProperties *const properties) {
+
+  if (properties == nullptr) {
+    return VSL_ERROR_NULL_PTR;
+  }
+
   if (brngId >= VSL_BRNG_MT2203 && brngId < VSL_BRNG_MT2203 + 6024) {
     properties->StreamStateSize = 0;
     properties->InitStream = nullptr;
@@ -590,8 +613,19 @@ int refGetBrngProperties(const int brngId,
     properties->NBits = 32;
     break;
 
-  case VSL_BRNG_WH:
   case VSL_BRNG_NIEDERR:
+    properties->StreamStateSize = 0;
+    properties->InitStream = nullptr;
+    properties->sBRng = nullptr;
+    properties->dBRng = nullptr;
+    properties->iBRng = nullptr;
+    properties->NSeeds = 2604;
+    properties->IncludesZero = 0;
+    properties->WordSize = 4;
+    properties->NBits = 32;
+    break;
+
+  case VSL_BRNG_WH:
   case VSL_BRNG_IABSTRACT:
   case VSL_BRNG_DABSTRACT:
   case VSL_BRNG_SABSTRACT:
@@ -635,6 +669,7 @@ int refLeapfrogStream(VSLStreamStatePtr stream, const refng_int_t k,
 
 int refLoadStreamF(VSLStreamStatePtr *stream, const char *fname) {
 
+  constexpr auto openrng_statewrapper_size = sizeof(openrng::StateWrapperBase);
   const auto fileHandle = fopen(fname, "rb");
   if (fileHandle == nullptr) {
     return VSL_RNG_ERROR_FILE_OPEN;
@@ -650,9 +685,15 @@ int refLoadStreamF(VSLStreamStatePtr *stream, const char *fname) {
     return VSL_RNG_ERROR_FILE_READ;
   }
 
-  DynamicArray<char> buffer(size);
-  const auto bytesRead = fread(buffer.data(), 1, size, fileHandle);
-  if (bytesRead == 0) {
+  const size_t file_size = size;
+  if (file_size < openrng_statewrapper_size) {
+    fclose(fileHandle);
+    return VSL_RNG_ERROR_FILE_READ;
+  }
+
+  DynamicArray<char> buffer(file_size);
+  const auto bytesRead = fread(buffer.data(), 1, file_size, fileHandle);
+  if (bytesRead != file_size) {
     fclose(fileHandle);
     return VSL_RNG_ERROR_FILE_READ;
   }
@@ -698,6 +739,10 @@ int refNewStream(VSLStreamStatePtr *stream, const refng_int_t brng,
 
 int refNewStreamEx(VSLStreamStatePtr *stream, const refng_int_t brng,
                    const refng_int_t n, const unsigned int params[]) {
+
+  if (stream == nullptr) {
+    return VSL_ERROR_NULL_PTR;
+  }
 
   auto [generator, error] = refng::Generator::create(brng, int64_t{n}, params);
   if (error)
