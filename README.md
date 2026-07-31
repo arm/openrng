@@ -24,7 +24,7 @@ implemented". We are intending to fill out this coverage in future releases, and
 we are very keen to hear from users who find missing functionality that they
 would like us to prioritize. If a user would like to request features or for any
 other form of assistance, e.g. report a bug, please [raise an
-issue](https://gitlab.arm.com/libraries/openrng/-/issues).
+issue](https://github.com/arm/openrng/issues).
 
 This document describes how to build and install OpenRNG, including
 the tests and examples provided within the source code. If a user wishes
@@ -43,7 +43,7 @@ documentation.
 Clone the OpenRNG repository:
 
 ```
-git clone https://git.gitlab.arm.com/libraries/openrng.git
+git clone https://github.com/arm/openrng.git
 ```
 
 Navigate to the folder with the cloned repository and, to install the library in

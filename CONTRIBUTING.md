@@ -3,16 +3,7 @@
 This document outlines how to contribute to the project. For an overview of the
 project and how to install it, see [README.md](README.md). All instructions
 given here will assume you are developing on Linux. On other platforms the steps
-would need to be similar. This document covers:
-
-[TOC]
-
-
-## Account creation
-
-To contribute to the project, you will need an account on https://gitlab.arm.com.
-Details on how to create an account can be found at
-https://gitlab.arm.com/documentation/contributions.
+would need to be similar.
 
 
 ## Building
@@ -95,11 +86,9 @@ different input arguments, based on the distribution, they all return
 only the measured average time as presented above.
 
 
-## Merge requests
+## Pull requests
 
-Merge requests can be submitted on [Arm's
-gitlab](https://gitlab.arm.com/libraries/openrng). See [Account
-creation](#account-creation) for instructions on setting up an account.
+Pull requests can be submitted on [github](https://github.com/arm/openrng).
 
 Every patch must compile successfully and pass all tests. All new functionality
 must come with sufficient test coverage. It is good practice to split the
@@ -229,7 +218,7 @@ introduces a runtime dependency on libc++ or libstdc++ is not permitted. Some
 features such as `std::array` are compile-time only, so may be used. This policy
 is enforced by the `test_linking_with_c_compiler` build target. If submitting a
 patch which uses an STL feature not previously used in the project, please make
-a note of this in the merge request.
+a note of this in the pull request.
 
 Note: Memory allocation on the heap is done with `malloc` and `free`. "Placement
 new" can be used to construct C++ objects on the heap. `DynamicArray` is a naive
