@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -15,31 +15,16 @@
 namespace openrng {
 
 struct MRG32k3aStateNeon {
-  /**
-   * The number of elements calculated sequentially in the generators hot loop.
-   */
-  constexpr static uint64_t nLanes = 2;
-
-  /**
-   * The number of previous elements we need to preserve between iterations.
-   *
-   * In the following example, f and e are calculated from d, c, b, and a. To
-   * calculate h and g, we need to preserve d and c.
-   *
-   *    [ d, c, b, a ] -> [ f, e, d, c ]
-   */
-  constexpr static uint64_t nExtraElements = 2;
-
   constexpr static uint64_t m_1 = (1LL << 32) - 209;
   constexpr static uint64_t m_2 = (1LL << 32) - 22853;
 
   // X state vector:
   // [ x_(n-1), x_(n-2), x_(n-3) ]
-  std::array<uint32_t, nLanes + nExtraElements> x = {};
+  std::array<uint32_t, 3> x = {};
 
   // Y state vector:
   // [ y_(n-1), y_(n-2), y_(n-3) ]
-  std::array<uint32_t, nLanes + nExtraElements> y = {};
+  std::array<uint32_t, 3> y = {};
 };
 
 template <>
@@ -75,7 +60,7 @@ class MRG32k3aGenerator<CPUFeatures::neon>
   };
 
   uint32_t advance(int64_t n, uint32_t buffer[]);
-  void backfill(const std::array<GaloisFieldElement<m_1>, 3> &x,
+  void setState(const std::array<GaloisFieldElement<m_1>, 3> &x,
                 const std::array<GaloisFieldElement<m_2>, 3> &y);
 
 public:
