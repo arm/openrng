@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: Copyright 2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
+# SPDX-License-Identifier: MIT OR (Apache-2.0 WITH LLVM-exception)
+
+name: Build and test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux / GCC / ${{ matrix.interface }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        interface: [lp64, ilp64]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.10"
+
+      - name: Show toolchain
+        run: |
+          gcc --version
+          g++ --version
+          cmake --version
+
+      - name: Configure
+        run: |
+          cmake -S . -B build-ci \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_BENCH=OFF \
+            -DOPENRNG_INTERFACE=${{ matrix.interface }}
+
+      - name: Build
+        run: cmake --build build-ci --parallel 4
+
+      - name: Test
+        run: ctest --test-dir build-ci --output-on-failure
