@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024, 2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -9,7 +9,6 @@
 
 #include <generator/neon/mrg32k3a_neon.hpp>
 #include <utils/dynamic_array.hpp>
-#include <utils/helpers.hpp>
 
 namespace openrng {
 
@@ -35,44 +34,19 @@ int MRG32k3aGenerator<CPUFeatures::neon>::initialise(
     y[0] = 1;
   }
 
-  backfill(x, y);
+  setState(x, y);
 
   return VSL_ERROR_OK;
 }
 
-/**
- * Restore previous state from the 3 most recent values of both x and y.
- *
- * Runs the generator in reverse to fill in some old state. Running the
- * generator forward, and precalculating future state would also be a valid
- * tactic, but it would add a bit of extra logic to advancing the state, so
- * initialising backwards ends up being neater.
- */
-void MRG32k3aGenerator<CPUFeatures::neon>::backfill(
+/** Store the three most recent values of both x and y. */
+void MRG32k3aGenerator<CPUFeatures::neon>::setState(
     const std::array<GaloisFieldElement<m_1>, 3> &x,
     const std::array<GaloisFieldElement<m_2>, 3> &y) {
 
-  const auto [a0, a1, a2] = coeffs_x;
-  const auto [b0, b1, b2] = coeffs_y;
-
   const auto toData = [](auto e) { return e.data; };
-  std::transform(x.rbegin(), x.rend(), state.x.rbegin(), toData);
-  std::transform(y.rbegin(), y.rend(), state.y.rbegin(), toData);
-
-  for (int id = state.x.size() - 4; id >= 0; id--) {
-    // Recursively solves the following for x0 & y0
-    //
-    //   a0 * x0 + a1 * x1 + a2 * x2 = x3 mod M
-    //
-    const GaloisFieldElement<m_1> x1 = state.x[id + 1];
-    const GaloisFieldElement<m_1> x2 = state.x[id + 2];
-    const GaloisFieldElement<m_1> x3 = state.x[id + 3];
-    const GaloisFieldElement<m_2> y1 = state.y[id + 1];
-    const GaloisFieldElement<m_2> y2 = state.y[id + 2];
-    const GaloisFieldElement<m_2> y3 = state.y[id + 3];
-    state.x[id] = ((x3 - x2 * a2 - x1 * a1) / a0).data;
-    state.y[id] = ((y3 - y2 * b2 - y1 * b1) / b0).data;
-  }
+  std::transform(x.begin(), x.end(), state.x.begin(), toData);
+  std::transform(y.begin(), y.end(), state.y.begin(), toData);
 }
 
 /**
@@ -105,70 +79,32 @@ static inline uint64_t fastMod2(uint64_t x) {
   return x - ((x * c) >> 94) * m;
 }
 
-/**
- * Finds x mod m_1 in the range [0, 2 * m_1).
- *
- * An intermediate step of Barret Reduction. It approximates (1 / m_1) as
- * floor(c / 2**64), so division can be done with a single umulh. It's faster
- * than fastMod1 because it avoids the need for a right shift, but the answer
- * may be shifted by m_1. It's useful if you have intermediate values that you
- * know won't overflow.
- */
-static inline uint64_t approxMod1(uint64_t x) {
-  constexpr uint32_t m = MRG32k3aStateNeon::m_1;
-  constexpr __uint128_t c = (__uint128_t(1) << 64) / m;
-  return x - ((x * c) >> 64) * m;
-}
-
-/**
- * Finds x mod m_2 in the range [0, 2 * m_2).
- *
- * See approxMod1.
- */
-static inline uint64_t approxMod2(uint64_t x) {
-  constexpr uint32_t m = MRG32k3aStateNeon::m_2;
-  constexpr __uint128_t c = (__uint128_t(1) << 64) / m;
-  return x - ((x * c) >> 64) * m;
-}
-
 uint32_t MRG32k3aGenerator<CPUFeatures::neon>::advance(int64_t n,
                                                        uint32_t buffer[]) {
 
   int i = 0;
-  uint64_t x0 = state.x[0];
-  uint64_t x1 = state.x[1];
-  uint64_t x2 = state.x[2];
-  uint64_t x3 = state.x[3];
-  uint64_t y0 = state.y[0];
-  uint64_t y1 = state.y[1];
-  uint64_t y2 = state.y[2];
-  uint64_t y3 = state.y[3];
+  uint64_t x1 = state.x[0];
+  uint64_t x2 = state.x[1];
+  uint64_t x3 = state.x[2];
+  uint64_t y1 = state.y[0];
+  uint64_t y2 = state.y[1];
+  uint64_t y3 = state.y[2];
+
+  // Treat -ax as a(m - x). This means you can avoid intermediate mods.
+  constexpr uint64_t a2 = 810728; // Negative
+  constexpr uint64_t a1 = 1403580;
+  constexpr uint64_t b2 = 1370589; // Negative
+  constexpr uint64_t b0 = 527612;
 
   for (; i < n - 1; i += 2) {
-    constexpr static auto transform_x = matrix_x * matrix_x;
-    constexpr static auto transform_y = matrix_y * matrix_y;
+    const auto x4 = fastMod1(a2 * (m_1 - x1) + a1 * x2);
+    const auto x5 = fastMod1(a2 * (m_1 - x2) + a1 * x3);
+    const auto y4 = fastMod2(b2 * (m_2 - y1) + b0 * y3);
+    const auto y5 = fastMod2(b2 * (m_2 - y2) + b0 * y4);
 
-    constexpr uint64_t a0 = transform_x(2, 0).data;
-    constexpr uint64_t a1 = transform_x(2, 1).data;
-    constexpr uint64_t a2 = transform_x(2, 2).data;
-    constexpr uint64_t b0 = transform_y(2, 0).data;
-    constexpr uint64_t b1 = transform_y(2, 1).data;
-    constexpr uint64_t b2 = transform_y(2, 2).data;
-
-    auto x4 = fastMod1(approxMod1(a0 * x0) + approxMod1(a1 * x1) +
-                       approxMod1(a2 * x2));
-    auto x5 = fastMod1(approxMod1(a0 * x1) + approxMod1(a1 * x2) +
-                       approxMod1(a2 * x3));
-    auto y4 = fastMod2(approxMod2(b0 * y0) + approxMod2(b1 * y1) +
-                       approxMod2(b2 * y2));
-    auto y5 = fastMod2(approxMod2(b0 * y1) + approxMod2(b1 * y2) +
-                       approxMod2(b2 * y3));
-
-    x0 = x2;
     x1 = x3;
     x2 = x4;
     x3 = x5;
-    y0 = y2;
     y1 = y3;
     y2 = y4;
     y3 = y5;
@@ -178,24 +114,12 @@ uint32_t MRG32k3aGenerator<CPUFeatures::neon>::advance(int64_t n,
   }
 
   for (; i < n; i++) {
-    // Advance state vectors once & compute an output element
-    constexpr uint64_t a0 = coeffs_x[0].data;
-    constexpr uint64_t a1 = coeffs_x[1].data;
-    constexpr uint64_t a2 = coeffs_x[2].data;
-    constexpr uint64_t b0 = coeffs_y[0].data;
-    constexpr uint64_t b1 = coeffs_y[1].data;
-    constexpr uint64_t b2 = coeffs_y[2].data;
+    const auto x4 = fastMod1(a2 * (m_1 - x1) + a1 * x2);
+    const auto y4 = fastMod2(b2 * (m_2 - y1) + b0 * y3);
 
-    const auto x4 =
-        fastMod1(fastMod1(a0 * x1) + fastMod1(a1 * x2) + fastMod1(a2 * x3));
-    const auto y4 =
-        fastMod2(fastMod2(b0 * y1) + fastMod2(b1 * y2) + fastMod2(b2 * y3));
-
-    x0 = x1;
     x1 = x2;
     x2 = x3;
     x3 = x4;
-    y0 = y1;
     y1 = y2;
     y2 = y3;
     y3 = y4;
@@ -203,14 +127,12 @@ uint32_t MRG32k3aGenerator<CPUFeatures::neon>::advance(int64_t n,
     buffer[i] = fastMod1(m_1 + x4 - y4);
   }
 
-  state.x[0] = x0;
-  state.x[1] = x1;
-  state.x[2] = x2;
-  state.x[3] = x3;
-  state.y[0] = y0;
-  state.y[1] = y1;
-  state.y[2] = y2;
-  state.y[3] = y3;
+  state.x[0] = x1;
+  state.x[1] = x2;
+  state.x[2] = x3;
+  state.y[0] = y1;
+  state.y[1] = y2;
+  state.y[2] = y3;
 
   return VSL_ERROR_OK;
 }
@@ -291,8 +213,8 @@ int MRG32k3aGenerator<CPUFeatures::neon>::skipAhead(uint64_t n,
   std::array<GaloisFieldElement<m_1>, 3> x;
   std::array<GaloisFieldElement<m_2>, 3> y;
 
-  std::copy(state.x.rbegin(), state.x.rbegin() + 3, x.rbegin());
-  std::copy(state.y.rbegin(), state.y.rbegin() + 3, y.rbegin());
+  std::copy(state.x.begin(), state.x.end(), x.begin());
+  std::copy(state.y.begin(), state.y.end(), y.begin());
 
   for (uint64_t i = 0; i < n; i++) {
     if (nskip[i] == 0)
@@ -317,7 +239,7 @@ int MRG32k3aGenerator<CPUFeatures::neon>::skipAhead(uint64_t n,
     y = skip_matrix_y * y;
   }
 
-  backfill(x, y);
+  setState(x, y);
 
   return VSL_ERROR_OK;
 }
