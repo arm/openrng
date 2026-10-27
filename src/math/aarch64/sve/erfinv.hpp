@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include <math/sve/erfinv_data.hpp>
-#include <math/sve/log.hpp>
-#include <math/sve/util.hpp>
+#include <math/aarch64/log.hpp>
+#include <math/aarch64/sve/erfinv_data.hpp>
+#include <math/aarch64/sve/util.hpp>
 
 #include <arm_sve.h>
 

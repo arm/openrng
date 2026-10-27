@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024, 2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -15,13 +15,18 @@
 
 #pragma once
 
+#include <math/aarch64/sve/log_data.hpp>
+#include <math/log.hpp>
 #include <math/log_data.hpp>
-#include <math/sve/log_data.hpp>
 
 #include <arm_sve.h>
 #include <numbers>
 
 namespace openrng::math::sve {
+
+inline float log(float x) { return math::log(x); }
+
+inline double log(double x) { return math::log(x); }
 
 /**
  * Single-precision log(x).
