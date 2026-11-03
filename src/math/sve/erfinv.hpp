@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024, 2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -86,7 +86,7 @@ inline svfloat32_t erfinv(svfloat32_t x, svbool_t pg) {
   auto p = svmla_x(pg, p1, p2, t);
   p = svmla_x(pg, p0, p, t);
   p = svmad_m(is_tail, p, t, d::P29_0);
-  auto y = svmul_x(pg, x, p);
+  const auto y = svmul_x(pg, x, p);
 
   auto q = svadd_x(pg, t, q2);
   q = svmla_x(pg, q1, q, t);
