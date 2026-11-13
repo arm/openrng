@@ -10,6 +10,7 @@
 #include <distributions/kernels/exponential.hpp>
 #include <distributions/kernels/gamma.hpp>
 #include <distributions/kernels/neon/gaussian_icdf.hpp>
+#include <math/aarch64/log.hpp>
 
 namespace openrng::distribution::gamma {
 template <> struct GNorm<CPUFeatures::neon> {

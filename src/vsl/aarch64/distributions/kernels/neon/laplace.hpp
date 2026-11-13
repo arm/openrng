@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: <text>Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: <text>Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com></text>
  *
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
@@ -10,7 +10,7 @@
 #include <distributions/kernels/laplace.hpp>
 #include <utils/dynamic_array.hpp>
 
-#include <math/log.hpp>
+#include <math/aarch64/log.hpp>
 
 namespace openrng::distribution::laplace {
 

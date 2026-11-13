@@ -40,7 +40,9 @@ if(NOT (WIN32 OR APPLE))
     vsl/aarch64/distributions/kernels/sve/rayleigh.cpp
   )
 endif()
-set_source_files_properties(${SVE_DISTRIBUTION_KERNELS} PROPERTIES COMPILE_OPTIONS -march=armv8-a+sve)
+set_source_files_properties(${SVE_DISTRIBUTION_KERNELS} PROPERTIES
+  COMPILE_OPTIONS -march=armv8-a+sve
+  COMPILE_DEFINITIONS HAVE_SVE=1)
 
 target_include_directories(openrng PRIVATE vsl/aarch64)
 

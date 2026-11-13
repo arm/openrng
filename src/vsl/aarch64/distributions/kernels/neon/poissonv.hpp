@@ -9,7 +9,7 @@
 
 #include <array>
 #include <distributions/kernels/poissonv.hpp>
-#include <math/log.hpp>
+#include <math/aarch64/log.hpp>
 
 namespace openrng::distribution::poissonv {
 
